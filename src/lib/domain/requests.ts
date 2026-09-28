@@ -1,4 +1,4 @@
-import type { RequestOption, RequestPriority, RequestStatus, ServiceLevelTarget } from "./types";
+import type { RequestOption, RequestPriority, RequestStatus, ServiceLevelTarget, ServiceRequest } from "./types";
 
 /**
  * Request lifecycle. Every status change in the product passes through
@@ -114,4 +114,25 @@ export function requestReference(seed: string): string {
     n = Math.floor(n / alphabet.length);
   }
   return `BX-${out}`;
+}
+
+/** A short title from a free-form brief, used until staff refine it. */
+export function deriveTitle(brief: string): string {
+  const firstSentence = brief.split(/(?<=[.!?])\s|\n/)[0] ?? brief;
+  const clean = firstSentence.replace(/^(hi|hello|hey)[,!\s]+/i, "").trim();
+  if (clean.length <= 64) return clean.replace(/[.!?]$/, "");
+  const cut = clean.slice(0, 60);
+  return `${cut.slice(0, cut.lastIndexOf(" ") > 30 ? cut.lastIndexOf(" ") : 60)}…`;
+}
+
+/** Queue ordering: breached/soonest SLA first, then priority, then age. */
+export function queueOrder(a: ServiceRequest, b: ServiceRequest): number {
+  const weight = { urgent: 0, priority: 1, standard: 2 } as const;
+  const awaiting = (r: ServiceRequest) => (r.firstRespondedAt ? 1 : 0);
+  return (
+    awaiting(a) - awaiting(b) ||
+    (a.firstRespondedAt ? 0 : (a.firstResponseDueAt ?? "9999").localeCompare(b.firstResponseDueAt ?? "9999")) ||
+    weight[a.priority] - weight[b.priority] ||
+    b.updatedAt.localeCompare(a.updatedAt)
+  );
 }

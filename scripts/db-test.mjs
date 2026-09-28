@@ -66,6 +66,14 @@ async function main() {
   console.log("✓ seed");
   await db.end();
 
+  if (process.argv.includes("--gen-types")) {
+    const result = spawnSync(process.execPath, [path.join(root, "scripts/gen-db-types.mjs")], {
+      stdio: "inherit",
+      env: { ...process.env, PGHOST: dataDir, PGPORT: String(port), PGUSER: "postgres", PGDATABASE: "biluxr_test" },
+    });
+    return result.status ?? 1;
+  }
+
   const testFiles = readdirSync(path.join(root, "tests/db")).filter((f) => f.endsWith(".test.mjs")).map((f) => path.join(root, "tests/db", f));
   const result = spawnSync(process.execPath, ["--test", "--test-concurrency=1", ...testFiles], {
     stdio: "inherit",

@@ -26,9 +26,10 @@ const WORDMARK_PATHS = [
   "M84.25 0V20 M84.25 0H90.75A5 5 0 0 1 90.75 10H84.25 M90.25 10L96.25 20",
 ] as const;
 
-type Weight = "hairline" | "light" | "regular";
+type Weight = "whisper" | "hairline" | "light" | "regular";
 
 const STROKE: Record<Weight, number> = {
+  whisper: 0.45,
   hairline: 1.3,
   light: 1.9,
   regular: 2.6,

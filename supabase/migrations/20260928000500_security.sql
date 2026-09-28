@@ -140,6 +140,9 @@ create policy request_events_read on public.request_events for select using (
   or exists (select 1 from public.requests r where r.id = request_id and r.member_id = auth.uid())
 );
 
+create policy request_events_staff_insert on public.request_events for insert to authenticated
+  with check (public.is_staff() and actor_id = auth.uid());
+
 create policy messages_member_read on public.request_messages for select using (
   public.is_staff()
   or (

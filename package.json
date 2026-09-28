@@ -18,7 +18,8 @@
     "test:watch": "vitest",
     "test:db": "node scripts/db-test.mjs",
     "test:e2e": "playwright test",
-    "verify": "npm run typecheck && npm run lint && npm run test"
+    "verify": "npm run typecheck && npm run lint && npm run test",
+    "db:types": "node scripts/db-test.mjs --gen-types"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.128.0",

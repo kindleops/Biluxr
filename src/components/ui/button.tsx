@@ -22,7 +22,7 @@ const variants: Record<Tone, Record<Variant, string>> = {
       "bg-transparent text-bone-100 shadow-[inset_0_0_0_1px_var(--line-strong)] hover:bg-white/[0.04] hover:shadow-[inset_0_0_0_1px_rgb(255_255_255/0.3)]",
     ghost: "bg-transparent text-bone-200 hover:bg-white/[0.05] hover:text-bone-50",
     quiet:
-      "h-auto px-0 bg-transparent text-bone-200 underline decoration-white/25 underline-offset-[6px] hover:text-bone-50 hover:decoration-white/60",
+      "bg-transparent text-bone-200 underline decoration-white/25 underline-offset-[6px] hover:text-bone-50 hover:decoration-white/60",
     danger:
       "bg-transparent text-status-clay shadow-[inset_0_0_0_1px_rgb(196_138_126/0.4)] hover:bg-status-clay/10",
   },
@@ -32,7 +32,7 @@ const variants: Record<Tone, Record<Variant, string>> = {
       "bg-transparent text-ink-900 shadow-[inset_0_0_0_1px_var(--line-paper-strong)] hover:bg-black/[0.03]",
     ghost: "bg-transparent text-ink-800 hover:bg-black/[0.04]",
     quiet:
-      "h-auto px-0 bg-transparent text-ink-900 underline decoration-black/25 underline-offset-[6px] hover:decoration-black/60",
+      "bg-transparent text-ink-900 underline decoration-black/25 underline-offset-[6px] hover:decoration-black/60",
     danger: "bg-transparent text-[#8c4a3e] shadow-[inset_0_0_0_1px_rgb(140_74_62/0.35)]",
   },
 };
@@ -45,7 +45,8 @@ export interface ButtonStyleProps {
 }
 
 export function buttonStyles({ variant = "primary", size = "md", tone = "dark", className }: ButtonStyleProps = {}) {
-  return cn(base, sizes[size], variants[tone][variant], className);
+  const sizing = variant === "quiet" ? "text-body-sm" : sizes[size];
+  return cn(base, sizing, variants[tone][variant], className);
 }
 
 function Spinner() {
