@@ -20,6 +20,7 @@ const [outDir, pathsArg, vpArg] = process.argv.slice(2).filter((a) => !a.startsW
 const flags = process.argv.filter((a) => a.startsWith("--"));
 const persona = flags.find((f) => f.startsWith("--persona="))?.split("=")[1];
 const full = flags.includes("--full");
+const selector = flags.find((f) => f.startsWith("--selector="))?.slice("--selector=".length);
 const base = process.env.BASE_URL ?? "http://localhost:3000";
 const paths = (pathsArg ?? "/").split(",");
 const vps = (vpArg ?? "d1440,m390").split(",");
@@ -48,7 +49,14 @@ for (const vp of vps) {
       () => document.documentElement.scrollWidth - window.innerWidth,
     );
     const name = `${vp}${p.replace(/[/?=&]+/g, "_") || "_home"}.png`;
-    await page.screenshot({ path: path.join(outDir, name), fullPage: full });
+    if (selector) {
+      const els = await page.locator(selector).all();
+      for (const [i, el] of els.entries()) {
+        await el.screenshot({ path: path.join(outDir, name.replace(".png", `_${i}.png`)) });
+      }
+    } else {
+      await page.screenshot({ path: path.join(outDir, name), fullPage: full });
+    }
     console.log(`${name}${overflow > 0 ? `  ⚠ horizontal overflow ${overflow}px` : ""}`);
   }
   await context.close();

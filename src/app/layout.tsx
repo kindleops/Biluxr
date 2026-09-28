@@ -49,7 +49,15 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       lang="en"
       className={`${display.variable} ${sans.variable} ${mono.variable}`}
       data-demo={demo || undefined}
+      // The inline script below adds the `js` class before hydration.
+      suppressHydrationWarning
     >
+      <head>
+        {/* Marks JS availability before paint so reveal animations never hide content without JS. */}
+        <script
+          dangerouslySetInnerHTML={{ __html: "document.documentElement.classList.add('js')" }}
+        />
+      </head>
       <body>
         <a
           href="#main"

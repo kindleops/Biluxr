@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
 import { Hero } from "@/components/home/hero";
+import { Founding, Premise, ServiceIndex } from "@/components/home/sections";
 import {
-  Founding,
-  HowItMoves,
-  Premise,
-  Remembered,
-  ServiceIndex,
-} from "@/components/home/sections";
+  CommandShowcase,
+  CredentialShowcase,
+  JourneysShowcase,
+  ProductShowcase,
+} from "@/components/home/showcase";
 import { SITE, siteUrl } from "@/lib/seo/site";
 
 export const metadata: Metadata = {
@@ -30,9 +30,11 @@ export default function HomePage() {
       />
       <Hero />
       <Premise />
-      <HowItMoves />
+      <ProductShowcase />
+      <JourneysShowcase />
       <ServiceIndex />
-      <Remembered />
+      <CredentialShowcase />
+      <CommandShowcase />
       <Founding />
     </>
   );
