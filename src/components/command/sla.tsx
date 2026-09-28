@@ -10,7 +10,15 @@ function span(ms: number): string {
 }
 
 /** First-response SLA against configured targets. */
-export function SlaBadge({ dueAt, respondedAt, now = new Date() }: { dueAt: string | null; respondedAt: string | null; now?: Date }) {
+export function SlaBadge({
+  dueAt,
+  respondedAt,
+  now = new Date(),
+}: {
+  dueAt: string | null;
+  respondedAt: string | null;
+  now?: Date;
+}) {
   const state = slaState(dueAt, respondedAt, now);
   if (state === "none") return <span className="text-caption text-bone-600">—</span>;
   if (state === "met") return <span className="text-caption text-bone-500">Responded</span>;
@@ -24,7 +32,11 @@ export function SlaBadge({ dueAt, respondedAt, now = new Date() }: { dueAt: stri
         state === "on_track" && "text-bone-300",
       )}
     >
-      {state === "breached" ? (respondedAt ? "Late reply" : `Overdue ${span(remaining)}`) : `Reply in ${span(remaining)}`}
+      {state === "breached"
+        ? respondedAt
+          ? "Late reply"
+          : `Overdue ${span(remaining)}`
+        : `Reply in ${span(remaining)}`}
     </span>
   );
 }

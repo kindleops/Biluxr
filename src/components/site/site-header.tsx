@@ -27,9 +27,12 @@ export function SiteHeader() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  useEffect(() => {
+  // Close the mobile menu on navigation (adjusting state during render).
+  const [lastPath, setLastPath] = useState(pathname);
+  if (lastPath !== pathname) {
+    setLastPath(pathname);
     setOpen(false);
-  }, [pathname]);
+  }
 
   useEffect(() => {
     document.documentElement.style.overflow = open ? "hidden" : "";
@@ -46,8 +49,12 @@ export function SiteHeader() {
   return (
     <header
       className={cn(
-        "sticky top-0 z-nav transition-[background-color,box-shadow,color] duration-base ease-considered",
-        solid ? "bg-ink-950 [box-shadow:inset_0_-1px_0_0_var(--line-subtle)]" : scrolled && !open ? "glass rounded-none [box-shadow:inset_0_-1px_0_0_var(--line-subtle)]" : "bg-transparent",
+        "z-nav duration-base sticky top-0 transition-[background-color,box-shadow,color] ease-considered",
+        solid
+          ? "bg-ink-950 [box-shadow:inset_0_-1px_0_0_var(--line-subtle)]"
+          : scrolled && !open
+            ? "glass rounded-none [box-shadow:inset_0_-1px_0_0_var(--line-subtle)]"
+            : "bg-transparent",
         paper ? "text-ink-900" : "text-bone-100",
       )}
     >
@@ -65,9 +72,9 @@ export function SiteHeader() {
                 href={item.href}
                 aria-current={active ? "page" : undefined}
                 className={cn(
-                  "relative text-body-sm tracking-[0.01em] transition-opacity duration-quick hover:opacity-100",
+                  "duration-quick relative text-body-sm tracking-[0.01em] transition-opacity hover:opacity-100",
                   active ? "opacity-100" : "opacity-65",
-                  "after:absolute after:-bottom-1.5 after:left-0 after:h-px after:w-full after:origin-left after:bg-current after:transition-transform after:duration-base",
+                  "after:duration-base after:absolute after:-bottom-1.5 after:left-0 after:h-px after:w-full after:origin-left after:bg-current after:transition-transform",
                   active ? "after:scale-x-100" : "after:scale-x-0 hover:after:scale-x-100",
                 )}
               >
@@ -78,13 +85,16 @@ export function SiteHeader() {
         </nav>
 
         <div className="hidden items-center gap-6 md:flex">
-          <Link href="/login" className="text-body-sm opacity-65 transition-opacity hover:opacity-100">
+          <Link
+            href="/login"
+            className="text-body-sm opacity-65 transition-opacity hover:opacity-100"
+          >
             Sign in
           </Link>
           <Link
             href="/apply"
             className={cn(
-              "inline-flex h-9 items-center rounded-sm px-4 text-body-sm font-medium transition-colors duration-quick",
+              "duration-quick inline-flex h-9 items-center rounded-sm px-4 text-body-sm font-medium transition-colors",
               paper
                 ? "bg-ink-900 text-paper-50 hover:bg-ink-800"
                 : "shadow-[inset_0_0_0_1px_var(--line-strong)] hover:bg-white/[0.06]",
@@ -105,13 +115,13 @@ export function SiteHeader() {
           <span className="relative block h-3 w-5" aria-hidden>
             <span
               className={cn(
-                "absolute left-0 h-px w-5 bg-current transition-transform duration-base ease-settle",
+                "duration-base absolute left-0 h-px w-5 bg-current transition-transform ease-settle",
                 open ? "top-1.5 rotate-45" : "top-0",
               )}
             />
             <span
               className={cn(
-                "absolute left-0 h-px w-5 bg-current transition-transform duration-base ease-settle",
+                "duration-base absolute left-0 h-px w-5 bg-current transition-transform ease-settle",
                 open ? "top-1.5 -rotate-45" : "top-3",
               )}
             />
@@ -122,9 +132,12 @@ export function SiteHeader() {
       <div
         id="mobile-menu"
         hidden={!open}
-        className="fixed inset-x-0 top-(--nav-height) bottom-0 z-overlay bg-ink-950 text-bone-100 md:hidden"
+        className="z-overlay fixed inset-x-0 top-(--nav-height) bottom-0 bg-ink-950 text-bone-100 md:hidden"
       >
-        <nav aria-label="Mobile" className="page-gutter flex h-full flex-col justify-between pt-8 pb-[max(2rem,var(--safe-bottom))]">
+        <nav
+          aria-label="Mobile"
+          className="page-gutter flex h-full flex-col justify-between pt-8 pb-[max(2rem,var(--safe-bottom))]"
+        >
           <ul className="grid gap-1">
             {[...NAV, { href: "/apply", label: "Apply" }].map((item, i) => (
               <li key={item.href} className="reveal" style={{ animationDelay: `${60 + i * 50}ms` }}>

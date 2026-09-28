@@ -45,11 +45,15 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   const demo = isDemo();
   return (
-    <html lang="en" className={`${display.variable} ${sans.variable} ${mono.variable}`} data-demo={demo || undefined}>
+    <html
+      lang="en"
+      className={`${display.variable} ${sans.variable} ${mono.variable}`}
+      data-demo={demo || undefined}
+    >
       <body>
         <a
           href="#main"
-          className="sr-only z-toast focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:rounded-md focus:bg-bone-100 focus:px-4 focus:py-2 focus:text-ink-950"
+          className="z-toast sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:rounded-md focus:bg-bone-100 focus:px-4 focus:py-2 focus:text-ink-950"
         >
           Skip to content
         </a>

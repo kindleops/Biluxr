@@ -18,7 +18,11 @@ const INVITE_STATUS = {
 export default async function AccessPage() {
   const identity = await requireMember();
   const repo = await memberRepository(identity);
-  const [offers, invitations, membership] = await Promise.all([repo.listAccessOffers(), repo.listInvitations(), repo.membership()]);
+  const [offers, invitations, membership] = await Promise.all([
+    repo.listAccessOffers(),
+    repo.listInvitations(),
+    repo.membership(),
+  ]);
   const remaining = Math.max(0, membership.invitationAllowance - membership.invitationsUsed);
   const active = membership.membership?.status === "active";
 
@@ -33,19 +37,33 @@ export default async function AccessPage() {
         {offers.length > 0 ? (
           <div className="grid gap-3 sm:grid-cols-2">
             {offers.map((o) => (
-              <article key={o.id} className="flex flex-col justify-between gap-8 rounded-card bg-ink-900 p-6 shadow-[inset_0_0_0_1px_var(--line-subtle)]">
+              <article
+                key={o.id}
+                className="flex flex-col justify-between gap-8 rounded-card bg-ink-900 p-6 shadow-[inset_0_0_0_1px_var(--line-subtle)]"
+              >
                 <div>
-                  <p className="text-label text-bone-500">{o.availableUntil ? `Until ${formatDateLong(o.availableUntil)}` : "Ongoing"}</p>
-                  <h3 className="mt-4 font-display text-title font-light text-bone-50">{o.title}</h3>
+                  <p className="text-label text-bone-500">
+                    {o.availableUntil ? `Until ${formatDateLong(o.availableUntil)}` : "Ongoing"}
+                  </p>
+                  <h3 className="mt-4 font-display text-title font-light text-bone-50">
+                    {o.title}
+                  </h3>
                   <p className="mt-3 text-body-sm text-bone-400">{o.summary}</p>
                 </div>
-                {o.detail && <p className="text-caption text-bone-500">{o.detail} Ask your concierge to arrange it.</p>}
+                {o.detail && (
+                  <p className="text-caption text-bone-500">
+                    {o.detail} Ask your concierge to arrange it.
+                  </p>
+                )}
               </article>
             ))}
           </div>
         ) : (
           <div className="rounded-card shadow-[inset_0_0_0_1px_var(--line-subtle)]">
-            <EmptyState title="New invitations will appear here." body="Openings, previews and privileges arranged with our partners — only when they are real and available to you." />
+            <EmptyState
+              title="New invitations will appear here."
+              body="Openings, previews and privileges arranged with our partners — only when they are real and available to you."
+            />
           </div>
         )}
       </section>
@@ -62,14 +80,21 @@ export default async function AccessPage() {
         {invitations.length > 0 && (
           <ul className="grid gap-px overflow-hidden rounded-card bg-white/[0.05]">
             {invitations.map((i) => (
-              <li key={i.id} className="flex flex-wrap items-center justify-between gap-4 bg-ink-900 px-5 py-4">
+              <li
+                key={i.id}
+                className="flex flex-wrap items-center justify-between gap-4 bg-ink-900 px-5 py-4"
+              >
                 <div className="min-w-0">
-                  <p className="text-body-sm text-bone-100">{i.inviteeName ?? i.email ?? "Invitation"}</p>
+                  <p className="text-body-sm text-bone-100">
+                    {i.inviteeName ?? i.email ?? "Invitation"}
+                  </p>
                   <p className="mt-0.5 font-mono text-caption text-bone-500">
                     {i.code} · issued {formatDateLong(i.createdAt)}
                   </p>
                 </div>
-                <StatusPill tone={INVITE_STATUS[i.status].tone}>{INVITE_STATUS[i.status].label}</StatusPill>
+                <StatusPill tone={INVITE_STATUS[i.status].tone}>
+                  {INVITE_STATUS[i.status].label}
+                </StatusPill>
               </li>
             ))}
           </ul>

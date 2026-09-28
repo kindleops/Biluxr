@@ -1,6 +1,10 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { activateMembershipAction, assignOwnerAction, summarizeMemberAction } from "@/app/command/actions";
+import {
+  activateMembershipAction,
+  assignOwnerAction,
+  summarizeMemberAction,
+} from "@/app/command/actions";
 import { AddMemberPreference } from "@/components/command/member-tools";
 import { CommandPage, KeyValue, Panel } from "@/components/command/page";
 import { Button } from "@/components/ui/button";
@@ -37,7 +41,9 @@ export default async function Member360Page({ params }: { params: Promise<{ id: 
       title={
         <>
           {m.profile.fullName}
-          {m.profile.preferredName && <span className="text-bone-500"> · “{m.profile.preferredName}”</span>}
+          {m.profile.preferredName && (
+            <span className="text-bone-500"> · “{m.profile.preferredName}”</span>
+          )}
         </>
       }
       actions={
@@ -62,22 +68,38 @@ export default async function Member360Page({ params }: { params: Promise<{ id: 
                     <li key={k}>{k}</li>
                   ))}
                 </ul>
-                {summary.openItems.length > 0 && <p className="text-caption text-bone-400">Open: {summary.openItems.join(" · ")}</p>}
-                {summary.watchOuts.length > 0 && <p className="text-caption text-status-amber">Watch: {summary.watchOuts.join(" · ")}</p>}
+                {summary.openItems.length > 0 && (
+                  <p className="text-caption text-bone-400">
+                    Open: {summary.openItems.join(" · ")}
+                  </p>
+                )}
+                {summary.watchOuts.length > 0 && (
+                  <p className="text-caption text-status-amber">
+                    Watch: {summary.watchOuts.join(" · ")}
+                  </p>
+                )}
                 <p className="text-caption text-bone-600">
-                  Drafted by Biluxr AI ({latestSummary.model}) {formatRelative(latestSummary.createdAt)} — verify before relying on it.
+                  Drafted by Biluxr AI ({latestSummary.model}){" "}
+                  {formatRelative(latestSummary.createdAt)} — verify before relying on it.
                 </p>
               </div>
             ) : aiAvailable() ? (
-              <form action={summarizeMemberAction} className="flex items-center justify-between gap-4">
-                <p className="text-body-sm text-bone-400">Draft a briefing from this member&apos;s records.</p>
+              <form
+                action={summarizeMemberAction}
+                className="flex items-center justify-between gap-4"
+              >
+                <p className="text-body-sm text-bone-400">
+                  Draft a briefing from this member&apos;s records.
+                </p>
                 <input type="hidden" name="memberId" value={m.profile.id} />
                 <Button type="submit" size="sm" variant="secondary">
                   Draft briefing
                 </Button>
               </form>
             ) : (
-              <p className="text-body-sm text-bone-500">Briefings are drafted by Biluxr AI, which is not configured in this environment.</p>
+              <p className="text-body-sm text-bone-500">
+                Briefings are drafted by Biluxr AI, which is not configured in this environment.
+              </p>
             )}
           </Panel>
 
@@ -87,13 +109,23 @@ export default async function Member360Page({ params }: { params: Promise<{ id: 
             ) : (
               <ul className="grid gap-px overflow-hidden rounded-md bg-white/[0.05]">
                 {m.requests.map((r) => (
-                  <li key={r.id} className="relative flex items-center justify-between gap-4 bg-ink-900 px-4 py-3 hover:bg-ink-850">
-                    <Link href={`/command/requests/${r.id}`} className="min-w-0 truncate text-body-sm text-bone-100 after:absolute after:inset-0">
+                  <li
+                    key={r.id}
+                    className="relative flex items-center justify-between gap-4 bg-ink-900 px-4 py-3 hover:bg-ink-850"
+                  >
+                    <Link
+                      href={`/command/requests/${r.id}`}
+                      className="min-w-0 truncate text-body-sm text-bone-100 after:absolute after:inset-0"
+                    >
                       {r.title}
                     </Link>
                     <span className="flex shrink-0 items-center gap-4">
-                      <StatusPill tone={REQUEST_STATUS_PRESENTATION[r.status].tone}>{REQUEST_STATUS_PRESENTATION[r.status].staff}</StatusPill>
-                      <span className="hidden text-caption text-bone-500 sm:inline">{formatRelative(r.createdAt)}</span>
+                      <StatusPill tone={REQUEST_STATUS_PRESENTATION[r.status].tone}>
+                        {REQUEST_STATUS_PRESENTATION[r.status].staff}
+                      </StatusPill>
+                      <span className="hidden text-caption text-bone-500 sm:inline">
+                        {formatRelative(r.createdAt)}
+                      </span>
                     </span>
                   </li>
                 ))}
@@ -124,9 +156,14 @@ export default async function Member360Page({ params }: { params: Promise<{ id: 
                 <ul className="grid gap-2.5">
                   {m.people.map((p) => (
                     <li key={p.id} className="text-body-sm">
-                      <span className="text-bone-100">{p.name}</span> <span className="text-bone-500">· {p.relationship}</span>
+                      <span className="text-bone-100">{p.name}</span>{" "}
+                      <span className="text-bone-500">· {p.relationship}</span>
                       {p.notes && <p className="text-caption text-bone-400">{p.notes}</p>}
-                      {p.birthday && <p className="text-caption text-bone-500">Birthday {formatDateLong(p.birthday)}</p>}
+                      {p.birthday && (
+                        <p className="text-caption text-bone-500">
+                          Birthday {formatDateLong(p.birthday)}
+                        </p>
+                      )}
                     </li>
                   ))}
                 </ul>
@@ -139,7 +176,14 @@ export default async function Member360Page({ params }: { params: Promise<{ id: 
           <Panel title="Membership">
             <KeyValue
               items={[
-                ["Number", m.membership ? <span className="font-mono">№ {m.membership.memberNumber}</span> : "—"],
+                [
+                  "Number",
+                  m.membership ? (
+                    <span className="font-mono">№ {m.membership.memberNumber}</span>
+                  ) : (
+                    "—"
+                  ),
+                ],
                 ["Status", m.membership?.status.replace("_", " ") ?? "None"],
                 ["Tier", m.tier?.name ?? "—"],
                 ["Since", m.membership?.startedAt ? formatDateLong(m.membership.startedAt) : "—"],
@@ -156,7 +200,12 @@ export default async function Member360Page({ params }: { params: Promise<{ id: 
               <label htmlFor="ownerId" className="sr-only">
                 Relationship owner
               </label>
-              <Select id="ownerId" name="ownerId" defaultValue={m.membership?.relationshipOwnerId ?? ""} dense>
+              <Select
+                id="ownerId"
+                name="ownerId"
+                defaultValue={m.membership?.relationshipOwnerId ?? ""}
+                dense
+              >
                 <option value="">Unassigned</option>
                 {m.staff.map((s) => (
                   <option key={s.id} value={s.id}>
@@ -176,8 +225,16 @@ export default async function Member360Page({ params }: { params: Promise<{ id: 
                   ["Referral", m.founding.referralSource],
                   ["Onboarding", m.founding.onboardingStatus.replace("_", " ")],
                   ["Preferences", m.founding.preferencesCompleted ? "Complete" : "Incomplete"],
-                  ["First request", m.founding.firstRequestAt ? formatDateLong(m.founding.firstRequestAt) : "Not yet"],
-                  ["Satisfaction", m.founding.satisfaction ? `${m.founding.satisfaction} / 5` : "Not rated"],
+                  [
+                    "First request",
+                    m.founding.firstRequestAt
+                      ? formatDateLong(m.founding.firstRequestAt)
+                      : "Not yet",
+                  ],
+                  [
+                    "Satisfaction",
+                    m.founding.satisfaction ? `${m.founding.satisfaction} / 5` : "Not rated",
+                  ],
                   ["Referral potential", m.founding.referralPotential ?? "—"],
                 ]}
               />

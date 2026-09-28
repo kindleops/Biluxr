@@ -41,10 +41,17 @@ function CloseButton({ onClose }: { onClose: () => void }) {
     <button
       type="button"
       onClick={onClose}
-      className="inline-flex size-9 items-center justify-center rounded-full text-bone-400 transition-colors duration-quick hover:bg-white/5 hover:text-bone-100"
+      className="duration-quick inline-flex size-9 items-center justify-center rounded-full text-bone-400 transition-colors hover:bg-white/5 hover:text-bone-100"
       aria-label="Close"
     >
-      <svg viewBox="0 0 16 16" className="size-3.5" fill="none" stroke="currentColor" strokeWidth="1.4" aria-hidden>
+      <svg
+        viewBox="0 0 16 16"
+        className="size-3.5"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.4"
+        aria-hidden
+      >
         <path d="M3 3l10 10M13 3L3 13" />
       </svg>
     </button>
@@ -75,7 +82,7 @@ export function Modal({
         if (e.target === e.currentTarget) onClose();
       }}
       className={cn(
-        "m-auto w-[min(34rem,calc(100vw-2rem))] max-h-[min(44rem,calc(100dvh-2rem))] overflow-hidden rounded-xl bg-ink-850 p-0 text-bone-100 shadow-[inset_0_0_0_1px_var(--line),var(--shadow-float)]",
+        "m-auto max-h-[min(44rem,calc(100dvh-2rem))] w-[min(34rem,calc(100vw-2rem))] overflow-hidden rounded-xl bg-ink-850 p-0 text-bone-100 shadow-[inset_0_0_0_1px_var(--line),var(--shadow-float)]",
         "backdrop:bg-ink-950/70 backdrop:backdrop-blur-[6px] open:animate-sheet",
         className,
       )}
@@ -117,12 +124,12 @@ export function Sheet({
       }}
       className={cn(
         "m-0 mt-auto h-auto max-h-[92dvh] w-full max-w-none overflow-hidden rounded-t-sheet bg-ink-850 p-0 text-bone-100 shadow-[inset_0_1px_0_0_var(--line),var(--shadow-float)]",
-        "sm:mr-0 sm:ml-auto sm:mt-0 sm:h-dvh sm:max-h-dvh sm:w-[30rem] sm:rounded-none sm:rounded-l-sheet",
+        "sm:mt-0 sm:mr-0 sm:ml-auto sm:h-dvh sm:max-h-dvh sm:w-[30rem] sm:rounded-none sm:rounded-l-sheet",
         "backdrop:bg-ink-950/60 backdrop:backdrop-blur-[4px] open:animate-sheet",
         className,
       )}
     >
-      <div className="flex max-h-[inherit] flex-col pb-safe sm:h-full">
+      <div className="pb-safe flex max-h-[inherit] flex-col sm:h-full">
         <div className="mx-auto mt-2.5 h-1 w-9 rounded-full bg-white/15 sm:hidden" aria-hidden />
         <header className="flex items-center justify-between gap-4 px-6 pt-4 pb-3 sm:pt-6">
           <h2 className="font-display text-title font-light">{title}</h2>

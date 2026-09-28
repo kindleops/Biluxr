@@ -65,7 +65,14 @@ export interface DemoStore {
   aiEvents: AiEvent[];
   foundingMembers: FoundingMember[];
   foundingProviders: FoundingProvider[];
-  contact: { id: string; name: string; email: string; topic: string; message: string; createdAt: string }[];
+  contact: {
+    id: string;
+    name: string;
+    email: string;
+    topic: string;
+    message: string;
+    createdAt: string;
+  }[];
 }
 
 export const DEMO_IDS = {
@@ -86,7 +93,8 @@ function uuid(n: number): string {
 export function createDemoStore(now: Date = new Date()): DemoStore {
   let seq = 1;
   const id = () => uuid(seq++);
-  const at = (hoursFromNow: number) => new Date(now.getTime() + hoursFromNow * 3_600_000).toISOString();
+  const at = (hoursFromNow: number) =>
+    new Date(now.getTime() + hoursFromNow * 3_600_000).toISOString();
   const day = (daysFromNow: number) =>
     new Date(now.getTime() + daysFromNow * 86_400_000).toISOString().slice(0, 10);
 
@@ -144,12 +152,33 @@ export function createDemoStore(now: Date = new Date()): DemoStore {
   ];
 
   const privileges: Privilege[] = [
-    ["A single relationship", "One concierge who knows your life, supported by a team that keeps it moving."],
-    ["Considered options", "Every request returns a short, reasoned set of options — never a search result."],
-    ["Remembered preferences", "Seats, rooms, tables, allergies, the people you travel with. Said once."],
-    ["Journeys, held together", "Flights, stays, tables and transfers gathered into one living itinerary."],
-    ["Invitations to extend", "A small number of invitations to share Biluxr with people you trust."],
-  ].map(([title, description], i) => ({ id: id(), tierId, title: title!, description: description!, sortOrder: (i + 1) * 10 }));
+    [
+      "A single relationship",
+      "One concierge who knows your life, supported by a team that keeps it moving.",
+    ],
+    [
+      "Considered options",
+      "Every request returns a short, reasoned set of options — never a search result.",
+    ],
+    [
+      "Remembered preferences",
+      "Seats, rooms, tables, allergies, the people you travel with. Said once.",
+    ],
+    [
+      "Journeys, held together",
+      "Flights, stays, tables and transfers gathered into one living itinerary.",
+    ],
+    [
+      "Invitations to extend",
+      "A small number of invitations to share Biluxr with people you trust.",
+    ],
+  ].map(([title, description], i) => ({
+    id: id(),
+    tierId,
+    title: title!,
+    description: description!,
+    sortOrder: (i + 1) * 10,
+  }));
 
   const categories: RequestCategory[] = [
     ["travel", "Travel", "concierge"],
@@ -206,11 +235,26 @@ export function createDemoStore(now: Date = new Date()): DemoStore {
   ];
 
   const templates: NotificationTemplate[] = [
-    ["application_received", "Your application to Biluxr", "Thank you, {{first_name}}. Your application has been received."],
+    [
+      "application_received",
+      "Your application to Biluxr",
+      "Thank you, {{first_name}}. Your application has been received.",
+    ],
     ["application_approved", "Welcome to Biluxr", "{{first_name}}, we would be glad to have you."],
     ["request_received", "Received: {{request_title}}", "Your request is with {{concierge_name}}."],
-    ["options_ready", "Options for {{request_title}}", "A considered set of options is ready for you."],
-  ].map(([key, subject, body]) => ({ id: id(), key: key!, channel: "email", subject: subject!, body: body!, isActive: true }));
+    [
+      "options_ready",
+      "Options for {{request_title}}",
+      "A considered set of options is ready for you.",
+    ],
+  ].map(([key, subject, body]) => ({
+    id: id(),
+    key: key!,
+    channel: "email",
+    subject: subject!,
+    body: body!,
+    isActive: true,
+  }));
 
   const person = (
     pid: string,
@@ -239,7 +283,14 @@ export function createDemoStore(now: Date = new Date()): DemoStore {
   const profiles: Profile[] = [
     person(DEMO_IDS.member, "Elena Voss", "Elena", "member", "elena.voss@example.com"),
     person(DEMO_IDS.member2, "Marcus Hale", null, "member", "marcus.hale@example.com"),
-    person(DEMO_IDS.member3, "Priya Anand", null, "member", "priya.anand@example.com", "Europe/London"),
+    person(
+      DEMO_IDS.member3,
+      "Priya Anand",
+      null,
+      "member",
+      "priya.anand@example.com",
+      "Europe/London",
+    ),
     person(DEMO_IDS.member4, "Theo Castellane", "Theo", "member", "theo.c@example.com"),
     person(DEMO_IDS.concierge, "Isabel Moreau", "Isabel", "concierge", "isabel@biluxr.example"),
     person(DEMO_IDS.concierge2, "Daniel Okafor", "Daniel", "concierge", "daniel@biluxr.example"),
@@ -282,7 +333,11 @@ export function createDemoStore(now: Date = new Date()): DemoStore {
     ["dining", "Allergies", "Shellfish — severe. Always flag to the kitchen in advance."],
     ["dining", "Tables", "Corner or banquette. Quiet over scene."],
     ["family", "Children", "Sofia (9) and Luca (6) travel with a nanny on longer trips."],
-    ["communication", "Contact", "Messages over calls before 10am. Assistant (Maren) cc'd on travel."],
+    [
+      "communication",
+      "Contact",
+      "Messages over calls before 10am. Assistant (Maren) cc'd on travel.",
+    ],
   ].map(([domain, label, value], i) => ({
     id: id(),
     memberId: DEMO_IDS.member,
@@ -294,9 +349,30 @@ export function createDemoStore(now: Date = new Date()): DemoStore {
   }));
 
   const people: MemberPerson[] = [
-    { id: id(), memberId: DEMO_IDS.member, name: "Sofia Voss", relationship: "Daughter", notes: "Loves horses and anything botanical.", birthday: day(19) },
-    { id: id(), memberId: DEMO_IDS.member, name: "Luca Voss", relationship: "Son", notes: null, birthday: null },
-    { id: id(), memberId: DEMO_IDS.member, name: "Maren Holt", relationship: "Executive assistant", notes: "Copy on all travel confirmations.", birthday: null },
+    {
+      id: id(),
+      memberId: DEMO_IDS.member,
+      name: "Sofia Voss",
+      relationship: "Daughter",
+      notes: "Loves horses and anything botanical.",
+      birthday: day(19),
+    },
+    {
+      id: id(),
+      memberId: DEMO_IDS.member,
+      name: "Luca Voss",
+      relationship: "Son",
+      notes: null,
+      birthday: null,
+    },
+    {
+      id: id(),
+      memberId: DEMO_IDS.member,
+      name: "Maren Holt",
+      relationship: "Executive assistant",
+      notes: "Copy on all travel confirmations.",
+      birthday: null,
+    },
   ];
 
   const providers: Provider[] = [
@@ -318,7 +394,8 @@ export function createDemoStore(now: Date = new Date()): DemoStore {
     contactName: null,
     contactEmail: null,
     contactPhone: null,
-    termsSummary: status === "approved" || status === "preferred" ? "Net 30. Member rate on request." : null,
+    termsSummary:
+      status === "approved" || status === "preferred" ? "Net 30. Member rate on request." : null,
     notes: null,
     testRequestStatus: test as Provider["testRequestStatus"],
     performanceScore: score as number | null,
@@ -356,7 +433,8 @@ export function createDemoStore(now: Date = new Date()): DemoStore {
 
   // Requests
   const req = (
-    partial: Partial<ServiceRequest> & Pick<ServiceRequest, "title" | "brief" | "status" | "memberId">,
+    partial: Partial<ServiceRequest> &
+      Pick<ServiceRequest, "title" | "brief" | "status" | "memberId">,
     createdHoursAgo: number,
   ): ServiceRequest => {
     const rid = id();
@@ -423,7 +501,8 @@ export function createDemoStore(now: Date = new Date()): DemoStore {
     {
       memberId: DEMO_IDS.member,
       title: "Birthday gift for Sofia",
-      brief: "Sofia turns ten next month. Something she will remember — not a thing that sits on a shelf.",
+      brief:
+        "Sofia turns ten next month. Something she will remember — not a thing that sits on a shelf.",
       status: "clarifying",
       categorySlug: "gifting",
     },
@@ -500,15 +579,46 @@ export function createDemoStore(now: Date = new Date()): DemoStore {
 
   const messages: RequestMessage[] = [
     msg(dinner.id, "member", dinner.brief, 28),
-    msg(dinner.id, "concierge", "Lovely. I'll hold two rooms in mind — one with a private room, one at the bar-side banquette. Back to you this afternoon.", 27.6),
-    msg(dinner.id, "concierge", "Zurich guests: one is a sommelier by training (per their assistant). Lean on the list.", 27.5, "internal"),
-    msg(dinner.id, "concierge", "Two options below. Both can hold the table until tomorrow at noon.", 20),
+    msg(
+      dinner.id,
+      "concierge",
+      "Lovely. I'll hold two rooms in mind — one with a private room, one at the bar-side banquette. Back to you this afternoon.",
+      27.6,
+    ),
+    msg(
+      dinner.id,
+      "concierge",
+      "Zurich guests: one is a sommelier by training (per their assistant). Lean on the list.",
+      27.5,
+      "internal",
+    ),
+    msg(
+      dinner.id,
+      "concierge",
+      "Two options below. Both can hold the table until tomorrow at noon.",
+      20,
+    ),
     msg(gift.id, "member", gift.brief, 5),
-    msg(gift.id, "concierge", "What a good age. Two directions I'd love your view on: an experience (a morning riding at a stable she can return to), or something botanical she grows herself. Is she more of a doer or a keeper?", 4.6),
+    msg(
+      gift.id,
+      "concierge",
+      "What a good age. Two directions I'd love your view on: an experience (a morning riding at a stable she can return to), or something botanical she grows herself. Is she more of a doer or a keeper?",
+      4.6,
+    ),
     msg(aspen.id, "member", aspen.brief, 70),
-    msg(aspen.id, "concierge", "Understood. I'm speaking with two chalets directly this week and holding lesson slots with an instructor we trust.", 69),
+    msg(
+      aspen.id,
+      "concierge",
+      "Understood. I'm speaking with two chalets directly this week and holding lesson slots with an instructor we trust.",
+      69,
+    ),
     msg(car.id, "member", car.brief, 24 * 8),
-    msg(car.id, "concierge", "Confirmed for 5:15am from home. Driver details will arrive the night before.", 24 * 8 - 0.3),
+    msg(
+      car.id,
+      "concierge",
+      "Confirmed for 5:15am from home. Driver details will arrive the night before.",
+      24 * 8 - 0.3,
+    ),
     msg(car.id, "system", "Completed.", 24 * 6 - 3),
     msg(marcusReq.id, "member", marcusReq.brief, 0.05),
     msg(priyaReq.id, "member", priyaReq.brief, 1),
@@ -547,7 +657,16 @@ export function createDemoStore(now: Date = new Date()): DemoStore {
 
   const events: RequestEvent[] = requests.flatMap((r) => {
     const out: RequestEvent[] = [
-      { id: id(), requestId: r.id, kind: "created", fromStatus: null, toStatus: "received", actorId: r.memberId, note: null, createdAt: r.createdAt },
+      {
+        id: id(),
+        requestId: r.id,
+        kind: "created",
+        fromStatus: null,
+        toStatus: "received",
+        actorId: r.memberId,
+        note: null,
+        createdAt: r.createdAt,
+      },
     ];
     if (r.status !== "received") {
       out.push({
@@ -562,26 +681,108 @@ export function createDemoStore(now: Date = new Date()): DemoStore {
       });
     }
     if (r.status === "completed") {
-      out.push({ id: id(), requestId: r.id, kind: "status_changed", fromStatus: "confirmed", toStatus: "completed", actorId: DEMO_IDS.concierge, note: null, createdAt: at(-24 * 6 + 3) });
+      out.push({
+        id: id(),
+        requestId: r.id,
+        kind: "status_changed",
+        fromStatus: "confirmed",
+        toStatus: "completed",
+        actorId: DEMO_IDS.concierge,
+        note: null,
+        createdAt: at(-24 * 6 + 3),
+      });
     }
     return out;
   });
 
   const journeyItems: JourneyItem[] = [
-    { journeyId: parisJourney, kind: "flight", title: "MIA → CDG", detail: "Overnight, seats 2A / 2F", location: "Miami International", startsAt: `${day(12)}T23:30:00.000Z`, endsAt: `${day(13)}T13:05:00.000Z`, timezone: "America/New_York", status: "confirmed" },
-    { journeyId: parisJourney, kind: "transfer", title: "Car to the hotel", detail: "Driver will meet at arrivals with a name card.", location: "Charles de Gaulle, Terminal 2", startsAt: `${day(13)}T13:40:00.000Z`, endsAt: null, timezone: "Europe/Paris", status: "confirmed" },
-    { journeyId: parisJourney, kind: "stay", title: "Four nights, Left Bank", detail: "Courtyard-facing suite, high floor.", location: "Saint-Germain-des-Prés", startsAt: `${day(13)}T14:00:00.000Z`, endsAt: `${day(16)}T10:00:00.000Z`, timezone: "Europe/Paris", status: "confirmed" },
-    { journeyId: parisJourney, kind: "event", title: "Gallery opening", detail: "Guest list confirmed for two.", location: "Le Marais", startsAt: `${day(14)}T17:30:00.000Z`, endsAt: null, timezone: "Europe/Paris", status: "confirmed" },
-    { journeyId: parisJourney, kind: "dining", title: "Dinner after the opening", detail: "Holding a table for four at 9:30pm.", location: "Le Marais", startsAt: `${day(14)}T19:30:00.000Z`, endsAt: null, timezone: "Europe/Paris", status: "tentative" },
-    { journeyId: aspenJourney, kind: "stay", title: "Chalet near the lifts", detail: "Two properties under discussion.", location: "Aspen", startsAt: null, endsAt: null, timezone: "America/Denver", status: "tentative", requestId: aspen.id },
-    { journeyId: aspenJourney, kind: "experience", title: "Private ski lessons", detail: "Mornings, both children.", location: "Aspen Highlands", startsAt: null, endsAt: null, timezone: "America/Denver", status: "tentative", requestId: aspen.id },
+    {
+      journeyId: parisJourney,
+      kind: "flight",
+      title: "MIA → CDG",
+      detail: "Overnight, seats 2A / 2F",
+      location: "Miami International",
+      startsAt: `${day(12)}T23:30:00.000Z`,
+      endsAt: `${day(13)}T13:05:00.000Z`,
+      timezone: "America/New_York",
+      status: "confirmed",
+    },
+    {
+      journeyId: parisJourney,
+      kind: "transfer",
+      title: "Car to the hotel",
+      detail: "Driver will meet at arrivals with a name card.",
+      location: "Charles de Gaulle, Terminal 2",
+      startsAt: `${day(13)}T13:40:00.000Z`,
+      endsAt: null,
+      timezone: "Europe/Paris",
+      status: "confirmed",
+    },
+    {
+      journeyId: parisJourney,
+      kind: "stay",
+      title: "Four nights, Left Bank",
+      detail: "Courtyard-facing suite, high floor.",
+      location: "Saint-Germain-des-Prés",
+      startsAt: `${day(13)}T14:00:00.000Z`,
+      endsAt: `${day(16)}T10:00:00.000Z`,
+      timezone: "Europe/Paris",
+      status: "confirmed",
+    },
+    {
+      journeyId: parisJourney,
+      kind: "event",
+      title: "Gallery opening",
+      detail: "Guest list confirmed for two.",
+      location: "Le Marais",
+      startsAt: `${day(14)}T17:30:00.000Z`,
+      endsAt: null,
+      timezone: "Europe/Paris",
+      status: "confirmed",
+    },
+    {
+      journeyId: parisJourney,
+      kind: "dining",
+      title: "Dinner after the opening",
+      detail: "Holding a table for four at 9:30pm.",
+      location: "Le Marais",
+      startsAt: `${day(14)}T19:30:00.000Z`,
+      endsAt: null,
+      timezone: "Europe/Paris",
+      status: "tentative",
+    },
+    {
+      journeyId: aspenJourney,
+      kind: "stay",
+      title: "Chalet near the lifts",
+      detail: "Two properties under discussion.",
+      location: "Aspen",
+      startsAt: null,
+      endsAt: null,
+      timezone: "America/Denver",
+      status: "tentative",
+      requestId: aspen.id,
+    },
+    {
+      journeyId: aspenJourney,
+      kind: "experience",
+      title: "Private ski lessons",
+      detail: "Mornings, both children.",
+      location: "Aspen Highlands",
+      startsAt: null,
+      endsAt: null,
+      timezone: "America/Denver",
+      status: "tentative",
+      requestId: aspen.id,
+    },
   ].map((item, i) => ({ id: id(), requestId: null, sortOrder: i, ...item }) as JourneyItem);
 
   const accessOffers: AccessOffer[] = [
     {
       id: id(),
       title: "A morning in the cellar",
-      summary: "A private tasting with the head sommelier at Maison Ardent, before service. Up to four guests.",
+      summary:
+        "A private tasting with the head sommelier at Maison Ardent, before service. Up to four guests.",
       detail: "Arranged on request, weekday mornings.",
       providerId: provider("Maison Ardent"),
       marketId: market("miami"),
@@ -607,9 +808,36 @@ export function createDemoStore(now: Date = new Date()): DemoStore {
   ];
 
   const applications: Application[] = [
-    ["Jonah Whitcombe", "jonah.w@example.com", "Miami", "miami", "Private equity", "Referred by a member", "submitted", 6],
-    ["Amara Osei", "amara.osei@example.com", "New York", "new-york", "Architecture practice founder", "Invitation", "in_review", 30],
-    ["Lucien Faure", "l.faure@example.com", "Miami", "miami", "Family office principal", "Heard through a friend", "conversation", 72],
+    [
+      "Jonah Whitcombe",
+      "jonah.w@example.com",
+      "Miami",
+      "miami",
+      "Private equity",
+      "Referred by a member",
+      "submitted",
+      6,
+    ],
+    [
+      "Amara Osei",
+      "amara.osei@example.com",
+      "New York",
+      "new-york",
+      "Architecture practice founder",
+      "Invitation",
+      "in_review",
+      30,
+    ],
+    [
+      "Lucien Faure",
+      "l.faure@example.com",
+      "Miami",
+      "miami",
+      "Family office principal",
+      "Heard through a friend",
+      "conversation",
+      72,
+    ],
   ].map(([fullName, email, city, marketSlug, occupation, referral, status, hoursAgo]) => ({
     id: id(),
     fullName: fullName as string,
@@ -621,8 +849,10 @@ export function createDemoStore(now: Date = new Date()): DemoStore {
     referralSource: referral as string,
     invitationCode: referral === "Invitation" ? "••••H8M3" : null,
     answers: {
-      lifeInMotion: "Two homes, a young family, and a calendar that changes weekly. Travel most months.",
-      whatWouldHelp: "One person who knows how we like things done, and can simply make them happen.",
+      lifeInMotion:
+        "Two homes, a young family, and a calendar that changes weekly. Travel most months.",
+      whatWouldHelp:
+        "One person who knows how we like things done, and can simply make them happen.",
     },
     status: status as Application["status"],
     reviewerId: status === "submitted" ? null : DEMO_IDS.concierge,
@@ -641,7 +871,8 @@ export function createDemoStore(now: Date = new Date()): DemoStore {
       categorySlug: "travel",
       city: "Fort Lauderdale",
       website: null,
-      message: "Three crewed motor yachts, 70–110ft. Interested in a preferred arrangement for day charters.",
+      message:
+        "Three crewed motor yachts, 70–110ft. Interested in a preferred arrangement for day charters.",
       status: "submitted",
       submittedAt: at(-40),
     },
@@ -680,10 +911,50 @@ export function createDemoStore(now: Date = new Date()): DemoStore {
   ];
 
   const foundingMembers: FoundingMember[] = [
-    [DEMO_IDS.member, "Elena Voss", "Personal introduction", DEMO_IDS.concierge, "established", true, at(-24 * 120), 5, "high"],
-    [DEMO_IDS.member2, "Marcus Hale", "Member referral", DEMO_IDS.concierge2, "first_request", true, at(-0.05), null, "medium"],
-    [DEMO_IDS.member3, "Priya Anand", "Personal introduction", DEMO_IDS.concierge, "preferences", false, at(-1), null, "high"],
-    [DEMO_IDS.member4, "Theo Castellane", "Event introduction", null, "welcome_call", false, null, null, null],
+    [
+      DEMO_IDS.member,
+      "Elena Voss",
+      "Personal introduction",
+      DEMO_IDS.concierge,
+      "established",
+      true,
+      at(-24 * 120),
+      5,
+      "high",
+    ],
+    [
+      DEMO_IDS.member2,
+      "Marcus Hale",
+      "Member referral",
+      DEMO_IDS.concierge2,
+      "first_request",
+      true,
+      at(-0.05),
+      null,
+      "medium",
+    ],
+    [
+      DEMO_IDS.member3,
+      "Priya Anand",
+      "Personal introduction",
+      DEMO_IDS.concierge,
+      "preferences",
+      false,
+      at(-1),
+      null,
+      "high",
+    ],
+    [
+      DEMO_IDS.member4,
+      "Theo Castellane",
+      "Event introduction",
+      null,
+      "welcome_call",
+      false,
+      null,
+      null,
+      null,
+    ],
   ].map(([memberId, displayName, referral, owner, onboarding, prefs, first, sat, potential]) => ({
     id: id(),
     memberId: memberId as string,
@@ -707,7 +978,8 @@ export function createDemoStore(now: Date = new Date()): DemoStore {
       vettingStatus: p.status === "vetting" ? "in_progress" : "passed",
       termsStatus: p.termsSummary ? "agreed" : "negotiating",
       testRequestStatus: p.testRequestStatus,
-      performanceNote: p.performanceScore && p.performanceScore > 90 ? "Exceptional on short notice." : null,
+      performanceNote:
+        p.performanceScore && p.performanceScore > 90 ? "Exceptional on short notice." : null,
       preferredStatus: p.status === "preferred",
     }));
 

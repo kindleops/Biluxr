@@ -14,10 +14,16 @@ export default async function MemberLayout({ children }: { children: React.React
   const { profile } = await repo.profile();
   return (
     <div className="flex min-h-dvh bg-ink-950">
-      <MemberRail name={profile.preferredName ?? profile.fullName} initials={profile.avatarInitials} />
+      <MemberRail
+        name={profile.preferredName ?? profile.fullName}
+        initials={profile.avatarInitials}
+      />
       <div className="flex min-w-0 flex-1 flex-col">
         <MemberTopBar />
-        <main id="main" className="flex-1 pb-[calc(var(--mobile-nav-height)+var(--safe-bottom)+1.5rem)] lg:pb-16">
+        <main
+          id="main"
+          className="flex-1 pb-[calc(var(--mobile-nav-height)+var(--safe-bottom)+1.5rem)] lg:pb-16"
+        >
           {children}
         </main>
       </div>

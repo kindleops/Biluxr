@@ -15,7 +15,9 @@ export function ContactForm({ available }: { available: boolean }) {
   if (state.status === "success") {
     return (
       <div role="status" className="reveal">
-        <p className="font-display text-headline font-light text-ink-900">Thank you. We will reply personally.</p>
+        <p className="font-display text-headline font-light text-ink-900">
+          Thank you. We will reply personally.
+        </p>
       </div>
     );
   }
@@ -35,10 +37,25 @@ export function ContactForm({ available }: { available: boolean }) {
       )}
       <fieldset className="grid gap-6 sm:grid-cols-2" disabled={!available || pending}>
         <Field tone="paper" label="Name" htmlFor="c-name" error={e.name}>
-          <Input tone="paper" id="c-name" name="name" autoComplete="name" defaultValue={v.name} invalid={!!e.name} />
+          <Input
+            tone="paper"
+            id="c-name"
+            name="name"
+            autoComplete="name"
+            defaultValue={v.name}
+            invalid={!!e.name}
+          />
         </Field>
         <Field tone="paper" label="Email" htmlFor="c-email" error={e.email}>
-          <Input tone="paper" id="c-email" name="email" type="email" autoComplete="email" defaultValue={v.email} invalid={!!e.email} />
+          <Input
+            tone="paper"
+            id="c-email"
+            name="email"
+            type="email"
+            autoComplete="email"
+            defaultValue={v.email}
+            invalid={!!e.email}
+          />
         </Field>
         <Field tone="paper" label="About" htmlFor="topic" className="sm:col-span-2">
           <Select tone="paper" id="topic" name="topic" defaultValue={v.topic ?? "membership"}>
@@ -48,12 +65,33 @@ export function ContactForm({ available }: { available: boolean }) {
             <option value="other">Something else</option>
           </Select>
         </Field>
-        <Field tone="paper" label="Message" htmlFor="c-message" error={e.message} className="sm:col-span-2">
-          <Textarea tone="paper" id="c-message" name="message" rows={6} defaultValue={v.message} invalid={!!e.message} />
+        <Field
+          tone="paper"
+          label="Message"
+          htmlFor="c-message"
+          error={e.message}
+          className="sm:col-span-2"
+        >
+          <Textarea
+            tone="paper"
+            id="c-message"
+            name="message"
+            rows={6}
+            defaultValue={v.message}
+            invalid={!!e.message}
+          />
         </Field>
       </fieldset>
       <div>
-        <Button tone="paper" type="submit" size="lg" pending={pending} pendingLabel="Sending…" trailing={<Arrow />} disabled={!available}>
+        <Button
+          tone="paper"
+          type="submit"
+          size="lg"
+          pending={pending}
+          pendingLabel="Sending…"
+          trailing={<Arrow />}
+          disabled={!available}
+        >
           Send
         </Button>
       </div>

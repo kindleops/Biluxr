@@ -17,12 +17,24 @@ const LABEL: Record<ApplicationStatus, string> = {
   withdrawn: "Withdrawn by applicant",
 };
 
-export function DecisionForm({ applicationId, status, note }: { applicationId: string; status: ApplicationStatus; note: string | null }) {
+export function DecisionForm({
+  applicationId,
+  status,
+  note,
+}: {
+  applicationId: string;
+  status: ApplicationStatus;
+  note: string | null;
+}) {
   const [state, action, pending] = useActionState(decideApplicationAction, IDLE);
   return (
     <form action={action} className="grid gap-4">
       <input type="hidden" name="applicationId" value={applicationId} />
-      {state.status !== "idle" && state.message && <FormMessage kind={state.status === "error" ? "error" : "success"}>{state.message}</FormMessage>}
+      {state.status !== "idle" && state.message && (
+        <FormMessage kind={state.status === "error" ? "error" : "success"}>
+          {state.message}
+        </FormMessage>
+      )}
       <Field label="Stage" htmlFor="status">
         <Select id="status" name="status" defaultValue={status} dense>
           {(Object.keys(LABEL) as ApplicationStatus[]).map((s) => (
@@ -33,7 +45,13 @@ export function DecisionForm({ applicationId, status, note }: { applicationId: s
         </Select>
       </Field>
       <Field label="Note" htmlFor="note" optional hint="Internal. Never shown to the applicant.">
-        <Textarea id="note" name="note" rows={3} className="min-h-24 text-body-sm" defaultValue={note ?? ""} />
+        <Textarea
+          id="note"
+          name="note"
+          rows={3}
+          className="min-h-24 text-body-sm"
+          defaultValue={note ?? ""}
+        />
       </Field>
       <Button type="submit" size="sm" pending={pending} pendingLabel="Saving">
         Record decision

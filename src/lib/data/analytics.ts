@@ -28,12 +28,16 @@ export function summarizeAnalytics(input: {
 
   const responded = requests.filter((r) => r.firstRespondedAt);
   const responseMinutes = responded
-    .map((r) => (new Date(r.firstRespondedAt!).getTime() - new Date(r.createdAt).getTime()) / 60_000)
+    .map(
+      (r) => (new Date(r.firstRespondedAt!).getTime() - new Date(r.createdAt).getTime()) / 60_000,
+    )
     .filter((m) => m >= 0)
     .sort((a, b) => a - b);
 
   const slaEvaluated = requests.filter((r) => r.firstResponseDueAt && r.firstRespondedAt);
-  const slaMet = slaEvaluated.filter((r) => slaState(r.firstResponseDueAt, r.firstRespondedAt) === "met").length;
+  const slaMet = slaEvaluated.filter(
+    (r) => slaState(r.firstResponseDueAt, r.firstRespondedAt) === "met",
+  ).length;
 
   const decided = options.filter((o) => o.status === "accepted" || o.status === "declined");
   const accepted = decided.filter((o) => o.status === "accepted").length;
@@ -48,7 +52,9 @@ export function summarizeAnalytics(input: {
     applications: {
       total: applications.length,
       approved: applications.filter((a) => a.status === "approved").length,
-      pending: applications.filter((a) => ["submitted", "in_review", "conversation"].includes(a.status)).length,
+      pending: applications.filter((a) =>
+        ["submitted", "in_review", "conversation"].includes(a.status),
+      ).length,
     },
     members: {
       active: memberships.filter((m) => m.status === "active").length,

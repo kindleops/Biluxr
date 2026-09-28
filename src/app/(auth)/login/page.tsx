@@ -46,7 +46,9 @@ export default async function LoginPage({
       </header>
       <div className="page-gutter relative z-[2] flex flex-1 items-center justify-center py-16">
         <div className="w-full max-w-md">
-          <p className="text-label text-bone-500">{mode === "demo" ? "Demo environment" : "Members"}</p>
+          <p className="text-label text-bone-500">
+            {mode === "demo" ? "Demo environment" : "Members"}
+          </p>
           <EditorialHeading as="h1" size="headline" className="mt-5 text-bone-50">
             {mode === "demo" ? "Choose who you are today." : "Welcome back."}
           </EditorialHeading>
@@ -64,21 +66,31 @@ export default async function LoginPage({
                       type="submit"
                       name="persona"
                       value={key}
-                      className="group flex items-center justify-between gap-6 rounded-lg bg-ink-900 px-5 py-4 text-left shadow-[inset_0_0_0_1px_var(--line)] transition-[box-shadow,background-color] duration-quick hover:bg-ink-850 hover:shadow-[inset_0_0_0_1px_var(--line-strong)]"
+                      className="group duration-quick flex items-center justify-between gap-6 rounded-lg bg-ink-900 px-5 py-4 text-left shadow-[inset_0_0_0_1px_var(--line)] transition-[box-shadow,background-color] hover:bg-ink-850 hover:shadow-[inset_0_0_0_1px_var(--line-strong)]"
                     >
                       <span>
-                        <span className="block text-label text-bone-500">{p.label}</span>
+                        <span className="text-label block text-bone-500">{p.label}</span>
                         <span className="mt-1.5 block text-body text-bone-100">{p.name}</span>
-                        <span className="mt-0.5 block text-caption text-bone-400">{p.description}</span>
+                        <span className="mt-0.5 block text-caption text-bone-400">
+                          {p.description}
+                        </span>
                       </span>
-                      <svg viewBox="0 0 16 16" aria-hidden className="size-4 shrink-0 text-bone-500 transition-transform duration-base group-hover:translate-x-1 group-hover:text-bone-100" fill="none" stroke="currentColor" strokeWidth="1.25">
+                      <svg
+                        viewBox="0 0 16 16"
+                        aria-hidden
+                        className="duration-base size-4 shrink-0 text-bone-500 transition-transform group-hover:translate-x-1 group-hover:text-bone-100"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="1.25"
+                      >
                         <path d="M2 8h11M9 4l4 4-4 4" />
                       </svg>
                     </button>
                   );
                 })}
                 <p className="mt-3 text-caption text-bone-500">
-                  Demo mode uses fictional people and in-memory data that resets when the server restarts.
+                  Demo mode uses fictional people and in-memory data that resets when the server
+                  restarts.
                 </p>
               </form>
             )}

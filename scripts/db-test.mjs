@@ -16,14 +16,21 @@ const root = path.resolve(path.dirname(new URL(import.meta.url).pathname), "..")
 const port = Number(process.env.BILUXR_TEST_PG_PORT ?? 54329);
 
 function findBin(name) {
-  const candidates = ["/usr/lib/postgresql/17/bin", "/usr/lib/postgresql/16/bin", "/usr/lib/postgresql/15/bin", "/opt/homebrew/bin", "/usr/local/bin"];
+  const candidates = [
+    "/usr/lib/postgresql/17/bin",
+    "/usr/lib/postgresql/16/bin",
+    "/usr/lib/postgresql/15/bin",
+    "/opt/homebrew/bin",
+    "/usr/local/bin",
+  ];
   for (const dir of candidates) if (existsSync(path.join(dir, name))) return path.join(dir, name);
   return name;
 }
 
 const isRoot = typeof process.getuid === "function" && process.getuid() === 0;
 function run(bin, args) {
-  if (isRoot) return execFileSync("runuser", ["-u", "postgres", "--", bin, ...args], { stdio: "pipe" });
+  if (isRoot)
+    return execFileSync("runuser", ["-u", "postgres", "--", bin, ...args], { stdio: "pipe" });
   return execFileSync(bin, args, { stdio: "pipe" });
 }
 
@@ -36,8 +43,26 @@ if (isRoot) {
 
 let started = false;
 async function main() {
-  run(findBin("initdb"), ["-D", dataDir, "-U", "postgres", "--auth=trust", "--no-sync", "-E", "UTF8"]);
-  run(findBin("pg_ctl"), ["-D", dataDir, "-w", "-o", `-p ${port} -k ${dataDir} -c listen_addresses='' -c fsync=off`, "-l", path.join(dataDir, "log"), "start"]);
+  run(findBin("initdb"), [
+    "-D",
+    dataDir,
+    "-U",
+    "postgres",
+    "--auth=trust",
+    "--no-sync",
+    "-E",
+    "UTF8",
+  ]);
+  run(findBin("pg_ctl"), [
+    "-D",
+    dataDir,
+    "-w",
+    "-o",
+    `-p ${port} -k ${dataDir} -c listen_addresses='' -c fsync=off`,
+    "-l",
+    path.join(dataDir, "log"),
+    "start",
+  ]);
   started = true;
 
   const admin = new pg.Client({ host: dataDir, port, user: "postgres", database: "postgres" });
@@ -57,7 +82,9 @@ async function main() {
     }
   };
   await apply(path.join(root, "supabase/tests/auth_shim.sql"));
-  const migrations = readdirSync(path.join(root, "supabase/migrations")).filter((f) => f.endsWith(".sql")).sort();
+  const migrations = readdirSync(path.join(root, "supabase/migrations"))
+    .filter((f) => f.endsWith(".sql"))
+    .sort();
   for (const file of migrations) {
     await apply(path.join(root, "supabase/migrations", file));
     console.log(`✓ migration ${file}`);
@@ -69,15 +96,29 @@ async function main() {
   if (process.argv.includes("--gen-types")) {
     const result = spawnSync(process.execPath, [path.join(root, "scripts/gen-db-types.mjs")], {
       stdio: "inherit",
-      env: { ...process.env, PGHOST: dataDir, PGPORT: String(port), PGUSER: "postgres", PGDATABASE: "biluxr_test" },
+      env: {
+        ...process.env,
+        PGHOST: dataDir,
+        PGPORT: String(port),
+        PGUSER: "postgres",
+        PGDATABASE: "biluxr_test",
+      },
     });
     return result.status ?? 1;
   }
 
-  const testFiles = readdirSync(path.join(root, "tests/db")).filter((f) => f.endsWith(".test.mjs")).map((f) => path.join(root, "tests/db", f));
+  const testFiles = readdirSync(path.join(root, "tests/db"))
+    .filter((f) => f.endsWith(".test.mjs"))
+    .map((f) => path.join(root, "tests/db", f));
   const result = spawnSync(process.execPath, ["--test", "--test-concurrency=1", ...testFiles], {
     stdio: "inherit",
-    env: { ...process.env, PGHOST: dataDir, PGPORT: String(port), PGUSER: "postgres", PGDATABASE: "biluxr_test" },
+    env: {
+      ...process.env,
+      PGHOST: dataDir,
+      PGPORT: String(port),
+      PGUSER: "postgres",
+      PGDATABASE: "biluxr_test",
+    },
   });
   return result.status ?? 1;
 }

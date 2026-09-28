@@ -14,7 +14,14 @@ import { env } from "@/lib/env";
  */
 
 export type AiRun<T> =
-  | { ok: true; output: T; model: string; latencyMs: number; inputTokens: number | null; outputTokens: number | null }
+  | {
+      ok: true;
+      output: T;
+      model: string;
+      latencyMs: number;
+      inputTokens: number | null;
+      outputTokens: number | null;
+    }
   | { ok: false; error: string; model: string; latencyMs: number };
 
 let cached: Anthropic | null = null;
@@ -39,7 +46,8 @@ export async function runStructured<S extends z.ZodType>(opts: {
   const model = env.aiModel();
   const started = Date.now();
   const anthropic = client();
-  if (!anthropic) return { ok: false, error: "ANTHROPIC_API_KEY is not configured", model, latencyMs: 0 };
+  if (!anthropic)
+    return { ok: false, error: "ANTHROPIC_API_KEY is not configured", model, latencyMs: 0 };
 
   try {
     const response = await anthropic.beta.messages.parse({
@@ -54,10 +62,20 @@ export async function runStructured<S extends z.ZodType>(opts: {
     });
     const latencyMs = Date.now() - started;
     if (response.stop_reason === "refusal") {
-      return { ok: false, error: "The model declined this request.", model: response.model, latencyMs };
+      return {
+        ok: false,
+        error: "The model declined this request.",
+        model: response.model,
+        latencyMs,
+      };
     }
     if (response.stop_reason === "max_tokens" || response.parsed_output == null) {
-      return { ok: false, error: `No structured output (stop reason: ${response.stop_reason})`, model: response.model, latencyMs };
+      return {
+        ok: false,
+        error: `No structured output (stop reason: ${response.stop_reason})`,
+        model: response.model,
+        latencyMs,
+      };
     }
     return {
       ok: true,
@@ -71,10 +89,13 @@ export async function runStructured<S extends z.ZodType>(opts: {
     const latencyMs = Date.now() - started;
     let message = "Unexpected error";
     if (error instanceof Anthropic.RateLimitError) message = "Rate limited by the model provider";
-    else if (error instanceof Anthropic.AuthenticationError) message = "Model provider rejected the API key";
+    else if (error instanceof Anthropic.AuthenticationError)
+      message = "Model provider rejected the API key";
     else if (error instanceof Anthropic.BadRequestError) message = `Bad request: ${error.message}`;
-    else if (error instanceof Anthropic.APIConnectionError) message = "Could not reach the model provider";
-    else if (error instanceof Anthropic.APIError) message = `Model provider error (${error.status ?? "unknown"})`;
+    else if (error instanceof Anthropic.APIConnectionError)
+      message = "Could not reach the model provider";
+    else if (error instanceof Anthropic.APIError)
+      message = `Model provider error (${error.status ?? "unknown"})`;
     else if (error instanceof Error) message = error.message;
     return { ok: false, error: message, model, latencyMs };
   }

@@ -56,13 +56,15 @@ export function CommandComposer({
       ref={formRef}
       action={action}
       className={cn(
-        "relative overflow-hidden rounded-xl bg-[linear-gradient(180deg,var(--color-ink-850),var(--color-ink-900))] shadow-[inset_0_1px_0_0_var(--glass-highlight),inset_0_0_0_1px_var(--line),var(--shadow-lift)] transition-shadow duration-base ease-considered focus-within:shadow-[inset_0_1px_0_0_var(--glass-highlight),inset_0_0_0_1px_var(--line-strong),var(--shadow-float)]",
+        "duration-base relative overflow-hidden rounded-xl bg-[linear-gradient(180deg,var(--color-ink-850),var(--color-ink-900))] shadow-[inset_0_1px_0_0_var(--glass-highlight),inset_0_0_0_1px_var(--line),var(--shadow-lift)] transition-shadow ease-considered focus-within:shadow-[inset_0_1px_0_0_var(--glass-highlight),inset_0_0_0_1px_var(--line-strong),var(--shadow-float)]",
         hero ? "p-5 sm:p-6" : "p-4",
       )}
     >
       {journeyId && <input type="hidden" name="journeyId" value={journeyId} />}
       <label htmlFor="brief" className="text-label text-bone-500">
-        {hero ? `What can we arrange${placeholderName ? `, ${placeholderName}` : ""}?` : "New request"}
+        {hero
+          ? `What can we arrange${placeholderName ? `, ${placeholderName}` : ""}?`
+          : "New request"}
       </label>
       <textarea
         ref={ref}
@@ -84,7 +86,9 @@ export function CommandComposer({
         aria-describedby={error ? "brief-error" : "brief-hint"}
         className={cn(
           "mt-3 block w-full resize-none bg-transparent text-bone-50 outline-none placeholder:text-bone-600",
-          hero ? "font-display text-[1.5rem] leading-snug font-light sm:text-[1.75rem]" : "text-body",
+          hero
+            ? "font-display text-[1.5rem] leading-snug font-light sm:text-[1.75rem]"
+            : "text-body",
         )}
       />
       {error && (
@@ -103,9 +107,14 @@ export function CommandComposer({
           />
           <span
             aria-hidden
-            className="relative inline-flex h-4 w-7 items-center rounded-full bg-white/10 transition-colors duration-quick peer-checked:bg-status-amber/70 peer-focus-visible:outline peer-focus-visible:outline-1 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-bone-100"
+            className="duration-quick relative inline-flex h-4 w-7 items-center rounded-full bg-white/10 transition-colors peer-checked:bg-status-amber/70 peer-focus-visible:outline peer-focus-visible:outline-1 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-bone-100"
           >
-            <span className={cn("absolute left-0.5 size-3 rounded-full bg-bone-100 transition-transform duration-base ease-settle", urgent && "translate-x-3")} />
+            <span
+              className={cn(
+                "duration-base absolute left-0.5 size-3 rounded-full bg-bone-100 transition-transform ease-settle",
+                urgent && "translate-x-3",
+              )}
+            />
           </span>
           <span className={urgent ? "text-status-amber" : undefined}>Time-sensitive</span>
         </label>
@@ -113,7 +122,13 @@ export function CommandComposer({
           <span id="brief-hint" className="hidden text-caption text-bone-600 sm:inline">
             ⌘ ↵ to send
           </span>
-          <Button type="submit" size="sm" pending={pending} pendingLabel="Sending" disabled={!value.trim()}>
+          <Button
+            type="submit"
+            size="sm"
+            pending={pending}
+            pendingLabel="Sending"
+            disabled={!value.trim()}
+          >
             Send to concierge
           </Button>
         </div>

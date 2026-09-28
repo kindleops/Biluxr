@@ -38,6 +38,7 @@ export async function track(
   for (const [k, v] of Object.entries(properties)) {
     if (typeof v !== "string" || SAFE_VALUE.test(v)) safe[k] = v;
   }
-  const subject = subjectId && salt ? createHash("sha256").update(`${salt}:${subjectId}`).digest("hex") : null;
+  const subject =
+    subjectId && salt ? createHash("sha256").update(`${salt}:${subjectId}`).digest("hex") : null;
   await admin.from("analytics_events").insert({ name, properties: safe, subject });
 }

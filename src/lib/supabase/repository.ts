@@ -1,7 +1,14 @@
 import "server-only";
 import type { PostgrestError } from "@supabase/supabase-js";
 import { deriveTitle, isOpen, queueOrder } from "@/lib/domain/requests";
-import type { AiReviewStatus, ApplicationStatus, MessageVisibility, Profile, ProviderStatus, UUID } from "@/lib/domain/types";
+import type {
+  AiReviewStatus,
+  ApplicationStatus,
+  MessageVisibility,
+  Profile,
+  ProviderStatus,
+  UUID,
+} from "@/lib/domain/types";
 import type {
   ApplicationInput,
   ContactInput,
@@ -54,7 +61,8 @@ import { supabaseAdmin, type BiluxrSupabase } from "./server";
 function fail(error: PostgrestError | null, fallback = "Something went wrong"): never {
   if (!error) throw new Error(fallback);
   if (error.code === "PGRST116" || error.code === "P0002") throw new NotFoundError(error.message);
-  if (error.code === "42501" || /row-level security/i.test(error.message)) throw new ForbiddenError(error.message);
+  if (error.code === "42501" || /row-level security/i.test(error.message))
+    throw new ForbiddenError(error.message);
   if (error.code === "P0001" || error.code === "22023") throw new DomainError(error.message);
   throw new Error(`${fallback}: ${error.message}`);
 }
@@ -65,15 +73,22 @@ function ok<T>(res: { data: T; error: PostgrestError | null }, what?: string): N
 }
 
 function summary(p: Profile): PersonSummary {
-  const name = p.preferredName ? `${p.preferredName} ${p.fullName.split(" ").slice(1).join(" ")}`.trim() : p.fullName;
+  const name = p.preferredName
+    ? `${p.preferredName} ${p.fullName.split(" ").slice(1).join(" ")}`.trim()
+    : p.fullName;
   return { id: p.id, name, initials: initials(p.fullName) };
 }
 
-async function tiersWithPrivileges(db: BiluxrSupabase, onlyActive: boolean): Promise<TierWithPrivileges[]> {
+async function tiersWithPrivileges(
+  db: BiluxrSupabase,
+  onlyActive: boolean,
+): Promise<TierWithPrivileges[]> {
   let q = db.from("membership_tiers").select("*").order("sort_order");
   if (onlyActive) q = q.eq("is_active", true);
   const tiers = ok(await q).map(map.toTier);
-  const privileges = ok(await db.from("privileges").select("*").order("sort_order")).map(map.toPrivilege);
+  const privileges = ok(await db.from("privileges").select("*").order("sort_order")).map(
+    map.toPrivilege,
+  );
   return tiers.map((t) => ({ ...t, privileges: privileges.filter((p) => p.tierId === t.id) }));
 }
 
@@ -87,9 +102,13 @@ export class SupabasePublicRepository implements PublicRepository {
     return tiersWithPrivileges(this.db, true);
   }
   async listCategories() {
-    return ok(await this.db.from("request_categories").select("*").eq("is_active", true).order("sort_order")).map(
-      map.toCategory,
-    );
+    return ok(
+      await this.db
+        .from("request_categories")
+        .select("*")
+        .eq("is_active", true)
+        .order("sort_order"),
+    ).map(map.toCategory);
   }
   async submitApplication(input: ApplicationInput) {
     const { error } = await this.db.from("applications").insert({
@@ -130,7 +149,9 @@ export class SupabasePublicRepository implements PublicRepository {
 }
 
 async function loadViewer(db: BiluxrSupabase, viewerId: UUID): Promise<Viewer> {
-  const profile = map.toProfile(ok(await db.from("profiles").select("*").eq("id", viewerId).single(), "Profile"));
+  const profile = map.toProfile(
+    ok(await db.from("profiles").select("*").eq("id", viewerId).single(), "Profile"),
+  );
   const m = await db.from("memberships").select("*").eq("member_id", viewerId).maybeSingle();
   if (m.error) fail(m.error);
   return { profile, membership: m.data ? map.toMembership(m.data) : null };
@@ -154,7 +175,15 @@ export class SupabaseMemberRepository implements MemberRepository {
       if (res.data) owner = summary(map.toProfile(res.data));
     }
     const tier = viewer.membership
-      ? map.toTier(ok(await this.db.from("membership_tiers").select("*").eq("id", viewer.membership.tierId).single()))
+      ? map.toTier(
+          ok(
+            await this.db
+              .from("membership_tiers")
+              .select("*")
+              .eq("id", viewer.membership.tierId)
+              .single(),
+          ),
+        )
       : null;
     const today = new Date().toISOString().slice(0, 10);
     const journeys = ok(
@@ -177,13 +206,23 @@ export class SupabaseMemberRepository implements MemberRepository {
 
   async listRequests(): Promise<RequestSummary[]> {
     const requests = ok(
-      await this.db.from("requests").select("*").eq("member_id", this.viewerId).order("updated_at", { ascending: false }),
+      await this.db
+        .from("requests")
+        .select("*")
+        .eq("member_id", this.viewerId)
+        .order("updated_at", { ascending: false }),
     ).map(map.toRequest);
     if (requests.length === 0) return [];
     const ids = requests.map((r) => r.id);
-    const options = ok(await this.db.from("request_options").select("*").in("request_id", ids)).map(map.toOption);
+    const options = ok(await this.db.from("request_options").select("*").in("request_id", ids)).map(
+      map.toOption,
+    );
     const messages = ok(
-      await this.db.from("request_messages").select("request_id, created_at").in("request_id", ids).order("created_at"),
+      await this.db
+        .from("request_messages")
+        .select("request_id, created_at")
+        .in("request_id", ids)
+        .order("created_at"),
     );
     return requests.map((r) => ({
       ...r,
@@ -193,7 +232,9 @@ export class SupabaseMemberRepository implements MemberRepository {
   }
 
   async getRequest(id: UUID): Promise<MemberRequestDetail> {
-    const request = map.toRequest(ok(await this.db.from("requests").select("*").eq("id", id).single(), "Request"));
+    const request = map.toRequest(
+      ok(await this.db.from("requests").select("*").eq("id", id).single(), "Request"),
+    );
     const [messages, options, events] = await Promise.all([
       this.db.from("request_messages").select("*").eq("request_id", id).order("created_at"),
       this.db.from("request_options").select("*").eq("request_id", id).order("sort_order"),
@@ -202,7 +243,11 @@ export class SupabaseMemberRepository implements MemberRepository {
     let assignee: PersonSummary | null = null;
     if (request.assigneeId) {
       // Members may only see their relationship owner's profile; others stay anonymous as "Your concierge".
-      const res = await this.db.from("profiles").select("*").eq("id", request.assigneeId).maybeSingle();
+      const res = await this.db
+        .from("profiles")
+        .select("*")
+        .eq("id", request.assigneeId)
+        .maybeSingle();
       if (res.data) assignee = summary(map.toProfile(res.data));
     }
     return {
@@ -217,10 +262,14 @@ export class SupabaseMemberRepository implements MemberRepository {
   async createRequest(input: NewRequestInput) {
     const viewer = await loadViewer(this.db, this.viewerId);
     if (viewer.membership?.status !== "active") {
-      throw new DomainError("Your membership is not yet active. Your concierge will be in touch to complete activation.");
+      throw new DomainError(
+        "Your membership is not yet active. Your concierge will be in touch to complete activation.",
+      );
     }
     const categories = input.categorySlug
-      ? ok(await this.db.from("request_categories").select("*").eq("slug", input.categorySlug)).map(map.toCategory)
+      ? ok(await this.db.from("request_categories").select("*").eq("slug", input.categorySlug)).map(
+          map.toCategory,
+        )
       : [];
     const row = ok(
       await this.db
@@ -268,41 +317,66 @@ export class SupabaseMemberRepository implements MemberRepository {
   }
 
   async respondToOption(optionId: UUID, decision: "accept" | "decline") {
-    const { error } = await this.db.rpc("member_respond_to_option", { option_id: optionId, decision });
+    const { error } = await this.db.rpc("member_respond_to_option", {
+      option_id: optionId,
+      decision,
+    });
     if (error) fail(error);
   }
 
   async cancelRequest(requestId: UUID, reason: string | null) {
-    const { error } = await this.db.rpc("member_cancel_request", { target: requestId, reason: reason ?? undefined });
+    const { error } = await this.db.rpc("member_cancel_request", {
+      target: requestId,
+      reason: reason ?? undefined,
+    });
     if (error) fail(error);
   }
 
   async listJourneys() {
     return ok(
-      await this.db.from("journeys").select("*").eq("member_id", this.viewerId).order("starts_on", { nullsFirst: false }),
+      await this.db
+        .from("journeys")
+        .select("*")
+        .eq("member_id", this.viewerId)
+        .order("starts_on", { nullsFirst: false }),
     ).map(map.toJourney);
   }
 
   async getJourney(id: UUID) {
-    const journey = map.toJourney(ok(await this.db.from("journeys").select("*").eq("id", id).single(), "Journey"));
+    const journey = map.toJourney(
+      ok(await this.db.from("journeys").select("*").eq("id", id).single(), "Journey"),
+    );
     const items = ok(
-      await this.db.from("journey_items").select("*").eq("journey_id", id).order("starts_at", { nullsFirst: false }),
+      await this.db
+        .from("journey_items")
+        .select("*")
+        .eq("journey_id", id)
+        .order("starts_at", { nullsFirst: false }),
     ).map(map.toJourneyItem);
     return { journey, items };
   }
 
   async listAccessOffers() {
-    return ok(await this.db.from("access_offers").select("*").eq("status", "published")).map(map.toAccessOffer);
+    return ok(await this.db.from("access_offers").select("*").eq("status", "published")).map(
+      map.toAccessOffer,
+    );
   }
 
   async listInvitations() {
     return ok(
-      await this.db.from("invitations").select("*").eq("inviter_id", this.viewerId).order("created_at", { ascending: false }),
+      await this.db
+        .from("invitations")
+        .select("*")
+        .eq("inviter_id", this.viewerId)
+        .order("created_at", { ascending: false }),
     ).map(map.toInvitation);
   }
 
   async issueInvitation(email: string, name: string) {
-    const { data, error } = await this.db.rpc("member_issue_invitation", { invitee_email: email, invitee_name: name });
+    const { data, error } = await this.db.rpc("member_issue_invitation", {
+      invitee_email: email,
+      invitee_name: name,
+    });
     if (error) fail(error);
     const code = data?.[0]?.code;
     if (!code) throw new Error("Invitation was not created");
@@ -313,9 +387,19 @@ export class SupabaseMemberRepository implements MemberRepository {
     const viewer = await loadViewer(this.db, this.viewerId);
     const tiers = viewer.membership ? await tiersWithPrivileges(this.db, false) : [];
     const tier = tiers.find((t) => t.id === viewer.membership?.tierId) ?? null;
-    const cards = ok(await this.db.from("member_cards").select("*").eq("member_id", this.viewerId)).map(map.toCard);
+    const cards = ok(
+      await this.db.from("member_cards").select("*").eq("member_id", this.viewerId),
+    ).map(map.toCard);
     const programs = cards.length
-      ? ok(await this.db.from("card_programs").select("*").in("id", cards.map((c) => c.programId))).map(map.toCardProgram)
+      ? ok(
+          await this.db
+            .from("card_programs")
+            .select("*")
+            .in(
+              "id",
+              cards.map((c) => c.programId),
+            ),
+        ).map(map.toCardProgram)
       : [];
     const invitations = await this.listInvitations();
     return {
@@ -323,9 +407,12 @@ export class SupabaseMemberRepository implements MemberRepository {
       tier,
       cards: cards
         .map((c) => ({ ...c, program: programs.find((p) => p.id === c.programId) }))
-        .filter((c): c is typeof c & { program: NonNullable<typeof c.program> } => Boolean(c.program)),
+        .filter((c): c is typeof c & { program: NonNullable<typeof c.program> } =>
+          Boolean(c.program),
+        ),
       invitationAllowance: tier?.invitationAllowance ?? 0,
-      invitationsUsed: invitations.filter((i) => i.status === "issued" || i.status === "accepted").length,
+      invitationsUsed: invitations.filter((i) => i.status === "issued" || i.status === "accepted")
+        .length,
     };
   }
 
@@ -335,7 +422,11 @@ export class SupabaseMemberRepository implements MemberRepository {
       this.db.from("member_preferences").select("*").eq("member_id", this.viewerId).order("domain"),
       this.db.from("member_people").select("*").eq("member_id", this.viewerId).order("created_at"),
     ]);
-    return { profile, preferences: ok(prefs).map(map.toPreference), people: ok(people).map(map.toPerson) };
+    return {
+      profile,
+      preferences: ok(prefs).map(map.toPreference),
+      people: ok(people).map(map.toPerson),
+    };
   }
 
   async updateProfile(input: ProfileUpdateInput) {
@@ -352,24 +443,38 @@ export class SupabaseMemberRepository implements MemberRepository {
   }
 
   async addPreference(input: PreferenceInput) {
-    const { error } = await this.db
-      .from("member_preferences")
-      .insert({ member_id: this.viewerId, domain: input.domain, label: input.label, value: input.value, source: "member" });
+    const { error } = await this.db.from("member_preferences").insert({
+      member_id: this.viewerId,
+      domain: input.domain,
+      label: input.label,
+      value: input.value,
+      source: "member",
+    });
     if (error) fail(error);
   }
 
   async removePreference(id: UUID) {
-    const { error } = await this.db.from("member_preferences").delete().eq("id", id).eq("member_id", this.viewerId);
+    const { error } = await this.db
+      .from("member_preferences")
+      .delete()
+      .eq("id", id)
+      .eq("member_id", this.viewerId);
     if (error) fail(error);
   }
 
   async addPerson(input: PersonInput) {
-    const { error } = await this.db.from("member_people").insert({ member_id: this.viewerId, ...input });
+    const { error } = await this.db
+      .from("member_people")
+      .insert({ member_id: this.viewerId, ...input });
     if (error) fail(error);
   }
 
   async removePerson(id: UUID) {
-    const { error } = await this.db.from("member_people").delete().eq("id", id).eq("member_id", this.viewerId);
+    const { error } = await this.db
+      .from("member_people")
+      .delete()
+      .eq("id", id)
+      .eq("member_id", this.viewerId);
     if (error) fail(error);
   }
 }
@@ -388,7 +493,13 @@ export class SupabaseStaffRepository implements StaffRepository {
   }
 
   async listStaff(): Promise<PersonSummary[]> {
-    return ok(await this.db.from("profiles").select("*").in("role", ["concierge", "admin"]).order("full_name"))
+    return ok(
+      await this.db
+        .from("profiles")
+        .select("*")
+        .in("role", ["concierge", "admin"])
+        .order("full_name"),
+    )
       .map(map.toProfile)
       .map(summary);
   }
@@ -404,7 +515,15 @@ export class SupabaseStaffRepository implements StaffRepository {
     const requests = ok(await q.limit(500)).map(map.toRequest);
     const people = await this.profilesById(requests.flatMap((r) => [r.memberId, r.assigneeId]));
     const memberships = requests.length
-      ? ok(await this.db.from("memberships").select("member_id, is_founding").in("member_id", requests.map((r) => r.memberId)))
+      ? ok(
+          await this.db
+            .from("memberships")
+            .select("member_id, is_founding")
+            .in(
+              "member_id",
+              requests.map((r) => r.memberId),
+            ),
+        )
       : [];
     return requests
       .map((r) => {
@@ -412,7 +531,8 @@ export class SupabaseStaffRepository implements StaffRepository {
         return {
           ...r,
           member: member ? summary(member) : { id: r.memberId, name: "Member", initials: "·" },
-          assignee: r.assigneeId && people.get(r.assigneeId) ? summary(people.get(r.assigneeId)!) : null,
+          assignee:
+            r.assigneeId && people.get(r.assigneeId) ? summary(people.get(r.assigneeId)!) : null,
           isFounding: memberships.find((m) => m.member_id === r.memberId)?.is_founding ?? false,
         };
       })
@@ -420,18 +540,25 @@ export class SupabaseStaffRepository implements StaffRepository {
   }
 
   async getRequest(id: UUID): Promise<StaffRequestDetail> {
-    const request = map.toRequest(ok(await this.db.from("requests").select("*").eq("id", id).single(), "Request"));
-    const [member, membership, prefs, messages, options, events, ai, providers, staff] = await Promise.all([
-      this.db.from("profiles").select("*").eq("id", request.memberId).single(),
-      this.db.from("memberships").select("*").eq("member_id", request.memberId).maybeSingle(),
-      this.db.from("member_preferences").select("*").eq("member_id", request.memberId),
-      this.db.from("request_messages").select("*").eq("request_id", id).order("created_at"),
-      this.db.from("request_options").select("*").eq("request_id", id).order("sort_order"),
-      this.db.from("request_events").select("*").eq("request_id", id).order("created_at"),
-      this.db.from("ai_events").select("*").eq("request_id", id).order("created_at", { ascending: false }),
-      this.db.from("providers").select("*").not("status", "in", "(removed,paused)").order("name"),
-      this.listStaff(),
-    ]);
+    const request = map.toRequest(
+      ok(await this.db.from("requests").select("*").eq("id", id).single(), "Request"),
+    );
+    const [member, membership, prefs, messages, options, events, ai, providers, staff] =
+      await Promise.all([
+        this.db.from("profiles").select("*").eq("id", request.memberId).single(),
+        this.db.from("memberships").select("*").eq("member_id", request.memberId).maybeSingle(),
+        this.db.from("member_preferences").select("*").eq("member_id", request.memberId),
+        this.db.from("request_messages").select("*").eq("request_id", id).order("created_at"),
+        this.db.from("request_options").select("*").eq("request_id", id).order("sort_order"),
+        this.db.from("request_events").select("*").eq("request_id", id).order("created_at"),
+        this.db
+          .from("ai_events")
+          .select("*")
+          .eq("request_id", id)
+          .order("created_at", { ascending: false }),
+        this.db.from("providers").select("*").not("status", "in", "(removed,paused)").order("name"),
+        this.listStaff(),
+      ]);
     return {
       request,
       member: map.toProfile(ok(member)),
@@ -465,14 +592,20 @@ export class SupabaseStaffRepository implements StaffRepository {
   }
 
   async postMessage(requestId: UUID, body: string, visibility: MessageVisibility) {
-    const { error } = await this.db
-      .from("request_messages")
-      .insert({ request_id: requestId, author_id: this.viewerId, author_kind: "concierge", body, visibility });
+    const { error } = await this.db.from("request_messages").insert({
+      request_id: requestId,
+      author_id: this.viewerId,
+      author_kind: "concierge",
+      body,
+      visibility,
+    });
     if (error) fail(error);
   }
 
   async createOption(requestId: UUID, input: NewOptionInput) {
-    const count = ok(await this.db.from("request_options").select("id").eq("request_id", requestId)).length;
+    const count = ok(
+      await this.db.from("request_options").select("id").eq("request_id", requestId),
+    ).length;
     const { error } = await this.db.from("request_options").insert({
       request_id: requestId,
       provider_id: input.providerId,
@@ -486,29 +619,40 @@ export class SupabaseStaffRepository implements StaffRepository {
     });
     if (error) fail(error);
     if (input.present) {
-      await this.db
-        .from("request_events")
-        .insert({ request_id: requestId, kind: "option_presented", actor_id: this.viewerId, note: input.title });
+      await this.db.from("request_events").insert({
+        request_id: requestId,
+        kind: "option_presented",
+        actor_id: this.viewerId,
+        note: input.title,
+      });
     }
   }
 
   async setOptionStatus(optionId: UUID, status: "presented" | "withdrawn") {
-    const option = map.toOption(ok(await this.db.from("request_options").select("*").eq("id", optionId).single()));
-    if (status === "presented" && option.status !== "draft") throw new DomainError("Only drafts can be presented.");
+    const option = map.toOption(
+      ok(await this.db.from("request_options").select("*").eq("id", optionId).single()),
+    );
+    if (status === "presented" && option.status !== "draft")
+      throw new DomainError("Only drafts can be presented.");
     if (status === "withdrawn" && !["draft", "presented"].includes(option.status)) {
       throw new DomainError("This option can no longer be withdrawn.");
     }
     const { error } = await this.db.from("request_options").update({ status }).eq("id", optionId);
     if (error) fail(error);
     if (status === "presented") {
-      await this.db
-        .from("request_events")
-        .insert({ request_id: option.requestId, kind: "option_presented", actor_id: this.viewerId, note: option.title });
+      await this.db.from("request_events").insert({
+        request_id: option.requestId,
+        kind: "option_presented",
+        actor_id: this.viewerId,
+        note: option.title,
+      });
     }
   }
 
   async listMembers(): Promise<MemberListItem[]> {
-    const profiles = ok(await this.db.from("profiles").select("*").eq("role", "member")).map(map.toProfile);
+    const profiles = ok(await this.db.from("profiles").select("*").eq("role", "member")).map(
+      map.toProfile,
+    );
     if (profiles.length === 0) return [];
     const ids = profiles.map((p) => p.id);
     const [memberships, requests, tiers] = await Promise.all([
@@ -524,33 +668,55 @@ export class SupabaseStaffRepository implements StaffRepository {
       .map((profile) => {
         const membership = ms.find((m) => m.memberId === profile.id) ?? null;
         const mine = reqs.filter((r) => r.member_id === profile.id);
-        const owner = membership?.relationshipOwnerId ? owners.get(membership.relationshipOwnerId) : undefined;
+        const owner = membership?.relationshipOwnerId
+          ? owners.get(membership.relationshipOwnerId)
+          : undefined;
         return {
           profile,
           membership,
           tierName: ts.find((t) => t.id === membership?.tierId)?.name ?? null,
           openRequests: mine.filter((r) => isOpen(r.status)).length,
-          lastRequestAt: mine.map((r) => r.created_at).sort().at(-1) ?? null,
+          lastRequestAt:
+            mine
+              .map((r) => r.created_at)
+              .sort()
+              .at(-1) ?? null,
           relationshipOwner: owner ? summary(owner) : null,
         };
       })
-      .sort((a, b) => (a.membership?.memberNumber ?? "").localeCompare(b.membership?.memberNumber ?? ""));
+      .sort((a, b) =>
+        (a.membership?.memberNumber ?? "").localeCompare(b.membership?.memberNumber ?? ""),
+      );
   }
 
   async member360(id: UUID): Promise<Member360> {
-    const [profile, membership, prefs, people, requests, journeys, founding, summaries, staff] = await Promise.all([
-      this.db.from("profiles").select("*").eq("id", id).single(),
-      this.db.from("memberships").select("*").eq("member_id", id).maybeSingle(),
-      this.db.from("member_preferences").select("*").eq("member_id", id),
-      this.db.from("member_people").select("*").eq("member_id", id),
-      this.db.from("requests").select("*").eq("member_id", id).order("created_at", { ascending: false }),
-      this.db.from("journeys").select("*").eq("member_id", id).order("starts_on"),
-      this.db.from("founding_members").select("*").eq("member_id", id).maybeSingle(),
-      this.db.from("ai_events").select("*").eq("member_id", id).eq("kind", "summary").order("created_at", { ascending: false }),
-      this.listStaff(),
-    ]);
+    const [profile, membership, prefs, people, requests, journeys, founding, summaries, staff] =
+      await Promise.all([
+        this.db.from("profiles").select("*").eq("id", id).single(),
+        this.db.from("memberships").select("*").eq("member_id", id).maybeSingle(),
+        this.db.from("member_preferences").select("*").eq("member_id", id),
+        this.db.from("member_people").select("*").eq("member_id", id),
+        this.db
+          .from("requests")
+          .select("*")
+          .eq("member_id", id)
+          .order("created_at", { ascending: false }),
+        this.db.from("journeys").select("*").eq("member_id", id).order("starts_on"),
+        this.db.from("founding_members").select("*").eq("member_id", id).maybeSingle(),
+        this.db
+          .from("ai_events")
+          .select("*")
+          .eq("member_id", id)
+          .eq("kind", "summary")
+          .order("created_at", { ascending: false }),
+        this.listStaff(),
+      ]);
     const m = membership.data ? map.toMembership(membership.data) : null;
-    const tier = m ? map.toTier(ok(await this.db.from("membership_tiers").select("*").eq("id", m.tierId).single())) : null;
+    const tier = m
+      ? map.toTier(
+          ok(await this.db.from("membership_tiers").select("*").eq("id", m.tierId).single()),
+        )
+      : null;
     return {
       profile: map.toProfile(ok(profile, "Member")),
       membership: m,
@@ -583,7 +749,10 @@ export class SupabaseStaffRepository implements StaffRepository {
   }
 
   async assignRelationshipOwner(memberId: UUID, ownerId: UUID | null) {
-    const { error } = await this.db.from("memberships").update({ relationship_owner_id: ownerId }).eq("member_id", memberId);
+    const { error } = await this.db
+      .from("memberships")
+      .update({ relationship_owner_id: ownerId })
+      .eq("member_id", memberId);
     if (error) fail(error);
   }
 
@@ -592,7 +761,9 @@ export class SupabaseStaffRepository implements StaffRepository {
   }
 
   async getProvider(id: UUID) {
-    return map.toProvider(ok(await this.db.from("providers").select("*").eq("id", id).single(), "Provider"));
+    return map.toProvider(
+      ok(await this.db.from("providers").select("*").eq("id", id).single(), "Provider"),
+    );
   }
 
   async createProvider(input: ProviderInput) {
@@ -625,13 +796,15 @@ export class SupabaseStaffRepository implements StaffRepository {
   }
 
   async listApplications() {
-    return ok(await this.db.from("applications").select("*").order("submitted_at", { ascending: false })).map(
-      map.toApplication,
-    );
+    return ok(
+      await this.db.from("applications").select("*").order("submitted_at", { ascending: false }),
+    ).map(map.toApplication);
   }
 
   async getApplication(id: UUID) {
-    return map.toApplication(ok(await this.db.from("applications").select("*").eq("id", id).single(), "Application"));
+    return map.toApplication(
+      ok(await this.db.from("applications").select("*").eq("id", id).single(), "Application"),
+    );
   }
 
   async decideApplication(id: UUID, status: ApplicationStatus, note: string | null) {
@@ -649,21 +822,36 @@ export class SupabaseStaffRepository implements StaffRepository {
   }
 
   async listPartnerApplications() {
-    return ok(await this.db.from("partner_applications").select("*").order("submitted_at", { ascending: false })).map(
-      map.toPartnerApplication,
-    );
+    return ok(
+      await this.db
+        .from("partner_applications")
+        .select("*")
+        .order("submitted_at", { ascending: false }),
+    ).map(map.toPartnerApplication);
   }
 
   async cohort(): Promise<CohortView> {
     const [members, providers, setting, staff] = await Promise.all([
       this.db.from("founding_members").select("*").order("created_at"),
       this.db.from("founding_providers").select("*").order("created_at"),
-      this.db.from("app_settings").select("value").eq("key", "founding_cohort_target").maybeSingle(),
+      this.db
+        .from("app_settings")
+        .select("value")
+        .eq("key", "founding_cohort_target")
+        .maybeSingle(),
       this.listStaff(),
     ]);
     const fp = ok(providers).map(map.toFoundingProvider);
     const provs = fp.length
-      ? ok(await this.db.from("providers").select("*").in("id", fp.map((p) => p.providerId))).map(map.toProvider)
+      ? ok(
+          await this.db
+            .from("providers")
+            .select("*")
+            .in(
+              "id",
+              fp.map((p) => p.providerId),
+            ),
+        ).map(map.toProvider)
       : [];
     const target = targetFrom(setting.data?.value ?? null);
     return {
@@ -673,7 +861,9 @@ export class SupabaseStaffRepository implements StaffRepository {
         .map((f) => ({ ...f, owner: staff.find((s) => s.id === f.relationshipOwnerId) ?? null })),
       providers: fp
         .map((f) => ({ ...f, provider: provs.find((p) => p.id === f.providerId) }))
-        .filter((f): f is typeof f & { provider: NonNullable<typeof f.provider> } => Boolean(f.provider)),
+        .filter((f): f is typeof f & { provider: NonNullable<typeof f.provider> } =>
+          Boolean(f.provider),
+        ),
     };
   }
 
@@ -699,15 +889,16 @@ export class SupabaseStaffRepository implements StaffRepository {
   }
 
   async analytics(): Promise<AnalyticsView> {
-    const [applications, memberships, requests, options, providers, ai, categories] = await Promise.all([
-      this.db.from("applications").select("*"),
-      this.db.from("memberships").select("*"),
-      this.db.from("requests").select("*"),
-      this.db.from("request_options").select("*"),
-      this.db.from("providers").select("*"),
-      this.db.from("ai_events").select("*"),
-      this.db.from("request_categories").select("*"),
-    ]);
+    const [applications, memberships, requests, options, providers, ai, categories] =
+      await Promise.all([
+        this.db.from("applications").select("*"),
+        this.db.from("memberships").select("*"),
+        this.db.from("requests").select("*"),
+        this.db.from("request_options").select("*"),
+        this.db.from("providers").select("*"),
+        this.db.from("ai_events").select("*"),
+        this.db.from("request_categories").select("*"),
+      ]);
     return summarizeAnalytics({
       applications: ok(applications).map(map.toApplication),
       memberships: ok(memberships).map(map.toMembership),
@@ -752,9 +943,13 @@ export class SupabaseStaffRepository implements StaffRepository {
   }
 
   async addPreferenceForMember(memberId: UUID, input: PreferenceInput) {
-    const { error } = await this.db
-      .from("member_preferences")
-      .insert({ member_id: memberId, domain: input.domain, label: input.label, value: input.value, source: "concierge" });
+    const { error } = await this.db.from("member_preferences").insert({
+      member_id: memberId,
+      domain: input.domain,
+      label: input.label,
+      value: input.value,
+      source: "concierge",
+    });
     if (error) fail(error);
   }
 }

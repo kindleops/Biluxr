@@ -36,5 +36,7 @@ export function supabaseAdmin() {
   const url = env.supabaseUrl();
   const key = env.supabaseServiceRoleKey();
   if (!url || !key) return null;
-  return createClient<Database>(url, key, { auth: { persistSession: false, autoRefreshToken: false } });
+  return createClient<Database>(url, key, {
+    auth: { persistSession: false, autoRefreshToken: false },
+  });
 }

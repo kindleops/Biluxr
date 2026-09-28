@@ -28,7 +28,12 @@ export function MembershipCard({
         className,
       )}
     >
-      <svg aria-hidden viewBox="0 0 400 252" className="pointer-events-none absolute inset-0 size-full" preserveAspectRatio="xMidYMid slice">
+      <svg
+        aria-hidden
+        viewBox="0 0 400 252"
+        className="pointer-events-none absolute inset-0 size-full"
+        preserveAspectRatio="xMidYMid slice"
+      >
         <circle cx="340" cy="40" r="170" fill="none" stroke="rgb(243 239 232 / 0.07)" />
         <circle cx="340" cy="40" r="120" fill="none" stroke="rgb(243 239 232 / 0.05)" />
         <circle cx="340" cy="40" r="70" fill="none" stroke="rgb(243 239 232 / 0.035)" />
@@ -39,19 +44,27 @@ export function MembershipCard({
           <BiluxrMark decorative className="size-8 text-bone-300" />
         </div>
         <div>
-          <p className="font-display text-[1.6rem] leading-tight font-light tracking-[-0.01em]">{name}</p>
+          <p className="font-display text-[1.6rem] leading-tight font-light tracking-[-0.01em]">
+            {name}
+          </p>
           <div className="mt-3 flex items-end justify-between gap-4 text-[0.6875rem] tracking-[0.16em] text-bone-400 uppercase">
             <span>
               {membership.isFounding ? "Founding member" : (tierName ?? "Member")}
-              {active && membership.startedAt ? ` · Since ${new Date(membership.startedAt).getFullYear()}` : ""}
+              {active && membership.startedAt
+                ? ` · Since ${new Date(membership.startedAt).getFullYear()}`
+                : ""}
             </span>
-            <span className="font-mono tracking-[0.2em] text-bone-200">№ {membership.memberNumber}</span>
+            <span className="font-mono tracking-[0.2em] text-bone-200">
+              № {membership.memberNumber}
+            </span>
           </div>
         </div>
       </div>
       {!active && (
         <figcaption className="absolute inset-x-0 bottom-0 z-[3] bg-ink-950/80 px-6 py-2 text-center text-caption text-bone-300 backdrop-blur">
-          {membership.status === "pending_activation" ? "Awaiting activation" : `Membership ${membership.status.replace("_", " ")}`}
+          {membership.status === "pending_activation"
+            ? "Awaiting activation"
+            : `Membership ${membership.status.replace("_", " ")}`}
         </figcaption>
       )}
     </figure>

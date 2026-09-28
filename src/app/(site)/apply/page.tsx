@@ -9,11 +9,16 @@ export const metadata: Metadata = {
   alternates: { canonical: "/apply" },
 };
 
-export default async function ApplyPage({ searchParams }: { searchParams: Promise<{ invitation?: string }> }) {
+export default async function ApplyPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ invitation?: string }>;
+}) {
   const { invitation } = await searchParams;
   const repo = await publicRepository();
   const markets = repo ? await repo.listMarkets().catch(() => []) : [];
-  const invited = invitation && repo ? await repo.checkInvitation(invitation).catch(() => false) : false;
+  const invited =
+    invitation && repo ? await repo.checkInvitation(invitation).catch(() => false) : false;
 
   return (
     <div className="grid min-h-[calc(100dvh-var(--nav-height))] lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)]">
@@ -35,7 +40,8 @@ export default async function ApplyPage({ searchParams }: { searchParams: Promis
               <span className="font-mono text-bone-600">01</span> Your application, read personally
             </li>
             <li className="flex gap-4">
-              <span className="font-mono text-bone-600">02</span> A conversation, if it feels like a fit
+              <span className="font-mono text-bone-600">02</span> A conversation, if it feels like a
+              fit
             </li>
             <li className="flex gap-4">
               <span className="font-mono text-bone-600">03</span> An introduction to your concierge

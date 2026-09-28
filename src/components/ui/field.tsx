@@ -6,7 +6,7 @@ type Tone = "dark" | "paper";
 const control: Record<Tone, string> = {
   dark: "bg-ink-900/60 text-bone-50 placeholder:text-bone-500 shadow-[inset_0_0_0_1px_var(--line)] hover:shadow-[inset_0_0_0_1px_var(--line-strong)] focus:shadow-[inset_0_0_0_1px_var(--color-bone-300)] aria-invalid:shadow-[inset_0_0_0_1px_var(--color-status-clay)]",
   paper:
-    "bg-paper-50 text-ink-900 placeholder:text-paper-400 shadow-[inset_0_0_0_1px_var(--line-paper-strong)] hover:shadow-[inset_0_0_0_1px_rgb(20_18_14/0.35)] focus:shadow-[inset_0_0_0_1px_var(--color-ink-900)] aria-invalid:shadow-[inset_0_0_0_1px_#8c4a3e]",
+    "bg-paper-50 text-ink-900 placeholder:text-ink-700/50 shadow-[inset_0_0_0_1px_var(--line-paper-strong)] hover:shadow-[inset_0_0_0_1px_rgb(20_18_14/0.35)] focus:shadow-[inset_0_0_0_1px_var(--color-ink-900)] aria-invalid:shadow-[inset_0_0_0_1px_#8c4a3e]",
 };
 
 const controlBase =
@@ -35,18 +35,37 @@ export function Field({
     <div className={cn("grid content-start gap-2", className)}>
       <label
         htmlFor={htmlFor}
-        className={cn("flex items-baseline justify-between text-body-sm font-medium", tone === "dark" ? "text-bone-200" : "text-ink-800")}
+        className={cn(
+          "flex items-baseline justify-between text-body-sm font-medium",
+          tone === "dark" ? "text-bone-200" : "text-ink-800",
+        )}
       >
         <span>{label}</span>
-        {optional && <span className={cn("text-caption font-normal", tone === "dark" ? "text-bone-500" : "text-paper-400")}>Optional</span>}
+        {optional && (
+          <span
+            className={cn(
+              "text-caption font-normal",
+              tone === "dark" ? "text-bone-500" : "text-ink-700/70",
+            )}
+          >
+            Optional
+          </span>
+        )}
       </label>
       {children}
       {error ? (
-        <p id={`${htmlFor}-error`} role="alert" className={cn("text-caption", tone === "dark" ? "text-status-clay" : "text-[#8c4a3e]")}>
+        <p
+          id={`${htmlFor}-error`}
+          role="alert"
+          className={cn("text-caption", tone === "dark" ? "text-status-clay" : "text-[#8c4a3e]")}
+        >
           {error}
         </p>
       ) : hint ? (
-        <p id={`${htmlFor}-hint`} className={cn("text-caption", tone === "dark" ? "text-bone-500" : "text-ink-700/70")}>
+        <p
+          id={`${htmlFor}-hint`}
+          className={cn("text-caption", tone === "dark" ? "text-bone-500" : "text-ink-700/70")}
+        >
           {hint}
         </p>
       ) : null}
@@ -79,7 +98,12 @@ export function Textarea({
 }: ComponentProps<"textarea"> & { tone?: Tone; invalid?: boolean }) {
   return (
     <textarea
-      className={cn(controlBase, "min-h-32 resize-y py-3 leading-relaxed", control[tone], className)}
+      className={cn(
+        controlBase,
+        "min-h-32 resize-y py-3 leading-relaxed",
+        control[tone],
+        className,
+      )}
       aria-invalid={invalid || undefined}
       aria-describedby={invalid && rest.id ? `${rest.id}-error` : rest["aria-describedby"]}
       {...rest}
@@ -98,7 +122,13 @@ export function Select({
   return (
     <div className="relative">
       <select
-        className={cn(controlBase, dense ? "h-10 text-body-sm" : "h-12", "appearance-none pr-10", control[tone], className)}
+        className={cn(
+          controlBase,
+          dense ? "h-10 text-body-sm" : "h-12",
+          "appearance-none pr-10",
+          control[tone],
+          className,
+        )}
         aria-invalid={invalid || undefined}
         {...rest}
       >
@@ -107,7 +137,10 @@ export function Select({
       <svg
         aria-hidden
         viewBox="0 0 16 16"
-        className={cn("pointer-events-none absolute right-4 top-1/2 size-3 -translate-y-1/2", tone === "dark" ? "text-bone-400" : "text-ink-700")}
+        className={cn(
+          "pointer-events-none absolute top-1/2 right-4 size-3 -translate-y-1/2",
+          tone === "dark" ? "text-bone-400" : "text-ink-700",
+        )}
         fill="none"
         stroke="currentColor"
         strokeWidth="1.5"
@@ -118,17 +151,26 @@ export function Select({
   );
 }
 
-export function Checkbox({ label, tone = "dark", ...rest }: ComponentProps<"input"> & { label: ReactNode; tone?: Tone }) {
+export function Checkbox({
+  label,
+  tone = "dark",
+  ...rest
+}: ComponentProps<"input"> & { label: ReactNode; tone?: Tone }) {
   return (
-    <label className={cn("flex cursor-pointer items-start gap-3 text-body-sm", tone === "dark" ? "text-bone-300" : "text-ink-800")}>
+    <label
+      className={cn(
+        "flex cursor-pointer items-start gap-3 text-body-sm",
+        tone === "dark" ? "text-bone-300" : "text-ink-800",
+      )}
+    >
       <input
         type="checkbox"
         className={cn(
-          "mt-0.5 size-4 shrink-0 cursor-pointer appearance-none rounded-xs transition-colors duration-quick",
+          "duration-quick mt-0.5 size-4 shrink-0 cursor-pointer appearance-none rounded-xs transition-colors",
           tone === "dark"
             ? "shadow-[inset_0_0_0_1px_var(--line-strong)] checked:bg-bone-100 checked:shadow-none"
             : "shadow-[inset_0_0_0_1px_var(--line-paper-strong)] checked:bg-ink-900 checked:shadow-none",
-          "bg-[length:12px] bg-center bg-no-repeat checked:bg-[url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 16 16%22><path d=%22M3.5 8.5l3 3 6-7%22 fill=%22none%22 stroke=%22%23888%22 stroke-width=%221.8%22/></svg>')]",
+          "checked:bg-[url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 16 16%22><path d=%22M3.5 8.5l3 3 6-7%22 fill=%22none%22 stroke=%22%23888%22 stroke-width=%221.8%22/></svg>')] bg-[length:12px] bg-center bg-no-repeat",
         )}
         {...rest}
       />
@@ -137,7 +179,15 @@ export function Checkbox({ label, tone = "dark", ...rest }: ComponentProps<"inpu
   );
 }
 
-export function FormMessage({ tone = "dark", kind, children }: { tone?: Tone; kind: "error" | "success"; children: ReactNode }) {
+export function FormMessage({
+  tone = "dark",
+  kind,
+  children,
+}: {
+  tone?: Tone;
+  kind: "error" | "success";
+  children: ReactNode;
+}) {
   return (
     <div
       role={kind === "error" ? "alert" : "status"}

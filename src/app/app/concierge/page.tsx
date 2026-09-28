@@ -11,9 +11,14 @@ export const metadata = { title: "Concierge" };
 export default async function ConciergePage() {
   const identity = await requireMember();
   const repo = await memberRepository(identity);
-  const [requests, home, pub] = await Promise.all([repo.listRequests(), repo.home(), publicRepository()]);
+  const [requests, home, pub] = await Promise.all([
+    repo.listRequests(),
+    repo.home(),
+    publicRepository(),
+  ]);
   const categories = pub ? await pub.listCategories() : [];
-  const categoryName = (slug: string | null) => categories.find((c) => c.slug === slug)?.name ?? null;
+  const categoryName = (slug: string | null) =>
+    categories.find((c) => c.slug === slug)?.name ?? null;
   const open = requests.filter((r) => isOpen(r.status));
   const past = requests.filter((r) => !isOpen(r.status));
   const active = home.viewer.membership?.status === "active";
@@ -30,12 +35,21 @@ export default async function ConciergePage() {
         {open.length > 0 ? (
           <div className="grid gap-3">
             {open.map((r) => (
-              <RequestCard key={r.id} request={r} options={r.options} lastActivity={r.lastMessageAt} categoryName={categoryName(r.categorySlug)} />
+              <RequestCard
+                key={r.id}
+                request={r}
+                options={r.options}
+                lastActivity={r.lastMessageAt}
+                categoryName={categoryName(r.categorySlug)}
+              />
             ))}
           </div>
         ) : (
           <div className="rounded-card shadow-[inset_0_0_0_1px_var(--line-subtle)]">
-            <EmptyState title="Nothing in motion." body="When you need something, Biluxr is here." />
+            <EmptyState
+              title="Nothing in motion."
+              body="When you need something, Biluxr is here."
+            />
           </div>
         )}
       </section>
@@ -47,7 +61,13 @@ export default async function ConciergePage() {
           </SectionHeading>
           <div className="grid gap-3 sm:grid-cols-2">
             {past.map((r) => (
-              <RequestCard key={r.id} request={r} options={r.options} lastActivity={r.lastMessageAt} categoryName={categoryName(r.categorySlug)} />
+              <RequestCard
+                key={r.id}
+                request={r}
+                options={r.options}
+                lastActivity={r.lastMessageAt}
+                categoryName={categoryName(r.categorySlug)}
+              />
             ))}
           </div>
         </section>

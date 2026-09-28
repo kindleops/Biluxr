@@ -8,7 +8,10 @@ import type { Money } from "./domain/types";
 
 const LOCALE = "en-US";
 
-export function formatMoney(money: Money | null | undefined, opts: { compact?: boolean } = {}): string {
+export function formatMoney(
+  money: Money | null | undefined,
+  opts: { compact?: boolean } = {},
+): string {
   if (!money) return "—";
   const value = money.amountMinor / 100;
   return new Intl.NumberFormat(LOCALE, {
@@ -71,7 +74,8 @@ export function formatDateRange(start: string | null, end: string | null): strin
   const e = new Date(`${end.slice(0, 10)}T12:00:00Z`);
   const sameYear = s.getUTCFullYear() === e.getUTCFullYear();
   const sameMonth = sameYear && s.getUTCMonth() === e.getUTCMonth();
-  const month = (d: Date) => new Intl.DateTimeFormat(LOCALE, { month: "long", timeZone: "UTC" }).format(d);
+  const month = (d: Date) =>
+    new Intl.DateTimeFormat(LOCALE, { month: "long", timeZone: "UTC" }).format(d);
   if (sameMonth) return `${month(s)} ${s.getUTCDate()}–${e.getUTCDate()}, ${s.getUTCFullYear()}`;
   if (sameYear)
     return `${month(s)} ${s.getUTCDate()} – ${month(e)} ${e.getUTCDate()}, ${s.getUTCFullYear()}`;
@@ -116,5 +120,5 @@ export function truncate(text: string, max: number): string {
   if (text.length <= max) return text;
   const cut = text.slice(0, max - 1);
   const lastSpace = cut.lastIndexOf(" ");
-  return `${cut.slice(0, lastSpace > max * 0.6 ? lastSpace : cut.length).trimEnd()}…`;
+  return `${cut.slice(0, lastSpace > max * 0.4 ? lastSpace : cut.length).trimEnd()}…`;
 }

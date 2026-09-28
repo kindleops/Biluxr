@@ -38,7 +38,9 @@ function money(amount: number | null, currency: string | null): Money | null {
 }
 
 function record(json: Json): Record<string, unknown> {
-  return json && typeof json === "object" && !Array.isArray(json) ? (json as Record<string, unknown>) : {};
+  return json && typeof json === "object" && !Array.isArray(json)
+    ? (json as Record<string, unknown>)
+    : {};
 }
 
 function stringRecord(json: Json): Record<string, string> {

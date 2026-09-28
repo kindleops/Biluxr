@@ -5,15 +5,28 @@ import { publicRepository } from "@/lib/data";
 
 export const metadata: Metadata = {
   title: "Partners",
-  description: "Biluxr works with a small network of exceptional providers. Introduce your business.",
+  description:
+    "Biluxr works with a small network of exceptional providers. Introduce your business.",
   alternates: { canonical: "/partners" },
 };
 
 const PRINCIPLES = [
-  ["Introduced properly", "Every request arrives with context: who the member is, what they value, and what would delight them."],
-  ["Vetted, then trusted", "We begin with a conversation and a test request. Partners who deliver become preferred — and hear from us first."],
-  ["Clear terms", "Agreed in writing, honoured in practice. We never resell what we have not confirmed with you."],
-  ["Discretion, both ways", "Members' details are shared only as needed to serve them. We expect the same of you."],
+  [
+    "Introduced properly",
+    "Every request arrives with context: who the member is, what they value, and what would delight them.",
+  ],
+  [
+    "Vetted, then trusted",
+    "We begin with a conversation and a test request. Partners who deliver become preferred — and hear from us first.",
+  ],
+  [
+    "Clear terms",
+    "Agreed in writing, honoured in practice. We never resell what we have not confirmed with you.",
+  ],
+  [
+    "Discretion, both ways",
+    "Members' details are shared only as needed to serve them. We expect the same of you.",
+  ],
 ];
 
 export default async function PartnersPage() {

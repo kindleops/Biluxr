@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState, useEffect, useRef, useState } from "react";
+import { useActionResult } from "@/lib/forms/use-action-result";
 import { postMessageAction } from "@/app/app/actions";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/cn";
@@ -8,7 +9,15 @@ import type { RequestMessage } from "@/lib/domain/types";
 import { formatDateTime } from "@/lib/format";
 import { IDLE } from "@/lib/forms/state";
 
-export function MessageThread({ messages, viewerId, timezone }: { messages: RequestMessage[]; viewerId: string; timezone: string }) {
+export function MessageThread({
+  messages,
+  viewerId,
+  timezone,
+}: {
+  messages: RequestMessage[];
+  viewerId: string;
+  timezone: string;
+}) {
   return (
     <ol className="grid gap-5" aria-label="Conversation">
       {messages.map((m) => {
@@ -25,12 +34,15 @@ export function MessageThread({ messages, viewerId, timezone }: { messages: Requ
         return (
           <li key={m.id} className={cn("flex flex-col", mine ? "items-end" : "items-start")}>
             <p className="mb-1.5 text-caption text-bone-500">
-              {mine ? "You" : m.authorName || "Your concierge"} · <time dateTime={m.createdAt}>{formatDateTime(m.createdAt, timezone)}</time>
+              {mine ? "You" : m.authorName || "Your concierge"} ·{" "}
+              <time dateTime={m.createdAt}>{formatDateTime(m.createdAt, timezone)}</time>
             </p>
             <p
               className={cn(
                 "max-w-[34rem] rounded-lg px-4 py-3 text-body-sm whitespace-pre-line",
-                mine ? "rounded-tr-xs bg-ink-800 text-bone-100" : "rounded-tl-xs bg-bone-100 text-ink-900",
+                mine
+                  ? "rounded-tr-xs bg-ink-800 text-bone-100"
+                  : "rounded-tl-xs bg-bone-100 text-ink-900",
               )}
             >
               {m.body}
@@ -48,9 +60,9 @@ export function ReplyBox({ requestId, disabled }: { requestId: string; disabled?
   const formRef = useRef<HTMLFormElement>(null);
   const ref = useRef<HTMLTextAreaElement>(null);
 
-  useEffect(() => {
-    if (state.status === "success") setValue("");
-  }, [state]);
+  useActionResult(state, (s) => {
+    if (s.status === "success") setValue("");
+  });
 
   useEffect(() => {
     const el = ref.current;
@@ -93,7 +105,13 @@ export function ReplyBox({ requestId, disabled }: { requestId: string; disabled?
         placeholder="Reply to your concierge…"
         className="min-h-10 flex-1 resize-none bg-transparent py-2 text-body text-bone-50 outline-none placeholder:text-bone-600"
       />
-      <Button type="submit" size="sm" pending={pending} disabled={!value.trim()} aria-label="Send reply">
+      <Button
+        type="submit"
+        size="sm"
+        pending={pending}
+        disabled={!value.trim()}
+        aria-label="Send reply"
+      >
         Send
       </Button>
       {state.status === "error" && state.message && (

@@ -22,10 +22,12 @@ export function PartnerForm({
   if (state.status === "success") {
     return (
       <div role="status" className="reveal py-6">
-        <p className="font-display text-headline font-light text-bone-50">Thank you — we will be in touch.</p>
+        <p className="font-display text-headline font-light text-bone-50">
+          Thank you — we will be in touch.
+        </p>
         <p className="mt-4 max-w-lg text-body text-bone-400">
-          Our partnerships team reads every introduction. If there is a fit with the members we serve, we will arrange a
-          conversation and, in time, a first request.
+          Our partnerships team reads every introduction. If there is a fit with the members we
+          serve, we will arrange a conversation and, in time, a first request.
         </p>
       </div>
     );
@@ -34,17 +36,42 @@ export function PartnerForm({
   return (
     <form action={action} className="relative grid gap-6" noValidate>
       <Honeypot />
-      {!available && <FormMessage kind="error">Partner introductions are not open online yet. Please use the contact page.</FormMessage>}
-      {state.status === "error" && state.message && <FormMessage kind="error">{state.message}</FormMessage>}
+      {!available && (
+        <FormMessage kind="error">
+          Partner introductions are not open online yet. Please use the contact page.
+        </FormMessage>
+      )}
+      {state.status === "error" && state.message && (
+        <FormMessage kind="error">{state.message}</FormMessage>
+      )}
       <fieldset className="grid gap-6 sm:grid-cols-2" disabled={!available || pending}>
         <Field label="Organization" htmlFor="organization" error={e.organization}>
-          <Input id="organization" name="organization" autoComplete="organization" defaultValue={v.organization} invalid={!!e.organization} />
+          <Input
+            id="organization"
+            name="organization"
+            autoComplete="organization"
+            defaultValue={v.organization}
+            invalid={!!e.organization}
+          />
         </Field>
         <Field label="Your name" htmlFor="contactName" error={e.contactName}>
-          <Input id="contactName" name="contactName" autoComplete="name" defaultValue={v.contactName} invalid={!!e.contactName} />
+          <Input
+            id="contactName"
+            name="contactName"
+            autoComplete="name"
+            defaultValue={v.contactName}
+            invalid={!!e.contactName}
+          />
         </Field>
         <Field label="Email" htmlFor="p-email" error={e.email}>
-          <Input id="p-email" name="email" type="email" autoComplete="email" defaultValue={v.email} invalid={!!e.email} />
+          <Input
+            id="p-email"
+            name="email"
+            type="email"
+            autoComplete="email"
+            defaultValue={v.email}
+            invalid={!!e.email}
+          />
         </Field>
         <Field label="Phone" htmlFor="p-phone" optional>
           <Input id="p-phone" name="phone" type="tel" autoComplete="tel" defaultValue={v.phone} />
@@ -60,10 +87,23 @@ export function PartnerForm({
           </Select>
         </Field>
         <Field label="City" htmlFor="p-city" error={e.city}>
-          <Input id="p-city" name="city" autoComplete="address-level2" defaultValue={v.city} invalid={!!e.city} />
+          <Input
+            id="p-city"
+            name="city"
+            autoComplete="address-level2"
+            defaultValue={v.city}
+            invalid={!!e.city}
+          />
         </Field>
         <Field label="Website" htmlFor="website" optional className="sm:col-span-2">
-          <Input id="website" name="website" type="url" inputMode="url" placeholder="https://" defaultValue={v.website} />
+          <Input
+            id="website"
+            name="website"
+            type="url"
+            inputMode="url"
+            placeholder="https://"
+            defaultValue={v.website}
+          />
         </Field>
         <Field
           label="Tell us about your work"
@@ -72,11 +112,24 @@ export function PartnerForm({
           error={e.message}
           className="sm:col-span-2"
         >
-          <Textarea id="message" name="message" rows={5} defaultValue={v.message} invalid={!!e.message} />
+          <Textarea
+            id="message"
+            name="message"
+            rows={5}
+            defaultValue={v.message}
+            invalid={!!e.message}
+          />
         </Field>
       </fieldset>
       <div className="flex justify-end">
-        <Button type="submit" size="lg" pending={pending} pendingLabel="Sending…" trailing={<Arrow />} disabled={!available}>
+        <Button
+          type="submit"
+          size="lg"
+          pending={pending}
+          pendingLabel="Sending…"
+          trailing={<Arrow />}
+          disabled={!available}
+        >
           Introduce your business
         </Button>
       </div>

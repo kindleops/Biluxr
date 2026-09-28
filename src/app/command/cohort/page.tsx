@@ -17,7 +17,14 @@ function Progress({ value, target, label }: { value: number; target: number; lab
           {value} / {target}
         </p>
       </div>
-      <div className="mt-3 h-px bg-white/10" role="progressbar" aria-valuenow={value} aria-valuemin={0} aria-valuemax={target} aria-label={label}>
+      <div
+        className="mt-3 h-px bg-white/10"
+        role="progressbar"
+        aria-valuenow={value}
+        aria-valuemin={0}
+        aria-valuemax={target}
+        aria-label={label}
+      >
         <div className="h-px bg-bone-200" style={{ width: `${pct}%` }} />
       </div>
     </div>
@@ -39,15 +46,23 @@ export default async function CohortPage() {
   return (
     <CommandPage eyebrow="Launch" title="Founding cohort">
       <p className="-mt-4 mb-8 max-w-2xl text-body-sm text-bone-400">
-        Twenty-five extraordinary members and twenty-five extraordinary providers, curated by hand. Growth here is measured in
-        relationships, not sign-ups.
+        Twenty-five extraordinary members and twenty-five extraordinary providers, curated by hand.
+        Growth here is measured in relationships, not sign-ups.
       </p>
       <div className="grid gap-6 md:grid-cols-2">
         <Panel>
-          <Progress value={cohort.members.length} target={cohort.target.members} label="Founding members" />
+          <Progress
+            value={cohort.members.length}
+            target={cohort.target.members}
+            label="Founding members"
+          />
         </Panel>
         <Panel>
-          <Progress value={cohort.providers.length} target={cohort.target.providers} label="Founding providers" />
+          <Progress
+            value={cohort.providers.length}
+            target={cohort.target.providers}
+            label="Founding providers"
+          />
         </Panel>
       </div>
 
@@ -73,7 +88,10 @@ export default async function CohortPage() {
                     <tr key={m.id} className="border-t border-white/[0.05]">
                       <td className="px-4 py-2.5">
                         {m.memberId ? (
-                          <Link href={`/command/members/${m.memberId}`} className="text-bone-100 hover:underline">
+                          <Link
+                            href={`/command/members/${m.memberId}`}
+                            className="text-bone-100 hover:underline"
+                          >
                             {m.displayName}
                           </Link>
                         ) : (
@@ -84,12 +102,22 @@ export default async function CohortPage() {
                         </p>
                       </td>
                       <td className="px-4 py-2.5">
-                        <StatusPill tone={ONBOARDING_TONE[m.onboardingStatus]}>{m.onboardingStatus.replace("_", " ")}</StatusPill>
+                        <StatusPill tone={ONBOARDING_TONE[m.onboardingStatus]}>
+                          {m.onboardingStatus.replace("_", " ")}
+                        </StatusPill>
                       </td>
-                      <td className="px-4 py-2.5 text-caption text-bone-300">{m.preferencesCompleted ? "Done" : "—"}</td>
-                      <td className="px-4 py-2.5 text-caption text-bone-300">{m.firstRequestAt ? formatDateLong(m.firstRequestAt) : "—"}</td>
-                      <td className="px-4 py-2.5 font-mono text-caption text-bone-300">{m.satisfaction ?? "—"}</td>
-                      <td className="px-4 py-2.5 text-caption text-bone-300">{m.referralPotential ?? "—"}</td>
+                      <td className="px-4 py-2.5 text-caption text-bone-300">
+                        {m.preferencesCompleted ? "Done" : "—"}
+                      </td>
+                      <td className="px-4 py-2.5 text-caption text-bone-300">
+                        {m.firstRequestAt ? formatDateLong(m.firstRequestAt) : "—"}
+                      </td>
+                      <td className="px-4 py-2.5 font-mono text-caption text-bone-300">
+                        {m.satisfaction ?? "—"}
+                      </td>
+                      <td className="px-4 py-2.5 text-caption text-bone-300">
+                        {m.referralPotential ?? "—"}
+                      </td>
                     </tr>
                   ))}
                 </tbody>
@@ -117,15 +145,28 @@ export default async function CohortPage() {
                   {cohort.providers.map((f) => (
                     <tr key={f.id} className="border-t border-white/[0.05]">
                       <td className="px-4 py-2.5">
-                        <Link href={`/command/providers/${f.providerId}`} className="text-bone-100 hover:underline">
+                        <Link
+                          href={`/command/providers/${f.providerId}`}
+                          className="text-bone-100 hover:underline"
+                        >
                           {f.provider.name}
                         </Link>
-                        {f.performanceNote && <p className="text-caption text-bone-500">{f.performanceNote}</p>}
+                        {f.performanceNote && (
+                          <p className="text-caption text-bone-500">{f.performanceNote}</p>
+                        )}
                       </td>
-                      <td className="px-4 py-2.5 text-caption text-bone-300">{f.vettingStatus.replace("_", " ")}</td>
-                      <td className="px-4 py-2.5 text-caption text-bone-300">{f.termsStatus.replace("_", " ")}</td>
-                      <td className="px-4 py-2.5 text-caption text-bone-300">{f.testRequestStatus.replace("_", " ")}</td>
-                      <td className="px-4 py-2.5 text-caption text-bone-300">{f.preferredStatus ? "Yes" : "—"}</td>
+                      <td className="px-4 py-2.5 text-caption text-bone-300">
+                        {f.vettingStatus.replace("_", " ")}
+                      </td>
+                      <td className="px-4 py-2.5 text-caption text-bone-300">
+                        {f.termsStatus.replace("_", " ")}
+                      </td>
+                      <td className="px-4 py-2.5 text-caption text-bone-300">
+                        {f.testRequestStatus.replace("_", " ")}
+                      </td>
+                      <td className="px-4 py-2.5 text-caption text-bone-300">
+                        {f.preferredStatus ? "Yes" : "—"}
+                      </td>
                     </tr>
                   ))}
                 </tbody>

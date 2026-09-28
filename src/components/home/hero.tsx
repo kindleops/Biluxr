@@ -26,8 +26,8 @@ export function Hero() {
           style={{ animationDelay: "550ms" }}
         >
           <p className="text-lede text-pretty text-bone-300">
-            Biluxr coordinates travel, stays, tables, access and every detail between — for a small number of members
-            whose time is worth more than the search.
+            Biluxr coordinates travel, stays, tables, access and every detail between — for a small
+            number of members whose time is worth more than the search.
           </p>
           <div className="flex flex-wrap items-center gap-x-8 gap-y-4 md:justify-end">
             <LinkButton href="/apply" size="lg" trailing={<Arrow />}>
@@ -38,7 +38,10 @@ export function Hero() {
             </LinkButton>
           </div>
         </div>
-        <div className="reveal mt-16 border-t border-white/[0.08] pt-6 sm:mt-20" style={{ animationDelay: "800ms" }}>
+        <div
+          className="reveal mt-16 border-t border-white/[0.08] pt-6 sm:mt-20"
+          style={{ animationDelay: "800ms" }}
+        >
           <WorldClock />
         </div>
       </div>
@@ -50,7 +53,7 @@ function HorizonArt() {
   return (
     <div aria-hidden className="pointer-events-none absolute inset-0 z-[1]">
       {/* soft light, off-center — like the last light over water */}
-      <div className="absolute top-[18%] right-[-20%] size-[70vmax] rounded-full bg-[radial-gradient(closest-side,rgb(194_171_130/0.10),transparent)] [animation:breathe_9s_ease-in-out_infinite]" />
+      <div className="absolute top-[18%] right-[-20%] size-[70vmax] [animation:breathe_9s_ease-in-out_infinite] rounded-full bg-[radial-gradient(closest-side,rgb(194_171_130/0.10),transparent)]" />
       <svg
         className="absolute top-[4%] right-[-62vmax] size-[108vmax] sm:right-[-55vmax] md:top-[2%] md:right-[-48vmax] md:size-[96vmax]"
         viewBox="0 0 1000 1000"

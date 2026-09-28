@@ -11,11 +11,19 @@ export const intentSchema = z.object({
   category: z
     .string()
     .describe("The best matching category slug from the provided list, or 'other'."),
-  priority: z.enum(["standard", "priority", "urgent"]).describe("urgent only if it must happen within hours."),
+  priority: z
+    .enum(["standard", "priority", "urgent"])
+    .describe("urgent only if it must happen within hours."),
   summary: z.string().describe("One sentence restating the request for the concierge team."),
   location: z.string().nullable(),
-  timing: z.string().nullable().describe("When, in plain words, exactly as specific as the member was."),
-  startDate: z.string().nullable().describe("ISO date YYYY-MM-DD only if the member gave an explicit date."),
+  timing: z
+    .string()
+    .nullable()
+    .describe("When, in plain words, exactly as specific as the member was."),
+  startDate: z
+    .string()
+    .nullable()
+    .describe("ISO date YYYY-MM-DD only if the member gave an explicit date."),
   partySize: z.number().int().nullable(),
   budget: z.string().nullable(),
   people: z.array(z.string()).describe("People mentioned by name or role."),
@@ -23,7 +31,9 @@ export const intentSchema = z.object({
   relevantPreferences: z
     .array(z.string())
     .describe("Known member preferences (from the list provided) that apply to this request."),
-  missingInformation: z.array(z.string()).describe("What the concierge still needs to know to act well."),
+  missingInformation: z
+    .array(z.string())
+    .describe("What the concierge still needs to know to act well."),
   clarifyingQuestions: z
     .array(z.string())
     .describe("At most two questions for the member, in Biluxr's voice. Empty if none are needed."),

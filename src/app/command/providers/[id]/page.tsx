@@ -20,7 +20,9 @@ export default async function ProviderPage({ params }: { params: Promise<{ id: s
     throw e;
   });
   const pub = await publicRepository();
-  const [markets, categories] = pub ? await Promise.all([pub.listMarkets(), pub.listCategories()]) : [[], []];
+  const [markets, categories] = pub
+    ? await Promise.all([pub.listMarkets(), pub.listCategories()])
+    : [[], []];
   return (
     <CommandPage
       eyebrow={
@@ -38,10 +40,17 @@ export default async function ProviderPage({ params }: { params: Promise<{ id: s
                 ["Category", categories.find((c) => c.slug === p.categorySlug)?.name],
                 ["Market", markets.find((m) => m.id === p.marketId)?.name],
                 ["Website", p.website],
-                ["Contact", [p.contactName, p.contactEmail, p.contactPhone].filter(Boolean).join(" · ") || null],
+                [
+                  "Contact",
+                  [p.contactName, p.contactEmail, p.contactPhone].filter(Boolean).join(" · ") ||
+                    null,
+                ],
                 ["Terms", p.termsSummary],
                 ["Test request", p.testRequestStatus.replace("_", " ")],
-                ["Performance", p.performanceScore !== null ? `${p.performanceScore} / 100` : "Not yet scored"],
+                [
+                  "Performance",
+                  p.performanceScore !== null ? `${p.performanceScore} / 100` : "Not yet scored",
+                ],
                 ["Founding", p.isFounding ? "Yes" : "No"],
               ]}
             />
@@ -68,7 +77,10 @@ export default async function ProviderPage({ params }: { params: Promise<{ id: s
             <Button type="submit" size="sm" variant="secondary">
               Update stage
             </Button>
-            <p className="text-caption text-bone-500">Prospect → vetting → approved → preferred. Paused and removed providers are hidden from option building.</p>
+            <p className="text-caption text-bone-500">
+              Prospect → vetting → approved → preferred. Paused and removed providers are hidden
+              from option building.
+            </p>
           </form>
         </Panel>
       </div>

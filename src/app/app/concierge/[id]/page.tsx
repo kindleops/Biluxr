@@ -10,7 +10,12 @@ import { Timeline, type TimelineEntry } from "@/components/ui/timeline";
 import { requireMember } from "@/lib/auth/session";
 import { memberRepository, publicRepository } from "@/lib/data";
 import { NotFoundError } from "@/lib/data/repository";
-import { REQUEST_STATUS_PRESENTATION, isOpen, memberCanCancel, memberStatusLabel } from "@/lib/domain/requests";
+import {
+  REQUEST_STATUS_PRESENTATION,
+  isOpen,
+  memberCanCancel,
+  memberStatusLabel,
+} from "@/lib/domain/requests";
 import type { RequestEvent } from "@/lib/domain/types";
 import { formatDateRange, formatDateTime } from "@/lib/format";
 
@@ -72,9 +77,19 @@ export default async function RequestPage({
 
   const facts = [
     ["Category", categories.find((c) => c.slug === request.categorySlug)?.name],
-    ["When", request.startsAt ? formatDateRange(request.startsAt.slice(0, 10), request.endsAt?.slice(0, 10) ?? null) : null],
+    [
+      "When",
+      request.startsAt
+        ? formatDateRange(request.startsAt.slice(0, 10), request.endsAt?.slice(0, 10) ?? null)
+        : null,
+    ],
     ["Where", request.location],
-    ["Party", request.partySize ? `${request.partySize} ${request.partySize === 1 ? "person" : "people"}` : null],
+    [
+      "Party",
+      request.partySize
+        ? `${request.partySize} ${request.partySize === 1 ? "person" : "people"}`
+        : null,
+    ],
   ].filter((f): f is [string, string] => Boolean(f[1]));
 
   return (
@@ -87,11 +102,17 @@ export default async function RequestPage({
 
       <header className="mt-6 grid gap-4 border-b border-white/[0.06] pb-8">
         <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
-          <StatusPill tone={presentation.tone}>{memberStatusLabel(request.status, options)}</StatusPill>
+          <StatusPill tone={presentation.tone}>
+            {memberStatusLabel(request.status, options)}
+          </StatusPill>
           <span className="font-mono text-caption text-bone-600">{request.reference}</span>
-          {request.priority === "urgent" && <span className="text-caption text-status-amber">Time-sensitive</span>}
+          {request.priority === "urgent" && (
+            <span className="text-caption text-status-amber">Time-sensitive</span>
+          )}
         </div>
-        <h1 className="font-display text-headline font-light text-bone-50 text-balance">{request.title}</h1>
+        <h1 className="font-display text-headline font-light text-balance text-bone-50">
+          {request.title}
+        </h1>
         {facts.length > 0 && (
           <dl className="flex flex-wrap gap-x-8 gap-y-2 text-body-sm">
             {facts.map(([k, v]) => (
@@ -106,7 +127,10 @@ export default async function RequestPage({
 
       {isNew && (
         <div className="mt-6">
-          <FormMessage kind="success">Received. {assignee ? `${assignee.name.split(" ")[0]} has it` : "Your concierge has it"} and will be in touch.</FormMessage>
+          <FormMessage kind="success">
+            Received. {assignee ? `${assignee.name.split(" ")[0]} has it` : "Your concierge has it"}{" "}
+            and will be in touch.
+          </FormMessage>
         </div>
       )}
 
@@ -114,22 +138,33 @@ export default async function RequestPage({
         <div className="grid content-start gap-12">
           {visibleOptions.length > 0 && (
             <section aria-labelledby="options">
-              <h2 id="options" className="mb-4 text-label text-bone-400">
+              <h2 id="options" className="text-label mb-4 text-bone-400">
                 {accepted ? "Your choice" : "Options for you"}
               </h2>
               <div className="grid gap-3">
                 {visibleOptions.map((o, i) => (
-                  <OptionCard key={o.id} option={o} index={i} total={visibleOptions.length} timezone={tz} locked={accepted || !isOpen(request.status)} />
+                  <OptionCard
+                    key={o.id}
+                    option={o}
+                    index={i}
+                    total={visibleOptions.length}
+                    timezone={tz}
+                    locked={accepted || !isOpen(request.status)}
+                  />
                 ))}
               </div>
             </section>
           )}
 
           <section aria-labelledby="conversation">
-            <h2 id="conversation" className="mb-5 text-label text-bone-400">
+            <h2 id="conversation" className="text-label mb-5 text-bone-400">
               Conversation
             </h2>
-            <MessageThread messages={messages} viewerId={identity.userId} timezone={profile.timezone} />
+            <MessageThread
+              messages={messages}
+              viewerId={identity.userId}
+              timezone={profile.timezone}
+            />
             <div className="mt-8">
               <ReplyBox requestId={request.id} disabled={!isOpen(request.status)} />
             </div>
@@ -138,14 +173,14 @@ export default async function RequestPage({
 
         <aside className="grid content-start gap-10 lg:sticky lg:top-8 lg:self-start">
           <section aria-labelledby="with">
-            <h2 id="with" className="mb-3 text-label text-bone-400">
+            <h2 id="with" className="text-label mb-3 text-bone-400">
               With
             </h2>
             <p className="text-body-sm text-bone-200">{assignee?.name ?? "Your concierge team"}</p>
           </section>
           {timeline.length > 0 && (
             <section aria-labelledby="history">
-              <h2 id="history" className="mb-5 text-label text-bone-400">
+              <h2 id="history" className="text-label mb-5 text-bone-400">
                 History
               </h2>
               <Timeline entries={timeline} />

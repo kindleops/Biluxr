@@ -22,10 +22,18 @@ function isActive(pathname: string, href: string) {
 }
 
 export function NavIcon({ name, className }: { name: IconName; className?: string }) {
-  const common = { fill: "none", stroke: "currentColor", strokeWidth: 1.25, strokeLinecap: "round" as const, strokeLinejoin: "round" as const };
+  const common = {
+    fill: "none",
+    stroke: "currentColor",
+    strokeWidth: 1.25,
+    strokeLinecap: "round" as const,
+    strokeLinejoin: "round" as const,
+  };
   return (
     <svg viewBox="0 0 24 24" aria-hidden className={cn("size-5", className)} {...common}>
-      {name === "home" && <path d="M4 10.5 12 4l8 6.5V20a1 1 0 0 1-1 1h-4.5v-6h-5v6H5a1 1 0 0 1-1-1z" />}
+      {name === "home" && (
+        <path d="M4 10.5 12 4l8 6.5V20a1 1 0 0 1-1 1h-4.5v-6h-5v6H5a1 1 0 0 1-1-1z" />
+      )}
       {name === "concierge" && (
         <>
           <path d="M4 17.5V7a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H8.5L4 19.5z" />
@@ -79,11 +87,16 @@ export function MemberRail({ name, initials }: { name: string; initials: string 
                     href={item.href}
                     aria-current={active ? "page" : undefined}
                     className={cn(
-                      "flex items-center gap-3.5 rounded-md px-3 py-2.5 text-body-sm transition-colors duration-quick",
-                      active ? "bg-white/[0.06] text-bone-50" : "text-bone-400 hover:bg-white/[0.03] hover:text-bone-100",
+                      "duration-quick flex items-center gap-3.5 rounded-md px-3 py-2.5 text-body-sm transition-colors",
+                      active
+                        ? "bg-white/[0.06] text-bone-50"
+                        : "text-bone-400 hover:bg-white/[0.03] hover:text-bone-100",
                     )}
                   >
-                    <NavIcon name={item.icon} className={active ? "text-bone-100" : "text-bone-500"} />
+                    <NavIcon
+                      name={item.icon}
+                      className={active ? "text-bone-100" : "text-bone-500"}
+                    />
                     {item.label}
                   </Link>
                 </li>
@@ -109,7 +122,7 @@ export function MemberRail({ name, initials }: { name: string; initials: string 
 
 export function MemberTopBar() {
   return (
-    <header className="sticky top-0 z-sticky flex h-14 items-center justify-between bg-ink-950/85 px-5 backdrop-blur-md [box-shadow:inset_0_-1px_0_0_var(--line-subtle)] lg:hidden">
+    <header className="z-sticky sticky top-0 flex h-14 items-center justify-between bg-ink-950/85 px-5 [box-shadow:inset_0_-1px_0_0_var(--line-subtle)] backdrop-blur-md lg:hidden">
       <Link href="/app" aria-label="Biluxr home" className="-m-2 p-2 text-bone-100">
         <BiluxrMark decorative className="size-7" />
       </Link>
@@ -126,7 +139,7 @@ export function MobileNav() {
   return (
     <nav
       aria-label="Member"
-      className="glass fixed inset-x-0 bottom-0 z-nav rounded-none pb-safe [box-shadow:inset_0_1px_0_0_var(--line)] lg:hidden"
+      className="glass z-nav pb-safe fixed inset-x-0 bottom-0 rounded-none [box-shadow:inset_0_1px_0_0_var(--line)] lg:hidden"
     >
       <ul className="mx-auto grid h-(--mobile-nav-height) max-w-md grid-cols-5">
         {items.map((item) => {
@@ -137,7 +150,7 @@ export function MobileNav() {
                 href={item.href}
                 aria-current={active ? "page" : undefined}
                 className={cn(
-                  "flex h-full flex-col items-center justify-center gap-1 text-[0.625rem] tracking-[0.04em] transition-colors duration-quick",
+                  "duration-quick flex h-full flex-col items-center justify-center gap-1 text-[0.625rem] tracking-[0.04em] transition-colors",
                   active ? "text-bone-50" : "text-bone-500 active:text-bone-200",
                 )}
               >

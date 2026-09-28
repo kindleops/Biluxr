@@ -37,7 +37,9 @@ export function SiteFooter() {
       <div className="page-gutter content-max pt-24 pb-10 sm:pt-32">
         <div className="grid gap-16 md:grid-cols-[1.4fr_2fr]">
           <div className="max-w-sm">
-            <p className="font-display text-headline font-light text-bone-100">Consider it handled.</p>
+            <p className="font-display text-headline font-light text-bone-100">
+              Consider it handled.
+            </p>
             <p className="mt-4 text-body-sm text-bone-400">
               A private membership, by application. Opening first in Miami &amp; South Florida.
             </p>
@@ -49,7 +51,10 @@ export function SiteFooter() {
                 <ul className="mt-5 grid gap-3">
                   {col.links.map((l) => (
                     <li key={l.href}>
-                      <Link href={l.href} className="text-body-sm text-bone-300 transition-colors hover:text-bone-50">
+                      <Link
+                        href={l.href}
+                        className="text-body-sm text-bone-300 transition-colors hover:text-bone-50"
+                      >
                         {l.label}
                       </Link>
                     </li>

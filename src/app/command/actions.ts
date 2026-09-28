@@ -26,13 +26,32 @@ import type { FormState } from "@/lib/forms/state";
 
 function failure(error: unknown, values?: Record<string, string>): FormState {
   if (error instanceof DomainError) return { status: "error", message: error.message, values };
-  if (error instanceof NotFoundError) return { status: "error", message: "That record could not be found.", values };
-  if (error instanceof ForbiddenError) return { status: "error", message: "Your role does not permit this.", values };
+  if (error instanceof NotFoundError)
+    return { status: "error", message: "That record could not be found.", values };
+  if (error instanceof ForbiddenError)
+    return { status: "error", message: "Your role does not permit this.", values };
   console.error(error);
   return { status: "error", message: "Something went wrong. Please try again.", values };
 }
 
 const uuid = z.uuid();
+
+type Staff = Awaited<ReturnType<typeof staffRepository>>;
+
+/**
+ * Presenting an option moves the request to "options presented", walking the
+ * lifecycle rather than jumping it: a new request passes through sourcing.
+ */
+async function advanceToOptionsReady(repo: Staff, requestId: string): Promise<void> {
+  const { request } = await repo.getRequest(requestId);
+  let status = request.status;
+  if (status === "received" || status === "clarifying") {
+    await repo.updateRequest(requestId, { status: "sourcing" });
+    status = "sourcing";
+  }
+  if (canTransition(status, "options_ready"))
+    await repo.updateRequest(requestId, { status: "options_ready" });
+}
 
 export async function updateRequestAction(_prev: FormState, form: FormData): Promise<FormState> {
   const identity = await requireStaff();
@@ -77,12 +96,7 @@ export async function createOptionAction(_prev: FormState, form: FormData): Prom
   try {
     const repo = await staffRepository(identity);
     await repo.createOption(parsed.data.requestId, parsed.data);
-    if (parsed.data.present) {
-      const detail = await repo.getRequest(parsed.data.requestId);
-      if (canTransition(detail.request.status, "options_ready")) {
-        await repo.updateRequest(parsed.data.requestId, { status: "options_ready" });
-      }
-    }
+    if (parsed.data.present) await advanceToOptionsReady(repo, parsed.data.requestId);
   } catch (error) {
     return failure(error, values);
   }
@@ -97,10 +111,7 @@ export async function setOptionStatusAction(form: FormData): Promise<void> {
   const status = z.enum(["presented", "withdrawn"]).parse(form.get("status"));
   const repo = await staffRepository(identity);
   await repo.setOptionStatus(optionId, status);
-  if (status === "presented") {
-    const detail = await repo.getRequest(requestId);
-    if (canTransition(detail.request.status, "options_ready")) await repo.updateRequest(requestId, { status: "options_ready" });
-  }
+  if (status === "presented") await advanceToOptionsReady(repo, requestId);
   revalidatePath(`/command/requests/${requestId}`);
 }
 
@@ -134,7 +145,9 @@ export async function applyIntentAction(form: FormData): Promise<void> {
   if (!event || !intent) throw new DomainError("Suggestion not found.");
   const pub = await publicRepository();
   const categories = pub ? await pub.listCategories() : [];
-  const validCategory = categories.some((c) => c.slug === intent.category) ? intent.category : undefined;
+  const validCategory = categories.some((c) => c.slug === intent.category)
+    ? intent.category
+    : undefined;
   // Only fields a person has chosen to apply; nothing reaches the member here.
   await repo.updateRequest(requestId, {
     title: form.get("applyTitle") === "on" ? intent.title.slice(0, 200) : undefined,
@@ -148,11 +161,19 @@ export async function applyIntentAction(form: FormData): Promise<void> {
   revalidatePath(`/command/requests/${requestId}`);
 }
 
-export async function sendClarifyingQuestionAction(_prev: FormState, form: FormData): Promise<FormState> {
+export async function sendClarifyingQuestionAction(
+  _prev: FormState,
+  form: FormData,
+): Promise<FormState> {
   const identity = await requireStaff();
   const values = formToObject(form);
   const parsed = z
-    .object({ requestId: z.uuid(), eventId: z.uuid(), original: z.string(), body: z.string().trim().min(3).max(2000) })
+    .object({
+      requestId: z.uuid(),
+      eventId: z.uuid(),
+      original: z.string(),
+      body: z.string().trim().min(3).max(2000),
+    })
     .safeParse(values);
   if (!parsed.success) return { status: "error", fieldErrors: fieldErrors(parsed.error), values };
   try {
@@ -164,7 +185,11 @@ export async function sendClarifyingQuestionAction(_prev: FormState, form: FormD
     }
     const edited = parsed.data.body.trim() !== parsed.data.original.trim();
     await repo.reviewAiEvent(parsed.data.eventId, edited ? "edited" : "accepted");
-    await track("ai.reviewed", { outcome: edited ? "edited" : "accepted", kind: "clarification" }, identity.userId);
+    await track(
+      "ai.reviewed",
+      { outcome: edited ? "edited" : "accepted", kind: "clarification" },
+      identity.userId,
+    );
   } catch (error) {
     return failure(error, values);
   }
@@ -194,7 +219,13 @@ export async function summarizeRequestAction(form: FormData): Promise<void> {
     `Options:\n${d.options.map((o) => `- ${o.title} [${o.status}]`).join("\n") || "- none"}`,
     `Messages:\n${d.messages.map((m) => `[${m.visibility}] ${m.authorKind} ${m.authorName}: ${m.body}`).join("\n")}`,
   ].join("\n\n");
-  const event = await summarize({ kind: "request", subjectId: requestId, memberId: d.member.id, requestId, records });
+  const event = await summarize({
+    kind: "request",
+    subjectId: requestId,
+    memberId: d.member.id,
+    requestId,
+    records,
+  });
   if (event) await repo.recordAiEvent(event);
   revalidatePath(`/command/requests/${requestId}`);
 }
@@ -212,7 +243,13 @@ export async function summarizeMemberAction(form: FormData): Promise<void> {
     `Requests:\n${m.requests.map((r) => `- ${r.reference} ${r.title} [${r.status}] ${r.createdAt.slice(0, 10)}`).join("\n") || "- none"}`,
     `Journeys:\n${m.journeys.map((j) => `- ${j.title} [${j.status}] ${j.startsOn ?? ""}–${j.endsOn ?? ""}`).join("\n") || "- none"}`,
   ].join("\n\n");
-  const event = await summarize({ kind: "member", subjectId: memberId, memberId, requestId: null, records });
+  const event = await summarize({
+    kind: "member",
+    subjectId: memberId,
+    memberId,
+    requestId: null,
+    records,
+  });
   if (event) await repo.recordAiEvent(event);
   revalidatePath(`/command/members/${memberId}`);
 }
@@ -238,13 +275,20 @@ export async function assignOwnerAction(form: FormData): Promise<void> {
   revalidatePath(`/command/members/${memberId}`);
 }
 
-export async function addMemberPreferenceAction(_prev: FormState, form: FormData): Promise<FormState> {
+export async function addMemberPreferenceAction(
+  _prev: FormState,
+  form: FormData,
+): Promise<FormState> {
   const identity = await requireStaff();
   const values = formToObject(form);
   const memberId = uuid.safeParse(values.memberId);
   const parsed = preferenceSchema.safeParse(values);
   if (!memberId.success || !parsed.success) {
-    return { status: "error", fieldErrors: parsed.success ? {} : fieldErrors(parsed.error), values };
+    return {
+      status: "error",
+      fieldErrors: parsed.success ? {} : fieldErrors(parsed.error),
+      values,
+    };
   }
   try {
     const repo = await staffRepository(identity);
@@ -258,7 +302,10 @@ export async function addMemberPreferenceAction(_prev: FormState, form: FormData
 
 /* ------------------------------ Applications ------------------------------ */
 
-export async function decideApplicationAction(_prev: FormState, form: FormData): Promise<FormState> {
+export async function decideApplicationAction(
+  _prev: FormState,
+  form: FormData,
+): Promise<FormState> {
   const identity = await requireStaff();
   const values = formToObject(form);
   const parsed = applicationDecisionSchema.safeParse(values);

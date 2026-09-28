@@ -16,13 +16,19 @@ export function ConciergeAvatar({
   ring?: boolean;
   className?: string;
 }) {
-  const sizes = { sm: "size-7 text-[0.625rem]", md: "size-10 text-caption", lg: "size-14 text-body-sm" };
+  const sizes = {
+    sm: "size-7 text-[0.625rem]",
+    md: "size-10 text-caption",
+    lg: "size-14 text-body-sm",
+  };
   return (
     <span
       aria-hidden
       className={cn(
-        "inline-flex shrink-0 select-none items-center justify-center rounded-full bg-ink-750 font-medium tracking-[0.08em] text-bone-200",
-        ring ? "shadow-[0_0_0_1px_var(--color-ink-950),0_0_0_2px_var(--color-sable-500)]" : "shadow-[inset_0_0_0_1px_var(--line)]",
+        "inline-flex shrink-0 items-center justify-center rounded-full bg-ink-750 font-medium tracking-[0.08em] text-bone-200 select-none",
+        ring
+          ? "shadow-[0_0_0_1px_var(--color-ink-950),0_0_0_2px_var(--color-sable-500)]"
+          : "shadow-[inset_0_0_0_1px_var(--line)]",
         sizes[size],
         className,
       )}

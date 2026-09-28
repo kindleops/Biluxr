@@ -1,4 +1,10 @@
-import type { RequestOption, RequestPriority, RequestStatus, ServiceLevelTarget, ServiceRequest } from "./types";
+import type {
+  RequestOption,
+  RequestPriority,
+  RequestStatus,
+  ServiceLevelTarget,
+  ServiceRequest,
+} from "./types";
 
 /**
  * Request lifecycle. Every status change in the product passes through
@@ -60,7 +66,10 @@ export const REQUEST_STATUS_PRESENTATION: Record<RequestStatus, StatusPresentati
  * an option but staff have not yet confirmed it with the provider, we say so
  * rather than claiming a confirmation.
  */
-export function memberStatusLabel(status: RequestStatus, options: readonly RequestOption[] = []): string {
+export function memberStatusLabel(
+  status: RequestStatus,
+  options: readonly RequestOption[] = [],
+): string {
   if (status === "options_ready" && options.some((o) => o.status === "accepted")) {
     return "Securing your choice";
   }
@@ -131,7 +140,9 @@ export function queueOrder(a: ServiceRequest, b: ServiceRequest): number {
   const awaiting = (r: ServiceRequest) => (r.firstRespondedAt ? 1 : 0);
   return (
     awaiting(a) - awaiting(b) ||
-    (a.firstRespondedAt ? 0 : (a.firstResponseDueAt ?? "9999").localeCompare(b.firstResponseDueAt ?? "9999")) ||
+    (a.firstRespondedAt
+      ? 0
+      : (a.firstResponseDueAt ?? "9999").localeCompare(b.firstResponseDueAt ?? "9999")) ||
     weight[a.priority] - weight[b.priority] ||
     b.updatedAt.localeCompare(a.updatedAt)
   );

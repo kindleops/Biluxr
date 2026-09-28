@@ -38,7 +38,7 @@ export function EditorialHeading({
 }
 
 export function Accent({ children }: { children: ReactNode }) {
-  return <em className="font-display italic font-light">{children}</em>;
+  return <em className="font-display font-light italic">{children}</em>;
 }
 
 export function Lede({ children, className }: { children: ReactNode; className?: string }) {
@@ -46,5 +46,7 @@ export function Lede({ children, className }: { children: ReactNode; className?:
 }
 
 export function Mono({ children, className }: { children: ReactNode; className?: string }) {
-  return <span className={cn("font-mono text-[0.8em] tracking-[0.02em]", className)}>{children}</span>;
+  return (
+    <span className={cn("font-mono text-[0.8em] tracking-[0.02em]", className)}>{children}</span>
+  );
 }

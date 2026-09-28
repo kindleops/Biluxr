@@ -9,7 +9,9 @@ export const metadata = { title: "New provider" };
 export default async function NewProviderPage() {
   await requireStaff();
   const pub = await publicRepository();
-  const [markets, categories] = pub ? await Promise.all([pub.listMarkets(), pub.listCategories()]) : [[], []];
+  const [markets, categories] = pub
+    ? await Promise.all([pub.listMarkets(), pub.listCategories()])
+    : [[], []];
   return (
     <CommandPage
       eyebrow={

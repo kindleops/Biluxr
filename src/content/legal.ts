@@ -126,7 +126,9 @@ export const LEGAL_DOCUMENTS: LegalDocument[] = [
       },
       {
         heading: "Reporting a concern",
-        body: ["If you believe you have found a security issue, please contact us through the contact page and mark it 'Security'."],
+        body: [
+          "If you believe you have found a security issue, please contact us through the contact page and mark it 'Security'.",
+        ],
       },
     ],
   },
@@ -156,7 +158,9 @@ export const LEGAL_DOCUMENTS: LegalDocument[] = [
       },
       {
         heading: "Ending membership",
-        body: ["Either party may end membership as described in the agreement provided at activation."],
+        body: [
+          "Either party may end membership as described in the agreement provided at activation.",
+        ],
       },
     ],
   },

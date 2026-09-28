@@ -14,7 +14,8 @@ z.config({
     if (issue.code === "too_small" && issue.origin === "string") {
       return Number(issue.minimum) <= 1 ? "Required." : "Please add a little more detail.";
     }
-    if (issue.code === "too_big" && issue.origin === "string") return "That is a little long — please shorten it.";
+    if (issue.code === "too_big" && issue.origin === "string")
+      return "That is a little long — please shorten it.";
     if (issue.code === "invalid_type" && issue.input === undefined) return "Required.";
     if (issue.code === "invalid_value") return "Please choose one of the options.";
     return undefined;
@@ -35,7 +36,11 @@ const optionalTrimmed = (max: number) =>
     .optional()
     .transform((v) => (v && v.length > 0 ? v : null));
 
-const email = z.string().trim().toLowerCase().pipe(z.email({ message: "Please enter a valid email address." }));
+const email = z
+  .string()
+  .trim()
+  .toLowerCase()
+  .pipe(z.email({ message: "Please enter a valid email address." }));
 
 export const applicationSchema = z.object({
   fullName: trimmed(2, 160),

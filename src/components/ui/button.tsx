@@ -44,7 +44,12 @@ export interface ButtonStyleProps {
   className?: string;
 }
 
-export function buttonStyles({ variant = "primary", size = "md", tone = "dark", className }: ButtonStyleProps = {}) {
+export function buttonStyles({
+  variant = "primary",
+  size = "md",
+  tone = "dark",
+  className,
+}: ButtonStyleProps = {}) {
   const sizing = variant === "quiet" ? "text-body-sm" : sizes[size];
   return cn(base, sizing, variants[tone][variant], className);
 }
@@ -96,7 +101,15 @@ export function Button({
 export type LinkButtonProps = Omit<ComponentProps<typeof Link>, "className"> &
   ButtonStyleProps & { trailing?: ReactNode };
 
-export function LinkButton({ variant, size, tone, className, trailing, children, ...rest }: LinkButtonProps) {
+export function LinkButton({
+  variant,
+  size,
+  tone,
+  className,
+  trailing,
+  children,
+  ...rest
+}: LinkButtonProps) {
   return (
     <Link className={buttonStyles({ variant, size, tone, className })} {...rest}>
       <span>{children}</span>
@@ -112,7 +125,7 @@ export function Arrow({ className }: { className?: string }) {
       viewBox="0 0 16 16"
       aria-hidden
       className={cn(
-        "size-3.5 transition-transform duration-base ease-settle group-hover/btn:translate-x-0.5",
+        "duration-base size-3.5 transition-transform ease-settle group-hover/btn:translate-x-0.5",
         className,
       )}
       fill="none"

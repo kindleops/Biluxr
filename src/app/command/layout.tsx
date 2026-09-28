@@ -12,10 +12,18 @@ export const metadata: Metadata = {
 export default async function CommandLayout({ children }: { children: React.ReactNode }) {
   const identity = await requireStaff();
   const repo = await staffRepository(identity);
-  const [staff, queue, applications] = await Promise.all([repo.listStaff(), repo.queue({ status: "open" }), repo.listApplications()]);
+  const [staff, queue, applications] = await Promise.all([
+    repo.listStaff(),
+    repo.queue({ status: "open" }),
+    repo.listApplications(),
+  ]);
   const me = staff.find((s) => s.id === identity.userId);
-  const awaitingResponse = queue.filter((r) => !r.firstRespondedAt || r.status === "received").length;
-  const pendingApps = applications.filter((a) => ["submitted", "in_review", "conversation"].includes(a.status)).length;
+  const awaitingResponse = queue.filter(
+    (r) => !r.firstRespondedAt || r.status === "received",
+  ).length;
+  const pendingApps = applications.filter((a) =>
+    ["submitted", "in_review", "conversation"].includes(a.status),
+  ).length;
 
   return (
     <div data-density="compact" className="flex min-h-dvh bg-ink-950 lg:flex-row">

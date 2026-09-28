@@ -61,31 +61,71 @@ export type MessageAuthorKind = (typeof MESSAGE_AUTHOR_KINDS)[number];
 export const MESSAGE_VISIBILITIES = ["member", "internal"] as const;
 export type MessageVisibility = (typeof MESSAGE_VISIBILITIES)[number];
 
-export const OPTION_STATUSES = ["draft", "presented", "accepted", "declined", "expired", "withdrawn"] as const;
+export const OPTION_STATUSES = [
+  "draft",
+  "presented",
+  "accepted",
+  "declined",
+  "expired",
+  "withdrawn",
+] as const;
 export type OptionStatus = (typeof OPTION_STATUSES)[number];
 
-export const JOURNEY_STATUSES = ["planning", "confirmed", "underway", "completed", "cancelled"] as const;
+export const JOURNEY_STATUSES = [
+  "planning",
+  "confirmed",
+  "underway",
+  "completed",
+  "cancelled",
+] as const;
 export type JourneyStatus = (typeof JOURNEY_STATUSES)[number];
 
-export const JOURNEY_ITEM_KINDS = ["flight", "stay", "dining", "transfer", "experience", "event", "note"] as const;
+export const JOURNEY_ITEM_KINDS = [
+  "flight",
+  "stay",
+  "dining",
+  "transfer",
+  "experience",
+  "event",
+  "note",
+] as const;
 export type JourneyItemKind = (typeof JOURNEY_ITEM_KINDS)[number];
 
 export const JOURNEY_ITEM_STATUSES = ["tentative", "confirmed", "cancelled"] as const;
 export type JourneyItemStatus = (typeof JOURNEY_ITEM_STATUSES)[number];
 
-export const PROVIDER_STATUSES = ["prospect", "vetting", "approved", "preferred", "paused", "removed"] as const;
+export const PROVIDER_STATUSES = [
+  "prospect",
+  "vetting",
+  "approved",
+  "preferred",
+  "paused",
+  "removed",
+] as const;
 export type ProviderStatus = (typeof PROVIDER_STATUSES)[number];
 
 export const ACCESS_OFFER_STATUSES = ["draft", "published", "archived"] as const;
 export type AccessOfferStatus = (typeof ACCESS_OFFER_STATUSES)[number];
 
-export const CARD_STATUSES = ["not_issued", "requested", "in_production", "issued", "suspended"] as const;
+export const CARD_STATUSES = [
+  "not_issued",
+  "requested",
+  "in_production",
+  "issued",
+  "suspended",
+] as const;
 export type CardStatus = (typeof CARD_STATUSES)[number];
 
 export const AI_EVENT_KINDS = ["intent_extraction", "clarification", "summary"] as const;
 export type AiEventKind = (typeof AI_EVENT_KINDS)[number];
 
-export const AI_REVIEW_STATUSES = ["proposed", "accepted", "edited", "dismissed", "failed"] as const;
+export const AI_REVIEW_STATUSES = [
+  "proposed",
+  "accepted",
+  "edited",
+  "dismissed",
+  "failed",
+] as const;
 export type AiReviewStatus = (typeof AI_REVIEW_STATUSES)[number];
 
 export const ONBOARDING_STATUSES = [
@@ -268,7 +308,13 @@ export interface RequestOption {
 export interface RequestEvent {
   id: UUID;
   requestId: UUID;
-  kind: "status_changed" | "assigned" | "option_presented" | "option_accepted" | "option_declined" | "created";
+  kind:
+    | "status_changed"
+    | "assigned"
+    | "option_presented"
+    | "option_accepted"
+    | "option_declined"
+    | "created";
   fromStatus: RequestStatus | null;
   toStatus: RequestStatus | null;
   actorId: UUID | null;

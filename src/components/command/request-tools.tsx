@@ -1,6 +1,7 @@
 "use client";
 
-import { useActionState, useEffect, useRef, useState } from "react";
+import { useActionState, useState } from "react";
+import { useActionResult } from "@/lib/forms/use-action-result";
 import {
   createOptionAction,
   postStaffMessageAction,
@@ -39,7 +40,11 @@ export function RequestControls({
   return (
     <form action={action} className="grid gap-4">
       <input type="hidden" name="requestId" value={requestId} />
-      <Field label="Status" htmlFor="status" hint={next.length === 0 ? "This request is closed." : "Only valid next steps are offered."}>
+      <Field
+        label="Status"
+        htmlFor="status"
+        hint={next.length === 0 ? "This request is closed." : "Only valid next steps are offered."}
+      >
         <Select id="status" name="status" defaultValue={status} disabled={next.length === 0} dense>
           <option value={status}>{REQUEST_STATUS_PRESENTATION[status].staff} (current)</option>
           {next.map((s) => (
@@ -78,7 +83,9 @@ export function RequestControls({
           </Select>
         </Field>
       </div>
-      {state.status === "error" && state.message && <FormMessage kind="error">{state.message}</FormMessage>}
+      {state.status === "error" && state.message && (
+        <FormMessage kind="error">{state.message}</FormMessage>
+      )}
       <div className="flex items-center justify-end gap-3">
         {state.status === "success" && (
           <span role="status" className="text-caption text-status-moss">
@@ -99,9 +106,9 @@ export function StaffComposer({ requestId, closed }: { requestId: string; closed
   const [state, action, pending] = useActionState(postStaffMessageAction, IDLE);
   const [visibility, setVisibility] = useState<"member" | "internal">("member");
   const [value, setValue] = useState("");
-  useEffect(() => {
-    if (state.status === "success") setValue("");
-  }, [state]);
+  useActionResult(state, (s) => {
+    if (s.status === "success") setValue("");
+  });
   const internal = visibility === "internal";
   return (
     <form
@@ -126,7 +133,11 @@ export function StaffComposer({ requestId, closed }: { requestId: string; closed
             disabled={closed && v === "member"}
             className={cn(
               "rounded-xs px-2.5 py-1 text-caption transition-colors disabled:opacity-40",
-              visibility === v ? (v === "internal" ? "bg-status-amber/15 text-status-amber" : "bg-white/10 text-bone-50") : "text-bone-500 hover:text-bone-200",
+              visibility === v
+                ? v === "internal"
+                  ? "bg-status-amber/15 text-status-amber"
+                  : "bg-white/10 text-bone-50"
+                : "text-bone-500 hover:text-bone-200",
             )}
           >
             {v === "member" ? "Reply to member" : "Internal note"}
@@ -143,10 +154,14 @@ export function StaffComposer({ requestId, closed }: { requestId: string; closed
         onChange={(e) => setValue(e.target.value)}
         rows={3}
         className="min-h-20 bg-transparent px-1 text-body-sm shadow-none hover:shadow-none focus:shadow-none"
-        placeholder={internal ? "Visible to the team only…" : "Write to the member in Biluxr's voice…"}
+        placeholder={
+          internal ? "Visible to the team only…" : "Write to the member in Biluxr's voice…"
+        }
       />
       <div className="mt-2 flex items-center justify-between gap-3">
-        <p className="text-caption text-bone-500">{internal ? "Never shown to the member." : "The member will see this immediately."}</p>
+        <p className="text-caption text-bone-500">
+          {internal ? "Never shown to the member." : "The member will see this immediately."}
+        </p>
         <Button type="submit" size="sm" pending={pending} disabled={!value.trim()}>
           {internal ? "Add note" : "Send"}
         </Button>
@@ -162,16 +177,22 @@ export function StaffComposer({ requestId, closed }: { requestId: string; closed
 
 /* --------------------------------- Options --------------------------------- */
 
-export function OptionBuilder({ requestId, providers }: { requestId: string; providers: Pick<Provider, "id" | "name" | "status">[] }) {
+export function OptionBuilder({
+  requestId,
+  providers,
+}: {
+  requestId: string;
+  providers: Pick<Provider, "id" | "name" | "status">[];
+}) {
   const [open, setOpen] = useState(false);
   const [state, action, pending] = useActionState(createOptionAction, IDLE);
-  const formRef = useRef<HTMLFormElement>(null);
-  useEffect(() => {
-    if (state.status === "success") {
-      formRef.current?.reset();
+  const [formKey, setFormKey] = useState(0);
+  useActionResult(state, (s) => {
+    if (s.status === "success") {
+      setFormKey((k) => k + 1);
       setOpen(false);
     }
-  }, [state]);
+  });
   const e = state.fieldErrors ?? {};
   return (
     <>
@@ -179,24 +200,52 @@ export function OptionBuilder({ requestId, providers }: { requestId: string; pro
         New option
       </Button>
       <Sheet open={open} onClose={() => setOpen(false)} title="New option">
-        <form ref={formRef} action={action} className="grid gap-5">
+        <form key={formKey} action={action} className="grid gap-5">
           <input type="hidden" name="requestId" value={requestId} />
-          {state.status === "error" && state.message && <FormMessage kind="error">{state.message}</FormMessage>}
-          <Field label="Title" htmlFor="opt-title" hint="What the member will see first." error={e.title}>
+          {state.status === "error" && state.message && (
+            <FormMessage kind="error">{state.message}</FormMessage>
+          )}
+          <Field
+            label="Title"
+            htmlFor="opt-title"
+            hint="What the member will see first."
+            error={e.title}
+          >
             <Input id="opt-title" name="title" invalid={!!e.title} />
           </Field>
-          <Field label="Why this" htmlFor="opt-summary" hint="Two or three sentences. The reason, not the brochure.">
+          <Field
+            label="Why this"
+            htmlFor="opt-summary"
+            hint="Two or three sentences. The reason, not the brochure."
+          >
             <Textarea id="opt-summary" name="summary" rows={4} className="min-h-28" />
           </Field>
           <div className="grid grid-cols-[1fr_6rem] gap-3">
             <Field label="Price" htmlFor="opt-price" optional error={e.priceMajor}>
-              <Input id="opt-price" name="priceMajor" inputMode="decimal" placeholder="Leave blank if on request" invalid={!!e.priceMajor} />
+              <Input
+                id="opt-price"
+                name="priceMajor"
+                inputMode="decimal"
+                placeholder="Leave blank if on request"
+                invalid={!!e.priceMajor}
+              />
             </Field>
             <Field label="Currency" htmlFor="opt-currency">
-              <Input id="opt-currency" name="currency" defaultValue="USD" maxLength={3} className="uppercase" />
+              <Input
+                id="opt-currency"
+                name="currency"
+                defaultValue="USD"
+                maxLength={3}
+                className="uppercase"
+              />
             </Field>
           </div>
-          <Field label="Provider" htmlFor="opt-provider" optional hint="Internal only — never shown to the member.">
+          <Field
+            label="Provider"
+            htmlFor="opt-provider"
+            optional
+            hint="Internal only — never shown to the member."
+          >
             <Select id="opt-provider" name="providerId" defaultValue="">
               <option value="">None / not listed</option>
               {providers.map((p) => (
@@ -209,7 +258,11 @@ export function OptionBuilder({ requestId, providers }: { requestId: string; pro
           <Field label="Held until" htmlFor="opt-expires" optional>
             <Input id="opt-expires" name="expiresAt" type="datetime-local" />
           </Field>
-          <Checkbox name="present" label="Present to the member now (moves the request to Options presented)" defaultChecked />
+          <Checkbox
+            name="present"
+            label="Present to the member now (moves the request to Options presented)"
+            defaultChecked
+          />
           <Button type="submit" pending={pending} pendingLabel="Saving">
             Save option
           </Button>
@@ -221,7 +274,15 @@ export function OptionBuilder({ requestId, providers }: { requestId: string; pro
 
 /* ------------------------------ AI clarifying ------------------------------ */
 
-export function ClarifyingQuestion({ requestId, eventId, question }: { requestId: string; eventId: string; question: string }) {
+export function ClarifyingQuestion({
+  requestId,
+  eventId,
+  question,
+}: {
+  requestId: string;
+  eventId: string;
+  question: string;
+}) {
   const [state, action, pending] = useActionState(sendClarifyingQuestionAction, IDLE);
   const [editing, setEditing] = useState(false);
   if (state.status === "success") {
@@ -233,14 +294,24 @@ export function ClarifyingQuestion({ requestId, eventId, question }: { requestId
       <input type="hidden" name="eventId" value={eventId} />
       <input type="hidden" name="original" value={question} />
       {editing ? (
-        <Textarea name="body" defaultValue={question} rows={3} className="min-h-20 text-body-sm" aria-label="Edit question" />
+        <Textarea
+          name="body"
+          defaultValue={question}
+          rows={3}
+          className="min-h-20 text-body-sm"
+          aria-label="Edit question"
+        />
       ) : (
         <>
           <input type="hidden" name="body" value={question} />
-          <p className="rounded-md bg-white/[0.03] px-3 py-2 text-body-sm text-bone-200">“{question}”</p>
+          <p className="rounded-md bg-white/[0.03] px-3 py-2 text-body-sm text-bone-200">
+            “{question}”
+          </p>
         </>
       )}
-      {state.status === "error" && state.message && <p className="text-caption text-status-clay">{state.message}</p>}
+      {state.status === "error" && state.message && (
+        <p className="text-caption text-status-clay">{state.message}</p>
+      )}
       <div className="flex gap-2">
         <Button type="button" size="sm" variant="ghost" onClick={() => setEditing((v) => !v)}>
           {editing ? "Preview" : "Edit"}

@@ -25,10 +25,16 @@ import type { FormState } from "@/lib/forms/state";
 
 function failure(error: unknown, values?: Record<string, string>): FormState {
   if (error instanceof DomainError) return { status: "error", message: error.message, values };
-  if (error instanceof NotFoundError) return { status: "error", message: "That could not be found.", values };
-  if (error instanceof ForbiddenError) return { status: "error", message: "That is not available to you.", values };
+  if (error instanceof NotFoundError)
+    return { status: "error", message: "That could not be found.", values };
+  if (error instanceof ForbiddenError)
+    return { status: "error", message: "That is not available to you.", values };
   console.error(error);
-  return { status: "error", message: "Something went wrong on our side. Please try again.", values };
+  return {
+    status: "error",
+    message: "Something went wrong on our side. Please try again.",
+    values,
+  };
 }
 
 export async function createRequestAction(_prev: FormState, form: FormData): Promise<FormState> {
@@ -40,7 +46,12 @@ export async function createRequestAction(_prev: FormState, form: FormData): Pro
     journeyId: values.journeyId || null,
   });
   if (!parsed.success) {
-    return { status: "error", fieldErrors: fieldErrors(parsed.error), message: "Tell us a little more.", values };
+    return {
+      status: "error",
+      fieldErrors: fieldErrors(parsed.error),
+      message: "Tell us a little more.",
+      values,
+    };
   }
   let requestId: string;
   try {
@@ -95,7 +106,11 @@ export async function respondToOptionAction(_prev: FormState, form: FormData): P
   try {
     const repo = await memberRepository(identity);
     await repo.respondToOption(parsed.data.optionId, parsed.data.decision);
-    await track(parsed.data.decision === "accept" ? "option.accepted" : "option.declined", {}, identity.userId);
+    await track(
+      parsed.data.decision === "accept" ? "option.accepted" : "option.declined",
+      {},
+      identity.userId,
+    );
   } catch (error) {
     return failure(error);
   }

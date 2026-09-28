@@ -12,19 +12,21 @@ export function Premise() {
     <PaperSurface className="relative">
       <div className="page-gutter content-max grid gap-14 py-28 sm:py-40 lg:grid-cols-[1fr_1fr] lg:gap-24">
         <div>
-          <p className="text-label text-ink-700/60">The premise</p>
+          <p className="text-label text-ink-700/75">The premise</p>
           <EditorialHeading as="h2" size="display" className="mt-8 text-ink-900">
             At a certain point, convenience <em className="italic">is</em> the luxury.
           </EditorialHeading>
         </div>
         <div className="grid content-end gap-6 text-lede text-pretty text-ink-800/85 lg:pt-40">
           <p>
-            Most people with complicated lives already have access. What they lack is a single place where it all comes
-            together — someone who remembers the details, knows the right people, and simply takes care of it.
+            Most people with complicated lives already have access. What they lack is a single place
+            where it all comes together — someone who remembers the details, knows the right people,
+            and simply takes care of it.
           </p>
           <p>
-            Biluxr is that relationship. You tell us what you need, in your own words, whenever it occurs to you. We
-            return with a considered choice, arrange it, and carry what we learn into everything that follows.
+            Biluxr is that relationship. You tell us what you need, in your own words, whenever it
+            occurs to you. We return with a considered choice, arrange it, and carry what we learn
+            into everything that follows.
           </p>
           <p className="text-body text-ink-700/70">No forms. No hold music. No starting over.</p>
         </div>
@@ -71,8 +73,13 @@ export function HowItMoves() {
         <div className="mt-20 grid gap-16 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)] lg:gap-24">
           <ol className="grid content-start gap-12">
             {STEPS.map((s) => (
-              <li key={s.n} className="grid grid-cols-[3rem_1fr] gap-4 border-t border-white/[0.08] pt-6">
-                <span className="font-display text-title font-light text-bone-500 italic">{s.n}</span>
+              <li
+                key={s.n}
+                className="grid grid-cols-[3rem_1fr] gap-4 border-t border-white/[0.08] pt-6"
+              >
+                <span className="font-display text-title font-light text-bone-500 italic">
+                  {s.n}
+                </span>
                 <div>
                   <h3 className="font-display text-title font-light text-bone-100">{s.title}</h3>
                   <p className="mt-3 max-w-md text-body text-bone-400">{s.body}</p>
@@ -99,12 +106,12 @@ function Exchange() {
       </div>
       <div className="grid gap-5 pt-6">
         <Bubble side="member" who="You" time="9:12">
-          Paris next Thursday, four nights. Somewhere quiet on the Left Bank — and a table after the gallery opening on
-          Friday.
+          Paris next Thursday, four nights. Somewhere quiet on the Left Bank — and a table after the
+          gallery opening on Friday.
         </Bubble>
         <Bubble side="biluxr" who="Isabel" time="9:31">
-          Lovely. I&apos;ll hold two stays and a table for four after the opening. You&apos;ll have options by this
-          evening — and yes, a high floor, away from the lift.
+          Lovely. I&apos;ll hold two stays and a table for four after the opening. You&apos;ll have
+          options by this evening — and yes, a high floor, away from the lift.
         </Bubble>
         <div className="ml-auto w-full max-w-[26rem] rounded-lg bg-ink-850 p-4 shadow-[inset_0_0_0_1px_var(--line)]">
           <div className="flex items-baseline justify-between gap-4">
@@ -186,7 +193,7 @@ export function ServiceIndex() {
       <div className="page-gutter content-max py-28 sm:py-40">
         <div className="grid gap-10 lg:grid-cols-[1fr_2fr]">
           <div>
-            <p className="text-label text-ink-700/60">What it covers</p>
+            <p className="text-label text-ink-700/75">What it covers</p>
             <EditorialHeading as="h2" size="headline" className="mt-6 max-w-[12ch] text-ink-900">
               Anything that moves your life forward.
             </EditorialHeading>
@@ -197,7 +204,7 @@ export function ServiceIndex() {
                 key={title}
                 className="group grid gap-1 border-b border-(--line-paper) py-6 sm:grid-cols-[1fr_1.2fr] sm:items-baseline sm:gap-8"
               >
-                <span className="font-display text-[clamp(1.6rem,1.2rem+1.4vw,2.4rem)] leading-tight font-light tracking-[-0.02em] text-ink-900 transition-transform duration-slow ease-settle group-hover:translate-x-1.5">
+                <span className="duration-slow font-display text-[clamp(1.6rem,1.2rem+1.4vw,2.4rem)] leading-tight font-light tracking-[-0.02em] text-ink-900 transition-transform ease-settle group-hover:translate-x-1.5">
                   {title}
                 </span>
                 <span className="text-body text-ink-700/75">{line}</span>
@@ -232,10 +239,13 @@ export function Remembered() {
         </EditorialHeading>
         <div>
           <p className="max-w-md text-lede text-bone-300">
-            Every request teaches us something. Seats, rooms, allergies, the names of the people you travel with — said
-            once, carried forward, and always yours to see and change.
+            Every request teaches us something. Seats, rooms, allergies, the names of the people you
+            travel with — said once, carried forward, and always yours to see and change.
           </p>
-          <ul className="mt-10 flex flex-wrap gap-2.5" aria-label="Examples of remembered preferences">
+          <ul
+            className="mt-10 flex flex-wrap gap-2.5"
+            aria-label="Examples of remembered preferences"
+          >
             {REMEMBERED.map((r) => (
               <li
                 key={r}
@@ -265,20 +275,26 @@ export function Founding() {
             A small founding membership, beginning in Miami.
           </EditorialHeading>
           <p className="mx-auto mt-8 max-w-xl text-lede text-pretty text-bone-400">
-            We are opening deliberately — a limited number of members, served by people who know them. Applications are
-            read personally, and every one receives a reply.
+            We are opening deliberately — a limited number of members, served by people who know
+            them. Applications are read personally, and every one receives a reply.
           </p>
           <div className="mt-12 flex flex-col items-center justify-center gap-5 sm:flex-row sm:gap-8">
             <LinkButton href="/apply" size="lg" trailing={<Arrow />}>
               Apply for membership
             </LinkButton>
-            <Link href="/membership" className="text-body-sm text-bone-300 underline decoration-white/25 underline-offset-[6px] hover:decoration-white/60">
+            <Link
+              href="/membership"
+              className="text-body-sm text-bone-300 underline decoration-white/25 underline-offset-[6px] hover:decoration-white/60"
+            >
               What membership includes
             </Link>
           </div>
         </div>
       </div>
-      <div aria-hidden className="pointer-events-none absolute inset-x-0 bottom-[-55vmax] z-[1] mx-auto size-[110vmax] rounded-full shadow-[inset_0_0_0_1px_rgb(243_239_232/0.08)]" />
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-x-0 bottom-[-55vmax] z-[1] mx-auto size-[110vmax] rounded-full shadow-[inset_0_0_0_1px_rgb(243_239_232/0.08)]"
+      />
     </section>
   );
 }

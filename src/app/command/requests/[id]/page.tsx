@@ -37,10 +37,22 @@ export default async function StaffRequestPage({ params }: { params: Promise<{ i
   });
   const pub = await publicRepository();
   const categories = pub ? await pub.listCategories() : [];
-  const { request, member, membership, messages, options, events, aiEvents, staff, providers, preferences } = d;
+  const {
+    request,
+    member,
+    membership,
+    messages,
+    options,
+    events,
+    aiEvents,
+    staff,
+    providers,
+    preferences,
+  } = d;
   const p = REQUEST_STATUS_PRESENTATION[request.status];
   const tz = request.timezone ?? member.timezone;
-  const personName = (pid: string | null) => staff.find((s) => s.id === pid)?.name ?? (pid === member.id ? member.fullName : "System");
+  const personName = (pid: string | null) =>
+    staff.find((s) => s.id === pid)?.name ?? (pid === member.id ? member.fullName : "System");
 
   return (
     <div className="px-4 pt-6 pb-16 sm:px-8 lg:pt-8">
@@ -54,17 +66,26 @@ export default async function StaffRequestPage({ params }: { params: Promise<{ i
           <div className="flex flex-wrap items-center gap-x-4 gap-y-1">
             <StatusPill tone={p.tone}>{p.staff}</StatusPill>
             <span className="font-mono text-caption text-bone-500">{request.reference}</span>
-            <span className={cn("text-caption", request.priority === "standard" ? "text-bone-500" : "text-status-amber")}>
+            <span
+              className={cn(
+                "text-caption",
+                request.priority === "standard" ? "text-bone-500" : "text-status-amber",
+              )}
+            >
               {PRIORITY_LABEL[request.priority]}
             </span>
             <SlaBadge dueAt={request.firstResponseDueAt} respondedAt={request.firstRespondedAt} />
           </div>
-          <h1 className="mt-3 font-display text-[1.9rem] leading-tight font-light text-bone-50">{request.title}</h1>
+          <h1 className="mt-3 font-display text-[1.9rem] leading-tight font-light text-bone-50">
+            {request.title}
+          </h1>
           <p className="mt-1 text-body-sm text-bone-400">
             <Link href={`/command/members/${member.id}`} className="text-bone-200 hover:underline">
               {member.fullName}
             </Link>
-            {membership && <span className="font-mono text-bone-500"> · № {membership.memberNumber}</span>}
+            {membership && (
+              <span className="font-mono text-bone-500"> · № {membership.memberNumber}</span>
+            )}
             {membership?.isFounding && <span className="text-sable-400"> · Founding</span>}
             <span> · received {formatDateTime(request.createdAt, member.timezone)}</span>
           </p>
@@ -77,18 +98,31 @@ export default async function StaffRequestPage({ params }: { params: Promise<{ i
             <p className="text-body whitespace-pre-line text-bone-100">{request.brief}</p>
           </Panel>
 
-          <Panel title={`Options (${options.length})`} action={isOpen(request.status) ? <OptionBuilder requestId={request.id} providers={providers} /> : undefined}>
+          <Panel
+            title={`Options (${options.length})`}
+            action={
+              isOpen(request.status) ? (
+                <OptionBuilder requestId={request.id} providers={providers} />
+              ) : undefined
+            }
+          >
             {options.length === 0 ? (
-              <p className="text-body-sm text-bone-500">No options yet. Draft privately, then present when ready.</p>
+              <p className="text-body-sm text-bone-500">
+                No options yet. Draft privately, then present when ready.
+              </p>
             ) : (
               <ul className="grid gap-2">
                 {options.map((o) => (
-                  <li key={o.id} className="flex flex-wrap items-start justify-between gap-3 rounded-md bg-ink-950 px-4 py-3 shadow-[inset_0_0_0_1px_var(--line-subtle)]">
+                  <li
+                    key={o.id}
+                    className="flex flex-wrap items-start justify-between gap-3 rounded-md bg-ink-950 px-4 py-3 shadow-[inset_0_0_0_1px_var(--line-subtle)]"
+                  >
                     <div className="min-w-0">
                       <p className="text-body-sm text-bone-100">{o.title}</p>
                       <p className="mt-0.5 text-caption text-bone-500">
                         {o.price ? formatMoney(o.price) : "Price on request"}
-                        {o.providerId && ` · ${providers.find((pr) => pr.id === o.providerId)?.name ?? "Provider"}`}
+                        {o.providerId &&
+                          ` · ${providers.find((pr) => pr.id === o.providerId)?.name ?? "Provider"}`}
                         {o.expiresAt && ` · held until ${formatDateTime(o.expiresAt, tz)}`}
                       </p>
                     </div>
@@ -99,11 +133,21 @@ export default async function StaffRequestPage({ params }: { params: Promise<{ i
                           <input type="hidden" name="optionId" value={o.id} />
                           <input type="hidden" name="requestId" value={request.id} />
                           {o.status === "draft" && (
-                            <button type="submit" name="status" value="presented" className="rounded-xs px-2 py-1 text-caption text-bone-200 shadow-[inset_0_0_0_1px_var(--line)] hover:bg-white/5">
+                            <button
+                              type="submit"
+                              name="status"
+                              value="presented"
+                              className="rounded-xs px-2 py-1 text-caption text-bone-200 shadow-[inset_0_0_0_1px_var(--line)] hover:bg-white/5"
+                            >
                               Present
                             </button>
                           )}
-                          <button type="submit" name="status" value="withdrawn" className="rounded-xs px-2 py-1 text-caption text-bone-500 hover:text-status-clay">
+                          <button
+                            type="submit"
+                            name="status"
+                            value="withdrawn"
+                            className="rounded-xs px-2 py-1 text-caption text-bone-500 hover:text-status-clay"
+                          >
                             Withdraw
                           </button>
                         </form>
@@ -113,11 +157,14 @@ export default async function StaffRequestPage({ params }: { params: Promise<{ i
                 ))}
               </ul>
             )}
-            {options.some((o) => o.status === "accepted") && request.status !== "confirmed" && isOpen(request.status) && (
-              <p className="mt-3 text-caption text-status-amber">
-                The member has chosen an option. Confirm with the provider, then set the status to Confirmed.
-              </p>
-            )}
+            {options.some((o) => o.status === "accepted") &&
+              request.status !== "confirmed" &&
+              isOpen(request.status) && (
+                <p className="mt-3 text-caption text-status-amber">
+                  The member has chosen an option. Confirm with the provider, then set the status to
+                  Confirmed.
+                </p>
+              )}
           </Panel>
 
           <Panel title="Conversation">
@@ -135,9 +182,13 @@ export default async function StaffRequestPage({ params }: { params: Promise<{ i
                   )}
                 >
                   <p className="text-caption text-bone-500">
-                    {m.visibility === "internal" && <span className="mr-2 text-status-amber">Internal</span>}
-                    <span className="text-bone-300">{m.authorKind === "member" ? member.fullName : m.authorName || "Biluxr"}</span> ·{" "}
-                    {formatDateTime(m.createdAt, member.timezone)}
+                    {m.visibility === "internal" && (
+                      <span className="mr-2 text-status-amber">Internal</span>
+                    )}
+                    <span className="text-bone-300">
+                      {m.authorKind === "member" ? member.fullName : m.authorName || "Biluxr"}
+                    </span>{" "}
+                    · {formatDateTime(m.createdAt, member.timezone)}
                   </p>
                   <p className="mt-1.5 text-body-sm whitespace-pre-line text-bone-100">{m.body}</p>
                 </li>
@@ -163,10 +214,26 @@ export default async function StaffRequestPage({ params }: { params: Promise<{ i
           </Panel>
 
           <Panel title="Biluxr AI">
-            <AiPanel request={request} events={aiEvents} categories={categories} canAnalyze={aiAvailable() || isDemo()} canSummarize={aiAvailable()} />
+            <AiPanel
+              request={request}
+              events={aiEvents}
+              categories={categories}
+              canAnalyze={aiAvailable() || isDemo()}
+              canSummarize={aiAvailable()}
+            />
           </Panel>
 
-          <Panel title="Member context" action={<Link href={`/command/members/${member.id}`} className="text-caption text-bone-400 hover:text-bone-100">360 →</Link>}>
+          <Panel
+            title="Member context"
+            action={
+              <Link
+                href={`/command/members/${member.id}`}
+                className="text-caption text-bone-400 hover:text-bone-100"
+              >
+                360 →
+              </Link>
+            }
+          >
             <KeyValue
               items={[
                 ["Time zone", member.timezone],

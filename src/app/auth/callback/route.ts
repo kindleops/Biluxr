@@ -15,7 +15,11 @@ export async function GET(request: NextRequest) {
   if (error || !data.user) {
     return NextResponse.redirect(new URL("/login?state=expired", url.origin));
   }
-  const { data: profile } = await db.from("profiles").select("role").eq("id", data.user.id).maybeSingle();
+  const { data: profile } = await db
+    .from("profiles")
+    .select("role")
+    .eq("id", data.user.id)
+    .maybeSingle();
   const safe = next && next.startsWith("/") && !next.startsWith("//") ? next : null;
   const destination = safe ?? (profile ? homeFor(profile.role) : "/login?state=pending");
   return NextResponse.redirect(new URL(destination, url.origin));

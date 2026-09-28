@@ -1,9 +1,20 @@
 import "server-only";
 import type { AiEventInput } from "@/lib/data/repository";
-import type { MemberPreference, Profile, RequestCategory, ServiceRequest } from "@/lib/domain/types";
+import type {
+  MemberPreference,
+  Profile,
+  RequestCategory,
+  ServiceRequest,
+} from "@/lib/domain/types";
 import { dataMode } from "@/lib/env";
 import { heuristicIntent } from "./heuristic";
-import { INTENT_PROMPT_VERSION, INTENT_SYSTEM, SUMMARY_PROMPT_VERSION, SUMMARY_SYSTEM, intentUserPrompt } from "./prompts";
+import {
+  INTENT_PROMPT_VERSION,
+  INTENT_SYSTEM,
+  SUMMARY_PROMPT_VERSION,
+  SUMMARY_SYSTEM,
+  intentUserPrompt,
+} from "./prompts";
 import { intentSchema, summarySchema } from "./schemas";
 import { aiAvailable, runStructured } from "./service";
 
@@ -29,7 +40,10 @@ export async function analyzeRequest(input: {
   if (!aiAvailable()) {
     if (dataMode() !== "demo") return null; // Production without a key: no suggestion, no pretence.
     const started = Date.now();
-    const output = heuristicIntent(input.request.brief, input.categories.map((c) => c.slug));
+    const output = heuristicIntent(
+      input.request.brief,
+      input.categories.map((c) => c.slug),
+    );
     return {
       ...base,
       model: "demo-heuristic",
@@ -64,7 +78,16 @@ export async function analyzeRequest(input: {
   });
 
   if (!run.ok) {
-    return { ...base, model: run.model, output: {}, status: "failed", latencyMs: run.latencyMs, inputTokens: null, outputTokens: null, error: run.error };
+    return {
+      ...base,
+      model: run.model,
+      output: {},
+      status: "failed",
+      latencyMs: run.latencyMs,
+      inputTokens: null,
+      outputTokens: null,
+      error: run.error,
+    };
   }
   const clamped = {
     ...run.output,
@@ -104,7 +127,16 @@ export async function summarize(input: {
     promptVersion: SUMMARY_PROMPT_VERSION,
   };
   if (!run.ok) {
-    return { ...base, model: run.model, output: {}, status: "failed", latencyMs: run.latencyMs, inputTokens: null, outputTokens: null, error: run.error };
+    return {
+      ...base,
+      model: run.model,
+      output: {},
+      status: "failed",
+      latencyMs: run.latencyMs,
+      inputTokens: null,
+      outputTokens: null,
+      error: run.error,
+    };
   }
   return {
     ...base,

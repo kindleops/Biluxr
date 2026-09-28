@@ -5,7 +5,10 @@ export const DEMO_PERSONA_KEYS = ["member", "concierge", "admin"] as const;
 export type DemoPersona = (typeof DEMO_PERSONA_KEYS)[number];
 export const demoPersonaSchema = z.enum(DEMO_PERSONA_KEYS);
 
-export const DEMO_PERSONAS: Record<DemoPersona, { id: string; label: string; name: string; description: string }> = {
+export const DEMO_PERSONAS: Record<
+  DemoPersona,
+  { id: string; label: string; name: string; description: string }
+> = {
   member: {
     id: "0b7e1c2a-1f4d-4c8e-9a51-6d2f0e3a7b01",
     label: "Member",

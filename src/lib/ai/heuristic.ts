@@ -8,7 +8,17 @@ import type { Intent } from "./schemas";
  */
 
 const NUMBER_WORDS: Record<string, number> = {
-  one: 1, two: 2, three: 3, four: 4, five: 5, six: 6, seven: 7, eight: 8, nine: 9, ten: 10, twelve: 12,
+  one: 1,
+  two: 2,
+  three: 3,
+  four: 4,
+  five: 5,
+  six: 6,
+  seven: 7,
+  eight: 8,
+  nine: 9,
+  ten: 10,
+  twelve: 12,
 };
 
 const CATEGORY_HINTS: [string, RegExp][] = [
@@ -24,26 +34,36 @@ const CATEGORY_HINTS: [string, RegExp][] = [
 
 export function heuristicIntent(brief: string, categories: string[]): Intent {
   const text = brief.trim();
-  const category = CATEGORY_HINTS.find(([slug, re]) => categories.includes(slug) && re.test(text))?.[0] ?? "other";
-  const partyMatch = text.match(/\bfor (\d{1,3}|one|two|three|four|five|six|seven|eight|nine|ten|twelve)\b/i);
+  const category =
+    CATEGORY_HINTS.find(([slug, re]) => categories.includes(slug) && re.test(text))?.[0] ?? "other";
+  const partyMatch = text.match(
+    /\bfor (\d{1,3}|one|two|three|four|five|six|seven|eight|nine|ten|twelve)\b/i,
+  );
   const partySize = partyMatch?.[1]
     ? Number.isNaN(Number(partyMatch[1]))
       ? (NUMBER_WORDS[partyMatch[1].toLowerCase()] ?? null)
       : Number(partyMatch[1])
     : null;
   const urgent = /\b(asap|urgent|tonight|right now|within the hour|today)\b/i.test(text);
-  const timing = text.match(
-    /\b(tonight|tomorrow|this (?:week|weekend)|next (?:week|weekend|month|monday|tuesday|wednesday|thursday|friday|saturday|sunday)|(?:mon|tues|wednes|thurs|fri|satur|sun)day)\b/i,
-  )?.[0] ?? null;
-  const location = text.match(/\b(?:in|to|at) ((?:[A-Z][a-zà-ÿ]+)(?: [A-Z][a-zà-ÿ]+)?)/)?.[1] ?? null;
+  const timing =
+    text.match(
+      /\b(tonight|tomorrow|this (?:week|weekend)|next (?:week|weekend|month|monday|tuesday|wednesday|thursday|friday|saturday|sunday)|(?:mon|tues|wednes|thurs|fri|satur|sun)day)\b/i,
+    )?.[0] ?? null;
+  const location =
+    text.match(/\b(?:in|to|at) ((?:[A-Z][a-zà-ÿ]+)(?: [A-Z][a-zà-ÿ]+)?)/)?.[1] ?? null;
   const firstSentence = text.split(/(?<=[.!?])\s/)[0] ?? text;
 
   const missing: string[] = [];
   if (!timing) missing.push("Timing");
-  if (!partySize && ["dining", "stays", "aviation", "travel"].includes(category)) missing.push("Number of people");
+  if (!partySize && ["dining", "stays", "aviation", "travel"].includes(category))
+    missing.push("Number of people");
 
   return {
-    title: firstSentence.split(/\s+/).slice(0, 8).join(" ").replace(/[.,;:!?]$/, ""),
+    title: firstSentence
+      .split(/\s+/)
+      .slice(0, 8)
+      .join(" ")
+      .replace(/[.,;:!?]$/, ""),
     category,
     priority: urgent ? "urgent" : "standard",
     summary: firstSentence,

@@ -4,7 +4,13 @@ export function Honeypot() {
     <div aria-hidden className="absolute -left-[9999px] h-px w-px overflow-hidden">
       <label>
         Company website
-        <input type="text" name="company_website" tabIndex={-1} autoComplete="off" defaultValue="" />
+        <input
+          type="text"
+          name="company_website"
+          tabIndex={-1}
+          autoComplete="off"
+          defaultValue=""
+        />
       </label>
     </div>
   );

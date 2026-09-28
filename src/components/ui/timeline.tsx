@@ -16,16 +16,27 @@ export function Timeline({ entries, className }: { entries: TimelineEntry[]; cla
       {entries.map((entry, i) => {
         const last = i === entries.length - 1;
         return (
-          <li key={entry.id} className="relative grid grid-cols-[1.25rem_1fr] gap-x-4 pb-7 last:pb-0">
-            {!last && <span aria-hidden className="absolute top-3 bottom-0 left-[0.59rem] w-px bg-white/10" />}
+          <li
+            key={entry.id}
+            className="relative grid grid-cols-[1.25rem_1fr] gap-x-4 pb-7 last:pb-0"
+          >
+            {!last && (
+              <span
+                aria-hidden
+                className="absolute top-3 bottom-0 left-[0.59rem] w-px bg-white/10"
+              />
+            )}
             <span aria-hidden className="relative mt-1.5 flex size-5 items-start justify-center">
               <span
                 className={cn(
                   "block size-2 rounded-full",
-                  entry.state === "current" && "bg-bone-100 shadow-[0_0_0_4px_rgb(243_239_232/0.1)]",
+                  entry.state === "current" &&
+                    "bg-bone-100 shadow-[0_0_0_4px_rgb(243_239_232/0.1)]",
                   entry.state === "done" && "bg-bone-400",
-                  entry.state === "tentative" && "border border-dashed border-bone-400 bg-transparent",
-                  (!entry.state || entry.state === "upcoming") && "border border-bone-500 bg-ink-950",
+                  entry.state === "tentative" &&
+                    "border border-dashed border-bone-400 bg-transparent",
+                  (!entry.state || entry.state === "upcoming") &&
+                    "border border-bone-500 bg-ink-950",
                 )}
               />
             </span>

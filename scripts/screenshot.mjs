@@ -25,7 +25,9 @@ const paths = (pathsArg ?? "/").split(",");
 const vps = (vpArg ?? "d1440,m390").split(",");
 mkdirSync(outDir, { recursive: true });
 
-const browser = await chromium.launch({ executablePath: process.env.CHROMIUM_PATH ?? "/opt/pw-browsers/chromium" });
+const browser = await chromium.launch({
+  executablePath: process.env.CHROMIUM_PATH ?? "/opt/pw-browsers/chromium",
+});
 for (const vp of vps) {
   const mobile = vp.startsWith("m");
   const context = await browser.newContext({
@@ -42,7 +44,9 @@ for (const vp of vps) {
   for (const p of paths) {
     await page.goto(base + p, { waitUntil: "networkidle" });
     await page.waitForTimeout(400);
-    const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
+    const overflow = await page.evaluate(
+      () => document.documentElement.scrollWidth - window.innerWidth,
+    );
     const name = `${vp}${p.replace(/[/?=&]+/g, "_") || "_home"}.png`;
     await page.screenshot({ path: path.join(outDir, name), fullPage: full });
     console.log(`${name}${overflow > 0 ? `  ⚠ horizontal overflow ${overflow}px` : ""}`);

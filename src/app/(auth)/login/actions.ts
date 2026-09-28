@@ -29,7 +29,11 @@ export async function requestSignInLink(_prev: FormState, form: FormData): Promi
   const h = await headers();
   const ip = h.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "unknown";
   if (!rateLimit(`signin:${ip}`, 6) || !rateLimit(`signin:${parsed.data.email}`, 3)) {
-    return { status: "error", message: "Too many attempts. Please wait a few minutes and try again.", values };
+    return {
+      status: "error",
+      message: "Too many attempts. Please wait a few minutes and try again.",
+      values,
+    };
   }
 
   const { supabaseAdmin, supabaseServer } = await import("@/lib/supabase/server");
@@ -55,7 +59,11 @@ export async function requestSignInLink(_prev: FormState, form: FormData): Promi
   // "Signups not allowed" for unknown addresses is expected; do not reveal it.
   if (error && !/signups? not allowed|not found/i.test(error.message)) {
     console.error("sign-in link failed", error.message);
-    return { status: "error", message: "We could not send a link just now. Please try again shortly.", values };
+    return {
+      status: "error",
+      message: "We could not send a link just now. Please try again shortly.",
+      values,
+    };
   }
   return { status: "success", values: { email: parsed.data.email } };
 }

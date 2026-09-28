@@ -16,13 +16,13 @@ export default async function ContactPage() {
       <section data-surface="paper" className="bg-paper-100 text-ink-900">
         <div className="page-gutter content-max grid gap-16 pt-[calc(var(--nav-height)+5rem)] pb-28 lg:grid-cols-[1fr_1.3fr] lg:gap-24 lg:pt-[calc(var(--nav-height)+8rem)]">
           <div>
-            <p className="text-label text-ink-700/60">Contact</p>
+            <p className="text-label text-ink-700/75">Contact</p>
             <EditorialHeading as="h1" size="display" className="mt-7 max-w-[10ch]">
               Write to us.
             </EditorialHeading>
             <p className="mt-8 max-w-sm text-body text-ink-700/80">
-              Every message is read by a person. Members should write through the Biluxr app, where your concierge will
-              see it first.
+              Every message is read by a person. Members should write through the Biluxr app, where
+              your concierge will see it first.
             </p>
           </div>
           <ContactForm available={repo !== null} />
