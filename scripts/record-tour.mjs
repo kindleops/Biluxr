@@ -15,6 +15,8 @@ import { mkdirSync, rmSync, writeFileSync } from "node:fs";
 import path from "node:path";
 
 const BASE = process.env.BASE_URL ?? "http://localhost:3000";
+/** Scroll target meaning "just above the footer" (the founding section). */
+const document_bottom = "main > section:last-of-type";
 const FFMPEG = process.env.FFMPEG ?? "ffmpeg";
 const [outDir = "tour", which = "all"] = process.argv.slice(2);
 mkdirSync(outDir, { recursive: true });
@@ -124,6 +126,8 @@ async function signIn(page, persona) {
 async function record(name, contextOptions, script) {
   const browser = await chromium.launch({
     executablePath: process.env.CHROMIUM_PATH ?? "/opt/pw-browsers/chromium",
+    // WebGL (silk, orb) in headless Chromium without a GPU.
+    args: ["--use-angle=swiftshader", "--enable-unsafe-swiftshader", "--ignore-gpu-blocklist"],
   });
   const context = await browser.newContext(contextOptions);
   await context.addInitScript(OVERLAY);
@@ -202,8 +206,23 @@ async function desktopTour(page) {
   await page.goto(BASE, { waitUntil: "networkidle" });
   await page.mouse.move(1100, 600);
   await caption(page, "Biluxr — one relationship for an exceptional life");
-  await page.waitForTimeout(5200);
+  await page.waitForTimeout(5600);
   await caption(page, "");
+  await smoothScrollTo(page, "#instrument", 3000);
+  await caption(page, "Request anything — the orb gathers as a request is written and read");
+  await page.waitForTimeout(9500);
+  await caption(page, "");
+  await smoothScrollTo(page, "section[aria-label='A year with Biluxr']", 2200);
+  await page.waitForTimeout(800);
+  await smoothScrollTo(
+    page,
+    await page.evaluate(() => {
+      const el = document.querySelector("section[aria-label='A year with Biluxr']");
+      return el.getBoundingClientRect().bottom + scrollY - innerHeight;
+    }),
+    14000,
+  );
+  await page.waitForTimeout(600);
   await smoothScrollTo(page, "#product", 2200);
   await caption(page, "The member app: say it once, choose, consider it handled");
   await page.waitForTimeout(3600);
@@ -219,8 +238,11 @@ async function desktopTour(page) {
   await caption(page, "Behind every member, a team working from one system");
   await page.waitForTimeout(1800);
   await smoothScrollTo(page, "#command [data-reveal]:nth-of-type(2)", 1800);
-  await page.waitForTimeout(3600);
+  await page.waitForTimeout(3000);
   await caption(page, "");
+  await smoothScrollTo(page, document_bottom, 3200);
+  await page.mouse.move(500, 300, { steps: 40 });
+  await page.waitForTimeout(3600);
 
   // 2. Member sends a request
   await signIn(page, "member");
@@ -228,13 +250,13 @@ async function desktopTour(page) {
   await page.waitForTimeout(2400);
   const composer = page.getByLabel(/What can we arrange/);
   await clickLike(page, composer);
-  await caption(page, "Write the way you would to someone who knows you");
-  await composer.pressSequentially(brief, { delay: 38 });
+  await caption(page, "Write the way you would to someone who knows you — the orb listens");
+  await composer.pressSequentially(brief, { delay: 55 });
   await page.waitForTimeout(500);
   await clickLike(page, page.getByRole("button", { name: "Send to concierge" }));
   await page.waitForURL(/\/app\/concierge\/.+/);
   await caption(page, "Received. A person has it — and the member can see exactly where it stands");
-  await page.waitForTimeout(3800);
+  await page.waitForTimeout(4400);
 
   // 3. ⌘K to a journey
   await caption(page, "⌘K — jump anywhere");
@@ -245,7 +267,7 @@ async function desktopTour(page) {
   await page.keyboard.press("Enter");
   await page.waitForURL(/\/app\/journeys\/.+/);
   await page.waitForLoadState("networkidle");
-  await caption(page, "Each journey opens on its route");
+  await caption(page, "Each journey opens on its destination and route");
   await page.waitForTimeout(2800);
   await smoothScrollTo(page, 700, 2400);
   await caption(page, "Flights, cars, rooms and tables — confirmed only when they are");
@@ -347,15 +369,33 @@ async function desktopTour(page) {
 async function mobileTour(page) {
   await page.goto(BASE, { waitUntil: "networkidle" });
   await caption(page, "Biluxr on a phone");
-  await page.waitForTimeout(4200);
+  await page.waitForTimeout(4600);
   await caption(page, "");
-  await smoothScrollTo(page, "#product", 2400);
-  await page.waitForTimeout(1200);
-  await smoothScrollTo(page, 3000, 3600);
+  await smoothScrollTo(page, "#instrument", 2600);
+  await smoothScrollTo(page, "#instrument [aria-hidden='true'].liquid-glass", 1400);
+  await page.waitForTimeout(8500);
+  const chapters = "section[aria-label='A year with Biluxr']";
+  await smoothScrollTo(page, chapters, 1800);
+  await smoothScrollTo(
+    page,
+    await page.evaluate((sel) => {
+      const el = document.querySelector(sel);
+      return el.getBoundingClientRect().bottom + scrollY - innerHeight;
+    }, chapters),
+    11000,
+  );
+  await smoothScrollTo(page, "#product", 2000);
   await page.waitForTimeout(1600);
   await signIn(page, "member");
   await caption(page, "Member home");
-  await page.waitForTimeout(2400);
+  await page.waitForTimeout(1600);
+  const composer = page.getByLabel(/What can we arrange/);
+  await composer.tap();
+  await composer.pressSequentially("A table for two tonight, somewhere quiet", { delay: 60 });
+  await page.waitForTimeout(1600);
+  await composer.fill("");
+  await page.locator("h1").first().tap();
+  await page.waitForTimeout(800);
   await smoothScrollTo(page, 900, 2400);
   await page.waitForTimeout(1200);
   await smoothScrollTo(page, 0, 1200);
