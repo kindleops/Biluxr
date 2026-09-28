@@ -224,7 +224,7 @@ const ITINERARY: [string, string, string, string][] = [
 
 export function JourneysShowcase() {
   return (
-    <section className="relative overflow-hidden bg-ink-900">
+    <section id="journeys" className="relative scroll-mt-(--nav-height) overflow-hidden bg-ink-900">
       <div className="page-gutter content-max relative py-28 sm:py-40">
         <div className="grid gap-10 lg:grid-cols-[1fr_1fr] lg:items-end">
           <Reveal>
@@ -304,7 +304,10 @@ export function JourneysShowcase() {
 
 export function CredentialShowcase() {
   return (
-    <section className="grain relative overflow-hidden bg-ink-950">
+    <section
+      id="credential"
+      className="grain relative scroll-mt-(--nav-height) overflow-hidden bg-ink-950"
+    >
       <div
         aria-hidden
         className="pointer-events-none absolute top-1/2 left-1/2 z-[1] size-[64rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(closest-side,rgb(194_171_130/0.08),transparent)]"
@@ -398,7 +401,7 @@ const QUEUE = [
 
 export function CommandShowcase() {
   return (
-    <section className="relative overflow-hidden bg-ink-950">
+    <section id="command" className="relative scroll-mt-(--nav-height) overflow-hidden bg-ink-950">
       <div className="page-gutter content-max py-28 sm:py-40">
         <div className="grid gap-10 lg:grid-cols-[1fr_1fr] lg:items-end">
           <Reveal>

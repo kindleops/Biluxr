@@ -32,6 +32,14 @@ describe("demo heuristic", () => {
     expect(vague.clarifyingQuestions.length).toBeLessThanOrEqual(2);
   });
 
+  it("titles end on a sentence or word boundary, never mid-phrase", () => {
+    const out = heuristicIntent(
+      "Two seats at the ballet on Saturday, near the front. It's my daughter's first time.",
+      categories,
+    );
+    expect(out.title).toBe("Two seats at the ballet on Saturday, near the front");
+  });
+
   it("stays low-confidence so staff do not over-trust it", () => {
     expect(heuristicIntent("anything", categories).confidence).toBeLessThan(0.5);
   });

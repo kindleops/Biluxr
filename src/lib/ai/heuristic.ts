@@ -1,3 +1,4 @@
+import { deriveTitle } from "@/lib/domain/requests";
 import type { Intent } from "./schemas";
 
 /**
@@ -59,11 +60,7 @@ export function heuristicIntent(brief: string, categories: string[]): Intent {
     missing.push("Number of people");
 
   return {
-    title: firstSentence
-      .split(/\s+/)
-      .slice(0, 8)
-      .join(" ")
-      .replace(/[.,;:!?]$/, ""),
+    title: deriveTitle(text),
     category,
     priority: urgent ? "urgent" : "standard",
     summary: firstSentence,
