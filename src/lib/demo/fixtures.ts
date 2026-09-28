@@ -388,9 +388,9 @@ export function createDemoStore(now: Date = new Date()): DemoStore {
   const dinner = req(
     {
       memberId: DEMO_IDS.member,
-      title: "Dinner for six, Friday",
+      title: "Dinner for six, guests from Zurich",
       brief:
-        "Dinner Friday for six — two of them are clients visiting from Zurich. Somewhere quiet enough to talk, excellent wine list. Around 8.",
+        "Dinner for six later this week — two of them are clients visiting from Zurich. Somewhere quiet enough to talk, excellent wine list. Around 8.",
       status: "options_ready",
       categorySlug: "dining",
       priority: "priority",
