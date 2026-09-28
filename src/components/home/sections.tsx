@@ -1,7 +1,9 @@
 import Link from "next/link";
 import { Arrow, LinkButton } from "@/components/ui/button";
 import { PaperSurface } from "@/components/ui/surface";
+import { LiquidSilk } from "@/components/motion/liquid-silk";
 import { Reveal } from "@/components/motion/reveal";
+import { SplitLines } from "@/components/motion/split-lines";
 import { EditorialHeading } from "@/components/ui/typography";
 
 /* -------------------------------------------------------------------------- */
@@ -12,10 +14,18 @@ export function Premise() {
   return (
     <PaperSurface className="relative">
       <div className="page-gutter content-max grid gap-14 py-28 sm:py-40 lg:grid-cols-[1fr_1fr] lg:gap-24">
-        <Reveal>
+        <Reveal bare>
           <p className="text-label text-ink-700/75">The premise</p>
           <EditorialHeading as="h2" size="display" className="mt-8 text-ink-900">
-            At a certain point, convenience <em className="italic">is</em> the luxury.
+            <SplitLines
+              lines={[
+                "At a certain point,",
+                "the rarest thing",
+                <em key="t" className="italic">
+                  is your own time.
+                </em>,
+              ]}
+            />
           </EditorialHeading>
         </Reveal>
         <Reveal
@@ -94,11 +104,18 @@ export function ServiceIndex() {
 export function Founding() {
   return (
     <section className="grain relative overflow-hidden bg-ink-950">
-      <div className="page-gutter content-max relative z-[2] py-28 sm:py-44">
+      <LiquidSilk tint="sable" intensity={1.1} />
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_bottom,var(--color-ink-950),transparent_30%,transparent_70%,var(--color-ink-950))]"
+      />
+      <div className="page-gutter content-max relative z-[2] py-32 sm:py-52">
         <Reveal className="mx-auto max-w-3xl text-center">
-          <p className="text-label text-bone-500">By application</p>
+          <p className="text-label text-bone-400">By application</p>
           <EditorialHeading as="h2" size="display" className="mt-8 text-bone-50">
-            A small founding membership, beginning in Miami.
+            <SplitLines
+              lines={["A small founding membership,", <em key="m">beginning in Miami.</em>]}
+            />
           </EditorialHeading>
           <p className="mx-auto mt-8 max-w-xl text-lede text-pretty text-bone-400">
             We are opening deliberately — a limited number of members, served by people who know

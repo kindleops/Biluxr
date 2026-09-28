@@ -63,6 +63,17 @@ test.describe("navigation", () => {
     await expect(page.getByRole("navigation", { name: "Mobile" })).toBeHidden();
   });
 
+  test("home tells the story: instrument, chapters, reduced motion safe", async ({ browser }) => {
+    const context = await browser.newContext({ reducedMotion: "reduce" });
+    const page = await context.newPage();
+    await page.goto("/");
+    await expect(page.getByRole("heading", { name: /Request anything/ })).toBeVisible();
+    await expect(page.getByRole("region", { name: "A year with Biluxr" })).toBeAttached();
+    await page.getByRole("region", { name: "A year with Biluxr" }).scrollIntoViewIfNeeded();
+    await expect(page.getByText("Somewhere above the weather", { exact: false })).toBeVisible();
+    await context.close();
+  });
+
   test("SEO endpoints respond", async ({ request }) => {
     expect((await request.get("/sitemap.xml")).status()).toBe(200);
     const robots = await (await request.get("/robots.txt")).text();

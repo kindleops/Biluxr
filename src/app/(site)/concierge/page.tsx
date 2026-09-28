@@ -36,6 +36,7 @@ export default async function ConciergePage() {
   return (
     <>
       <PageIntro
+        image={{ src: "/images/table.jpg", position: "50% 22%" }}
         eyebrow="Concierge"
         title={
           <>

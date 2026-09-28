@@ -99,15 +99,61 @@ Sourcing…).
 **Banned in product copy:** elite, exclusive, billionaire, prestige, luxury,
 revolutionary, next-generation, AI-powered, exclamation marks, emoji.
 
-## Art direction (for future photography)
+## Art direction & photography
 
 Photograph _access_, not wealth cosplay: architecture, material, shadow,
 movement, travel details, aerial geometry, transport interiors, night city
 texture, quiet human moments. Never: champagne, supercars, jet-stair poses,
-watches on steering wheels, staged penthouses, stock "success". The current
-build uses no photography by choice — type, line and space carry it.
+watches on steering wheels, staged penthouses, stock "success".
+
+**Treatment.** Black and white only, deep blacks, soft highlights, visible
+grain. On the page every photograph is darkened (`brightness ≈ 0.6`) and sits
+under an ink gradient so type always reads.
+
+**Library** (`public/images/`, generated for Biluxr with Runway, converted to
+grayscale JPEG; illustrative, noted in the site footer):
+
+| File          | Subject                                          | Used for                             |
+| ------------- | ------------------------------------------------ | ------------------------------------ |
+| `terrace.jpg` | Concrete villa terrace over the sea, blue hour   | Home hero                            |
+| `window.jpg`  | Aircraft wing above cloud from a window seat     | Chapters (In transit), sign-in       |
+| `suite.jpg`   | Hotel suite at first light, moving linen curtain | Chapters (Stays), Membership intro   |
+| `table.jpg`   | A hand placing a name card by candlelight        | Chapters (Tables), Concierge intro   |
+| `paris.jpg`   | Paris street after rain, one figure, umbrella    | Chapters (Evenings), Partners, Paris |
+| `chalet.jpg`  | Snow-covered chalet at dusk, windows lit         | Chapters (Seasons), Aspen journeys   |
+
+No legible real-world brands or signage: the Paris frame was cropped to remove
+a shopfront name. Destination images are mapped by market slug in
+`src/lib/design/destinations.ts` and are mood only — never a venue or booking.
 
 ## Motion & material
+
+**Liquid layer** (`components/motion/`):
+
+- **`ShaderCanvas`** — one WebGL fragment shader per canvas. Renders only while
+  on screen and the tab is visible, caps DPR and frame rate, freezes time under
+  reduced motion, handles context loss, and shows a CSS fallback until (or
+  instead of) the first frame.
+- **`LiquidSilk`** — dark cloth folding under a single lamp that leans toward
+  the pointer (domain-warped fbm, lit via finite-difference normals). Tints:
+  `sable` (warm), `pearl`, `tide` (blue hour). Half resolution, 30fps.
+- **`BiluxrOrb`** — a pearl of slow liquid colour: breathes while idle, gathers
+  and swirls as a member types (`activity`), turns faster while sending
+  (`thinking`), and releases one ring when a request has gone (`sent`,
+  `announce`). Always `aria-hidden`; it never implies someone is present.
+  `OrbGlyph` is the CSS-only version for small sizes and fallback.
+- **Liquid glass** (`.liquid-glass`, `.liquid-glass-strong`) — backdrop blur +
+  saturation, a specular top edge, a gradient hairline rim, and a highlight
+  that follows the mouse (`GlassPointer`, one document listener).
+
+**Scroll** — `SmoothScroll` (Lenis) gives inertial wheel scrolling on the
+public site only; touch, keyboard and reduced motion stay native. One shared
+scroll driver (`useScrollProgress` / `ScrollScene`) writes `--progress` for:
+the hero sinking and dimming beneath the page, `CinematicImage` wipes and
+parallax, and the pinned **Chapters** sequence (five photographs crossfading
+and settling as you scroll). `SplitLines` reveals headlines line by line out
+of masks. Public-site navigations crossfade with React `<ViewTransition>`
+(`page-swap`).
 
 - **Reveal** (`components/motion/reveal.tsx`): sections rise 28px out of a soft
   blur as they enter the viewport. Content is visible without JavaScript (the

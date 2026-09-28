@@ -1,5 +1,8 @@
+import Image from "next/image";
 import type { ReactNode } from "react";
 import { Reveal } from "@/components/motion/reveal";
+import { ScrollScene } from "@/components/motion/scroll";
+import { SplitLines } from "@/components/motion/split-lines";
 import { EditorialHeading } from "@/components/ui/typography";
 
 export function PageIntro({
@@ -7,12 +10,59 @@ export function PageIntro({
   title,
   lede,
   children,
+  image,
 }: {
   eyebrow: string;
   title: ReactNode;
   lede?: ReactNode;
   children?: ReactNode;
+  /** A full-bleed photograph behind the intro (decorative). */
+  image?: { src: string; position?: string };
 }) {
+  if (image) {
+    return (
+      <ScrollScene
+        as="section"
+        className="hero relative -mt-(--nav-height) flex min-h-[min(88svh,58rem)] flex-col justify-end overflow-hidden bg-ink-950"
+      >
+        <div aria-hidden className="hero-media absolute inset-0">
+          <div className="kenburns absolute inset-0">
+            <Image
+              src={image.src}
+              alt=""
+              fill
+              priority
+              sizes="100vw"
+              className="object-cover brightness-[0.58] contrast-[1.06]"
+              style={image.position ? { objectPosition: image.position } : undefined}
+            />
+          </div>
+        </div>
+        <div aria-hidden className="pointer-events-none absolute inset-0">
+          <div className="absolute inset-x-0 top-0 h-48 bg-[linear-gradient(to_bottom,rgb(8_8_10/0.7),transparent)]" />
+          <div className="absolute inset-0 bg-[linear-gradient(to_top,var(--color-ink-950)_0%,rgb(8_8_10/0.75)_30%,rgb(8_8_10/0.15)_70%,transparent)]" />
+          <div className="hero-dim absolute inset-0 bg-ink-950" />
+        </div>
+        <div className="hero-copy page-gutter content-max relative z-[2] w-full pt-[calc(var(--nav-height)+8rem)] pb-16 sm:pb-24">
+          <p className="reveal text-label text-bone-300" style={{ animationDelay: "250ms" }}>
+            {eyebrow}
+          </p>
+          <EditorialHeading as="h1" size="display" className="mt-7 max-w-[18ch] text-bone-50">
+            <SplitLines trigger="load" delay={320} lines={[title]} />
+          </EditorialHeading>
+          {lede && (
+            <p
+              className="reveal mt-8 max-w-2xl text-lede text-pretty text-bone-200"
+              style={{ animationDelay: "700ms" }}
+            >
+              {lede}
+            </p>
+          )}
+          {children}
+        </div>
+      </ScrollScene>
+    );
+  }
   return (
     <section className="grain relative -mt-(--nav-height) overflow-hidden bg-ink-950">
       <div

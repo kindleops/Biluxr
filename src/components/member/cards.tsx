@@ -1,6 +1,8 @@
+import Image from "next/image";
 import Link from "next/link";
 import { StatusPill } from "@/components/ui/status";
 import { cn } from "@/lib/cn";
+import { destinationImage } from "@/lib/design/destinations";
 import { REQUEST_STATUS_PRESENTATION, memberStatusLabel } from "@/lib/domain/requests";
 import type { Journey, RequestOption, ServiceRequest } from "@/lib/domain/types";
 import { formatDateRange, formatRelative } from "@/lib/format";
@@ -61,29 +63,51 @@ export function JourneyCard({
   journey,
   feature = false,
   marketName,
+  marketSlug,
 }: {
   journey: Journey;
   feature?: boolean;
   marketName?: string | null;
+  marketSlug?: string | null;
 }) {
   const s = JOURNEY_STATUS[journey.status];
+  const image = destinationImage(marketSlug);
   return (
     <Link
       href={`/app/journeys/${journey.id}`}
       className={cn(
         "group duration-base relative flex flex-col justify-between overflow-hidden rounded-card bg-ink-900 shadow-[inset_0_0_0_1px_var(--line-subtle)] transition-[background-color,box-shadow] hover:bg-ink-850 hover:shadow-[inset_0_0_0_1px_var(--line)]",
         feature ? "min-h-64 p-6 sm:p-8" : "min-h-52 p-6",
+        image && (feature ? "min-h-80 sm:min-h-96" : "min-h-64"),
       )}
     >
-      <JourneyArc />
+      {image ? (
+        <div aria-hidden className="absolute inset-0">
+          <Image
+            src={image.src}
+            alt=""
+            fill
+            sizes={feature ? "(min-width: 1024px) 60rem, 100vw" : "(min-width: 640px) 30rem, 100vw"}
+            className="object-cover brightness-[0.62] transition-transform duration-[2400ms] ease-settle group-hover:scale-[1.04]"
+            style={{ objectPosition: image.position }}
+          />
+          <div className="absolute inset-0 bg-[linear-gradient(to_top,rgb(8_8_10/0.92),rgb(8_8_10/0.35)_55%,rgb(8_8_10/0.55))]" />
+        </div>
+      ) : (
+        <JourneyArc />
+      )}
       <div className="relative flex items-start justify-between gap-4">
-        <p className="text-label text-bone-500">
+        <p className={cn("text-label", image ? "text-bone-300" : "text-bone-500")}>
           {formatDateRange(journey.startsOn, journey.endsOn)}
         </p>
         <StatusPill tone={s.tone}>{s.label}</StatusPill>
       </div>
       <div className="relative mt-10">
-        {marketName && <p className="text-caption text-bone-500">{marketName}</p>}
+        {marketName && (
+          <p className={cn("text-caption", image ? "text-bone-300" : "text-bone-500")}>
+            {marketName}
+          </p>
+        )}
         <h3
           className={cn(
             "mt-1 font-display font-light text-balance text-bone-50",
@@ -93,7 +117,11 @@ export function JourneyCard({
           {journey.title}
         </h3>
         {journey.summary && (
-          <p className="mt-3 max-w-md text-body-sm text-bone-400">{journey.summary}</p>
+          <p
+            className={cn("mt-3 max-w-md text-body-sm", image ? "text-bone-200" : "text-bone-400")}
+          >
+            {journey.summary}
+          </p>
         )}
       </div>
     </Link>

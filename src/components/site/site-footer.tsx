@@ -69,7 +69,10 @@ export function SiteFooter() {
         </div>
         <div className="mt-10 flex flex-col gap-3 text-caption text-bone-500 sm:flex-row sm:items-center sm:justify-between">
           <p>© {year} Biluxr. All rights reserved.</p>
-          <p>Services are arranged with independent providers under their own terms.</p>
+          <p>
+            Services are arranged with independent providers under their own terms. Photography is
+            illustrative.
+          </p>
         </div>
       </div>
     </footer>

@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono, Newsreader } from "next/font/google";
+import { GlassPointer } from "@/components/motion/glass-pointer";
 import { DemoBanner } from "@/components/site/demo-banner";
 import { isDemo } from "@/lib/env";
 import { SITE, siteUrl } from "@/lib/seo/site";
@@ -67,6 +68,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         </a>
         {demo && <DemoBanner />}
         {children}
+        <GlassPointer />
       </body>
     </html>
   );

@@ -1,10 +1,10 @@
 import Link from "next/link";
+import { ReceivedMoment } from "@/components/member/received";
 import { notFound } from "next/navigation";
 import { CancelRequest } from "@/components/member/cancel-request";
 import { OptionCard } from "@/components/member/option-card";
 import { MemberContainer } from "@/components/member/page-header";
 import { MessageThread, ReplyBox } from "@/components/member/thread";
-import { FormMessage } from "@/components/ui/field";
 import { StatusPill } from "@/components/ui/status";
 import { Timeline, type TimelineEntry } from "@/components/ui/timeline";
 import { requireMember } from "@/lib/auth/session";
@@ -127,10 +127,7 @@ export default async function RequestPage({
 
       {isNew && (
         <div className="mt-6">
-          <FormMessage kind="success">
-            Received. {assignee ? `${assignee.name.split(" ")[0]} has it` : "Your concierge has it"}{" "}
-            and will be in touch.
-          </FormMessage>
+          <ReceivedMoment who={assignee ? (assignee.name.split(" ")[0] ?? null) : null} />
         </div>
       )}
 

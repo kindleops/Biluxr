@@ -1,61 +1,60 @@
-import { PLACES, WorldMap } from "@/components/geo/world-map";
+import Image from "next/image";
+import { ScrollScene } from "@/components/motion/scroll";
+import { SplitLines } from "@/components/motion/split-lines";
 import { Arrow, LinkButton } from "@/components/ui/button";
 import { WorldClock } from "./world-clock";
 
-const ROUTES = [
-  [PLACES.miami, PLACES.paris],
-  [PLACES.miami, PLACES.london],
-  [PLACES.miami, PLACES.aspen],
-  [PLACES.london, PLACES.dubai],
-  [PLACES.paris, PLACES.tokyo],
-] as const;
-
 /**
- * Hero. The world, rendered as quiet points of light, with the routes a
- * member's life actually takes. It describes the member's world — not a claim
- * about where Biluxr operates.
+ * Hero. One photograph, held like the opening shot of a film: a slow push-in
+ * on arrival, then it sinks and dims beneath the page as you scroll.
  */
 export function Hero() {
   return (
-    <section className="grain relative -mt-(--nav-height) flex min-h-[min(100svh,62rem)] flex-col overflow-hidden bg-ink-950">
-      <div aria-hidden className="pointer-events-none absolute inset-0 z-[1]">
-        <div className="absolute inset-x-0 top-0 h-[70%] bg-[radial-gradient(ellipse_60%_55%_at_70%_0%,rgb(194_171_130/0.09),transparent_70%)]" />
-        <div className="hero-map absolute top-[calc(var(--nav-height)+1.5rem)] left-1/2 w-[260%] -translate-x-[42%] sm:w-[170%] sm:-translate-x-[44%] lg:top-[calc(var(--nav-height)-0.5rem)] lg:w-[118%] lg:-translate-x-1/2">
-          <WorldMap
-            label="A world map with routes between Miami, Paris, London, Aspen, Dubai and Tokyo"
-            latitudes={[64, 21]}
-            arcLift={0.45}
-            routes={ROUTES.map(([a, b]) => [a, b])}
-            markers={[
-              { ...PLACES.miami, emphasis: true },
-              PLACES.paris,
-              PLACES.london,
-              PLACES.aspen,
-              PLACES.dubai,
-              PLACES.tokyo,
-            ]}
+    <ScrollScene
+      as="section"
+      className="hero relative -mt-(--nav-height) flex h-[100svh] min-h-[38rem] flex-col overflow-hidden bg-ink-950"
+    >
+      <div aria-hidden className="hero-media absolute inset-0">
+        <div className="kenburns absolute inset-0">
+          <Image
+            src="/images/terrace.jpg"
+            alt=""
+            fill
+            priority
+            sizes="100vw"
+            className="object-cover object-[74%_50%] brightness-[0.62] contrast-[1.08] sm:object-[62%_50%]"
           />
         </div>
-        <div className="absolute inset-x-0 bottom-0 h-[38%] bg-[linear-gradient(to_top,var(--color-ink-950)_15%,transparent)]" />
+      </div>
+      <div aria-hidden className="pointer-events-none absolute inset-0">
+        <div className="absolute inset-x-0 top-0 h-48 bg-[linear-gradient(to_bottom,rgb(8_8_10/0.75),transparent)]" />
+        <div className="absolute inset-0 bg-[linear-gradient(to_top,var(--color-ink-950)_0%,rgb(8_8_10/0.82)_26%,rgb(8_8_10/0.25)_60%,transparent_80%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_70%_at_20%_100%,rgb(8_8_10/0.7),transparent_70%)]" />
+        <div className="hero-dim absolute inset-0 bg-ink-950" />
       </div>
 
-      <div className="page-gutter content-max relative z-[2] flex w-full flex-1 flex-col justify-end pt-[calc(var(--nav-height)+5rem)] pb-10 sm:pb-14">
-        <p className="reveal text-label text-bone-400" style={{ animationDelay: "150ms" }}>
+      <div className="hero-copy page-gutter content-max relative z-[2] flex w-full flex-1 flex-col justify-end pt-[calc(var(--nav-height)+4rem)] pb-8 sm:pb-12">
+        <p className="reveal text-label text-bone-300" style={{ animationDelay: "300ms" }}>
           Private membership · By application
         </p>
-        <h1
-          className="reveal-slow mt-6 max-w-[14ch] font-display text-monument font-light tracking-[var(--tracking-tight-display)] text-bone-50"
-          style={{ animationDelay: "250ms" }}
-        >
-          One relationship.
-          <br />
-          <em className="text-shine font-light">Wherever life moves.</em>
+        <h1 className="mt-6 max-w-[15ch] font-display text-monument font-light tracking-[var(--tracking-tight-display)] text-bone-50">
+          <SplitLines
+            trigger="load"
+            delay={380}
+            stagger={140}
+            lines={[
+              "One relationship.",
+              <em key="l2" className="text-shine font-light">
+                Wherever life moves.
+              </em>,
+            ]}
+          />
         </h1>
         <div
-          className="reveal mt-10 grid gap-8 sm:mt-14 md:grid-cols-[minmax(0,34rem)_1fr] md:items-end"
-          style={{ animationDelay: "550ms" }}
+          className="reveal mt-9 grid gap-8 sm:mt-12 md:grid-cols-[minmax(0,34rem)_1fr] md:items-end"
+          style={{ animationDelay: "900ms" }}
         >
-          <p className="text-lede text-pretty text-bone-300">
+          <p className="text-lede text-pretty text-bone-200">
             Biluxr coordinates travel, stays, tables, access and every detail between — for a small
             number of members whose time is worth more than the search.
           </p>
@@ -63,18 +62,24 @@ export function Hero() {
             <LinkButton href="/apply" size="lg" trailing={<Arrow />}>
               Request an invitation
             </LinkButton>
-            <LinkButton href="#product" variant="quiet">
+            <LinkButton href="#instrument" variant="quiet">
               See how it works
             </LinkButton>
           </div>
         </div>
         <div
-          className="reveal mt-16 border-t border-white/[0.08] pt-6 sm:mt-20"
-          style={{ animationDelay: "800ms" }}
+          className="reveal mt-12 flex items-end justify-between gap-8 border-t border-white/[0.12] pt-5 sm:mt-16"
+          style={{ animationDelay: "1150ms" }}
         >
           <WorldClock />
+          <span aria-hidden className="hidden flex-col items-center gap-3 lg:flex">
+            <span className="text-[0.625rem] tracking-[0.3em] text-bone-400 uppercase">Scroll</span>
+            <span className="relative block h-10 w-px overflow-hidden bg-white/10">
+              <span className="scroll-cue absolute inset-0 bg-bone-100" />
+            </span>
+          </span>
         </div>
       </div>
-    </section>
+    </ScrollScene>
   );
 }

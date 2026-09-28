@@ -2,6 +2,7 @@ import Link from "next/link";
 import { JourneyCard, RequestCard } from "@/components/member/cards";
 import { CommandComposer } from "@/components/member/composer";
 import { MemberContainer, SectionHeading } from "@/components/member/page-header";
+import { LiquidSilk } from "@/components/motion/liquid-silk";
 import { ConciergeAvatar } from "@/components/ui/avatar";
 import { EmptyState } from "@/components/ui/empty-state";
 import { requireMember } from "@/lib/auth/session";
@@ -35,6 +36,12 @@ export default async function MemberHome() {
   return (
     <MemberContainer>
       <section className="relative pt-10 pb-8 lg:pt-16">
+        <div
+          aria-hidden
+          className="pointer-events-none absolute -top-32 -right-[40vw] -left-[40vw] h-[40rem] [mask-image:linear-gradient(to_bottom,black_35%,transparent_95%)] opacity-90"
+        >
+          <LiquidSilk tint="tide" intensity={0.75} />
+        </div>
         <AmbientLight hour={localHour(now, profile.timezone)} />
         <p className="text-label relative flex flex-wrap items-center gap-x-3 text-bone-500">
           <span>
@@ -148,6 +155,7 @@ export default async function MemberHome() {
                 journey={j}
                 feature={i === 0 && home.upcomingJourneys.length === 1}
                 marketName={markets.find((m) => m.id === j.primaryMarketId)?.name}
+                marketSlug={markets.find((m) => m.id === j.primaryMarketId)?.slug}
               />
             ))}
           </div>

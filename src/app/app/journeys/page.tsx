@@ -17,6 +17,7 @@ export default async function JourneysPage() {
   );
   const past = journeys.filter((j) => !upcoming.includes(j));
   const market = (id: string | null) => markets.find((m) => m.id === id)?.name;
+  const slug = (id: string | null) => markets.find((m) => m.id === id)?.slug;
 
   return (
     <MemberContainer>
@@ -33,6 +34,7 @@ export default async function JourneysPage() {
                 journey={j}
                 feature={i === 0}
                 marketName={market(j.primaryMarketId)}
+                marketSlug={slug(j.primaryMarketId)}
               />
             ))}
           </div>
@@ -52,7 +54,12 @@ export default async function JourneysPage() {
           </SectionHeading>
           <div className="grid gap-3 sm:grid-cols-2">
             {past.map((j) => (
-              <JourneyCard key={j.id} journey={j} marketName={market(j.primaryMarketId)} />
+              <JourneyCard
+                key={j.id}
+                journey={j}
+                marketName={market(j.primaryMarketId)}
+                marketSlug={slug(j.primaryMarketId)}
+              />
             ))}
           </div>
         </section>

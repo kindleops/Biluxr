@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { BiluxrLogo } from "@/components/brand/logo";
 import { FormMessage } from "@/components/ui/field";
@@ -31,75 +32,96 @@ export default async function LoginPage({
   const mode = dataMode();
 
   return (
-    <main id="main" className="grain relative flex min-h-dvh flex-col overflow-hidden bg-ink-950">
-      <div
-        aria-hidden
-        className="pointer-events-none absolute bottom-[-50vmax] left-1/2 z-[1] size-[100vmax] -translate-x-1/2 rounded-full shadow-[inset_0_0_0_1px_rgb(243_239_232/0.07)]"
-      />
-      <header className="page-gutter relative z-[2] flex h-(--nav-height) items-center justify-between">
-        <Link href="/" aria-label="Biluxr, home" className="-m-2 p-2 text-bone-100">
-          <BiluxrLogo />
-        </Link>
-        <Link href="/apply" className="text-body-sm text-bone-400 hover:text-bone-100">
-          Not a member? Apply
-        </Link>
-      </header>
-      <div className="page-gutter relative z-[2] flex flex-1 items-center justify-center py-16">
-        <div className="w-full max-w-md">
-          <p className="text-label text-bone-500">
-            {mode === "demo" ? "Demo environment" : "Members"}
-          </p>
-          <EditorialHeading as="h1" size="headline" className="mt-5 text-bone-50">
-            {mode === "demo" ? "Choose who you are today." : "Welcome back."}
-          </EditorialHeading>
-          <div className="mt-10 grid gap-6">
-            {state && STATES[state] && <FormMessage kind="error">{STATES[state]}</FormMessage>}
-            {mode === "supabase" && <SignInForm next={next} />}
-            {mode === "demo" && (
-              <form action={chooseDemoPersona} className="grid gap-3">
-                <input type="hidden" name="next" value={next ?? ""} />
-                {DEMO_PERSONA_KEYS.map((key) => {
-                  const p = DEMO_PERSONAS[key];
-                  return (
-                    <button
-                      key={key}
-                      type="submit"
-                      name="persona"
-                      value={key}
-                      className="group duration-quick flex items-center justify-between gap-6 rounded-lg bg-ink-900 px-5 py-4 text-left shadow-[inset_0_0_0_1px_var(--line)] transition-[box-shadow,background-color] hover:bg-ink-850 hover:shadow-[inset_0_0_0_1px_var(--line-strong)]"
-                    >
-                      <span>
-                        <span className="text-label block text-bone-500">{p.label}</span>
-                        <span className="mt-1.5 block text-body text-bone-100">{p.name}</span>
-                        <span className="mt-0.5 block text-caption text-bone-400">
-                          {p.description}
-                        </span>
-                      </span>
-                      <svg
-                        viewBox="0 0 16 16"
-                        aria-hidden
-                        className="duration-base size-4 shrink-0 text-bone-500 transition-transform group-hover:translate-x-1 group-hover:text-bone-100"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="1.25"
+    <main
+      id="main"
+      className="grain relative grid min-h-dvh overflow-hidden bg-ink-950 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,1fr)]"
+    >
+      <div aria-hidden className="relative hidden overflow-hidden lg:block">
+        <div className="kenburns absolute inset-0">
+          <Image
+            src="/images/window.jpg"
+            alt=""
+            fill
+            priority
+            sizes="55vw"
+            className="object-cover brightness-[0.72]"
+          />
+        </div>
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,transparent_55%,var(--color-ink-950)),linear-gradient(to_top,rgb(8_8_10/0.8),transparent_40%)]" />
+        <p className="absolute bottom-12 left-12 max-w-lg pr-12 font-display text-headline font-light text-bone-50">
+          Wherever you are, <em className="text-bone-300">it’s already in hand.</em>
+        </p>
+      </div>
+      <div className="relative flex min-h-dvh flex-col">
+        <div
+          aria-hidden
+          className="pointer-events-none absolute bottom-[-50vmax] left-1/2 z-[1] size-[100vmax] -translate-x-1/2 rounded-full shadow-[inset_0_0_0_1px_rgb(243_239_232/0.07)]"
+        />
+        <header className="page-gutter relative z-[2] flex h-(--nav-height) items-center justify-between">
+          <Link href="/" aria-label="Biluxr, home" className="-m-2 p-2 text-bone-100">
+            <BiluxrLogo />
+          </Link>
+          <Link href="/apply" className="text-body-sm text-bone-400 hover:text-bone-100">
+            Not a member? Apply
+          </Link>
+        </header>
+        <div className="page-gutter relative z-[2] flex flex-1 items-center justify-center py-16">
+          <div className="w-full max-w-md">
+            <p className="text-label text-bone-500">
+              {mode === "demo" ? "Demo environment" : "Members"}
+            </p>
+            <EditorialHeading as="h1" size="headline" className="mt-5 text-bone-50">
+              {mode === "demo" ? "Choose who you are today." : "Welcome back."}
+            </EditorialHeading>
+            <div className="mt-10 grid gap-6">
+              {state && STATES[state] && <FormMessage kind="error">{STATES[state]}</FormMessage>}
+              {mode === "supabase" && <SignInForm next={next} />}
+              {mode === "demo" && (
+                <form action={chooseDemoPersona} className="grid gap-3">
+                  <input type="hidden" name="next" value={next ?? ""} />
+                  {DEMO_PERSONA_KEYS.map((key) => {
+                    const p = DEMO_PERSONAS[key];
+                    return (
+                      <button
+                        key={key}
+                        type="submit"
+                        name="persona"
+                        value={key}
+                        className="group liquid-glass duration-base flex items-center justify-between gap-6 rounded-xl px-5 py-4 text-left transition-transform ease-settle hover:-translate-y-0.5"
                       >
-                        <path d="M2 8h11M9 4l4 4-4 4" />
-                      </svg>
-                    </button>
-                  );
-                })}
-                <p className="mt-3 text-caption text-bone-500">
-                  Demo mode uses fictional people and in-memory data that resets when the server
-                  restarts.
-                </p>
-              </form>
-            )}
-            {mode === "unavailable" && (
-              <UnavailableState
-                title="Sign-in not yet available"
-                body="Member accounts are being prepared. If you are a member, your concierge will contact you directly."
-              />
-            )}
+                        <span>
+                          <span className="text-label block text-bone-500">{p.label}</span>
+                          <span className="mt-1.5 block text-body text-bone-100">{p.name}</span>
+                          <span className="mt-0.5 block text-caption text-bone-400">
+                            {p.description}
+                          </span>
+                        </span>
+                        <svg
+                          viewBox="0 0 16 16"
+                          aria-hidden
+                          className="duration-base size-4 shrink-0 text-bone-500 transition-transform group-hover:translate-x-1 group-hover:text-bone-100"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="1.25"
+                        >
+                          <path d="M2 8h11M9 4l4 4-4 4" />
+                        </svg>
+                      </button>
+                    );
+                  })}
+                  <p className="mt-3 text-caption text-bone-500">
+                    Demo mode uses fictional people and in-memory data that resets when the server
+                    restarts.
+                  </p>
+                </form>
+              )}
+              {mode === "unavailable" && (
+                <UnavailableState
+                  title="Sign-in not yet available"
+                  body="Member accounts are being prepared. If you are a member, your concierge will contact you directly."
+                />
+              )}
+            </div>
           </div>
         </div>
       </div>

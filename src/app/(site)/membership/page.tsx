@@ -37,6 +37,7 @@ export default async function MembershipPage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faq) }}
       />
       <PageIntro
+        image={{ src: "/images/suite.jpg", position: "62% 50%" }}
         eyebrow="Membership"
         title={
           <>

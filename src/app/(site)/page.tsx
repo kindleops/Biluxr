@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
+import { Chapters } from "@/components/home/chapters";
 import { Hero } from "@/components/home/hero";
+import { Instrument } from "@/components/home/instrument";
 import { Founding, Premise, ServiceIndex } from "@/components/home/sections";
 import {
   CommandShowcase,
@@ -30,6 +32,8 @@ export default function HomePage() {
       />
       <Hero />
       <Premise />
+      <Instrument />
+      <Chapters />
       <ProductShowcase />
       <JourneysShowcase />
       <ServiceIndex />

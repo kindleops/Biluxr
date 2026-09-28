@@ -2,6 +2,7 @@
 
 import { useActionState, useEffect, useRef, useState } from "react";
 import { createRequestAction } from "@/app/app/actions";
+import { BiluxrOrb, type OrbState } from "@/components/motion/orb";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/cn";
 import { IDLE } from "@/lib/forms/state";
@@ -32,6 +33,7 @@ export function CommandComposer({
   const [value, setValue] = useState(state.values?.brief ?? "");
   const [urgent, setUrgent] = useState(false);
   const [prompt, setPrompt] = useState(0);
+  const [focused, setFocused] = useState(false);
   const ref = useRef<HTMLTextAreaElement>(null);
   const formRef = useRef<HTMLFormElement>(null);
 
@@ -50,22 +52,35 @@ export function CommandComposer({
 
   const error = state.fieldErrors?.brief ?? (state.status === "error" ? state.message : undefined);
   const hero = variant === "hero";
+  const orb: OrbState = pending ? "thinking" : focused || value ? "listening" : "idle";
 
   return (
     <form
       ref={formRef}
       action={action}
+      onFocus={() => setFocused(true)}
+      onBlur={(e) => {
+        if (!e.currentTarget.contains(e.relatedTarget as Node | null)) setFocused(false);
+      }}
       className={cn(
-        "duration-base relative overflow-hidden rounded-xl bg-[linear-gradient(180deg,var(--color-ink-850),var(--color-ink-900))] shadow-[inset_0_1px_0_0_var(--glass-highlight),inset_0_0_0_1px_var(--line),var(--shadow-lift)] transition-shadow ease-considered focus-within:shadow-[inset_0_1px_0_0_var(--glass-highlight),inset_0_0_0_1px_var(--line-strong),var(--shadow-float)]",
+        "liquid-glass liquid-glass-strong duration-slow rounded-[22px] transition-shadow ease-considered focus-within:shadow-[inset_0_1px_0_0_rgb(255_255_255/0.24),inset_0_22px_36px_-24px_rgb(255_255_255/0.14),0_50px_110px_-40px_rgb(0_0_0/0.9),0_0_0_1px_rgb(255_255_255/0.08)]",
         hero ? "p-5 sm:p-6" : "p-4",
       )}
     >
       {journeyId && <input type="hidden" name="journeyId" value={journeyId} />}
-      <label htmlFor="brief" className="text-label text-bone-500">
-        {hero
-          ? `What can we arrange${placeholderName ? `, ${placeholderName}` : ""}?`
-          : "New request"}
-      </label>
+      <div className="flex items-center justify-between gap-4">
+        <label htmlFor="brief" className="text-label text-bone-400">
+          {hero
+            ? `What can we arrange${placeholderName ? `, ${placeholderName}` : ""}?`
+            : "New request"}
+        </label>
+        <BiluxrOrb
+          state={orb}
+          activity={value.length}
+          halo={0.8}
+          className={cn("shrink-0", hero ? "-my-7 -mr-3 size-24" : "-my-5 -mr-2 size-16")}
+        />
+      </div>
       <textarea
         ref={ref}
         id="brief"
@@ -85,7 +100,7 @@ export function CommandComposer({
         aria-invalid={error ? true : undefined}
         aria-describedby={error ? "brief-error" : "brief-hint"}
         className={cn(
-          "mt-3 block w-full resize-none bg-transparent text-bone-50 outline-none placeholder:text-bone-600",
+          "relative mt-3 block w-full resize-none bg-transparent text-bone-50 outline-none placeholder:text-bone-500",
           hero
             ? "font-display text-[1.5rem] leading-snug font-light sm:text-[1.75rem]"
             : "text-body",

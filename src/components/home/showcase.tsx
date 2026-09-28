@@ -1,6 +1,7 @@
 import { BiluxrMark, BiluxrWordmark } from "@/components/brand/logo";
 import { PLACES, WorldMap } from "@/components/geo/world-map";
 import { PhoneFrame, ScreenFrame } from "@/components/motion/device";
+import { OrbGlyph } from "@/components/motion/orb";
 import { Reveal } from "@/components/motion/reveal";
 import { TiltSurface } from "@/components/motion/tilt";
 import { EditorialHeading } from "@/components/ui/typography";
@@ -46,7 +47,12 @@ function PhoneHome() {
         </p>
       </div>
       <div className="mx-4 mt-5 rounded-[14px] bg-ink-850 p-3.5 shadow-[inset_0_0_0_1px_var(--line)]">
-        <p className="text-[7px] tracking-[0.16em] text-bone-500 uppercase">What can we arrange?</p>
+        <div className="flex items-center justify-between">
+          <p className="text-[7px] tracking-[0.16em] text-bone-500 uppercase">
+            What can we arrange?
+          </p>
+          <OrbGlyph active className="size-4" />
+        </div>
         <p className="mt-2 font-display text-[14px] leading-snug font-light text-bone-500">
           Paris next Thursday, four nights…
         </p>
@@ -158,7 +164,7 @@ export function ProductShowcase() {
 
             <div
               aria-hidden
-              className="float-slow absolute top-[47%] -left-2 z-[3] w-52 rounded-lg bg-ink-800/90 p-3.5 shadow-[inset_0_0_0_1px_var(--line),var(--shadow-float)] backdrop-blur-md max-sm:hidden sm:-left-12"
+              className="float-slow liquid-glass absolute top-[47%] -left-2 z-[3] w-52 rounded-xl p-3.5 max-sm:hidden sm:-left-12"
             >
               <p className="text-[9px] tracking-[0.16em] text-bone-500 uppercase">Option 1 of 2</p>
               <p className="mt-2 font-display text-[15px] leading-snug text-bone-50">
@@ -179,7 +185,7 @@ export function ProductShowcase() {
 
             <div
               aria-hidden
-              className="float-slower absolute right-0 bottom-[13%] z-[3] w-56 rounded-lg bg-ink-800/90 p-3.5 shadow-[inset_0_0_0_1px_var(--line),var(--shadow-float)] backdrop-blur-md sm:-right-8"
+              className="float-slower liquid-glass absolute right-0 bottom-[13%] z-[3] w-56 rounded-xl p-3.5 sm:-right-8"
             >
               <p className="flex items-center gap-1.5 text-[10px] text-status-moss">
                 <Dot tone="moss" /> Remembered
@@ -191,7 +197,7 @@ export function ProductShowcase() {
 
             <div
               aria-hidden
-              className="float-slower absolute top-[15%] -right-2 z-[3] hidden rounded-full bg-ink-800/80 px-3 py-1.5 text-[10px] text-bone-300 shadow-[inset_0_0_0_1px_var(--line)] backdrop-blur-md sm:block"
+              className="float-slower liquid-glass absolute top-[15%] -right-2 z-[3] hidden rounded-full px-3 py-1.5 text-[10px] text-bone-200 sm:block"
             >
               <span className="mr-1.5 inline-block size-1.5 rounded-full bg-status-tide align-middle" />
               Car at 5:15am · driver details tonight
@@ -259,7 +265,7 @@ export function JourneysShowcase() {
             </div>
             <div className="absolute inset-0 bg-[linear-gradient(to_right,transparent_40%,var(--color-ink-950)_85%)] max-md:bg-[linear-gradient(to_top,var(--color-ink-950)_40%,transparent_70%)]" />
             <div className="absolute right-4 bottom-4 left-4 md:top-6 md:right-6 md:bottom-auto md:left-auto md:w-[24rem]">
-              <div className="glass h-full rounded-lg p-5 md:p-6">
+              <div className="liquid-glass liquid-glass-strong h-full rounded-2xl p-5 md:p-6">
                 <div className="flex items-baseline justify-between">
                   <p className="text-label text-bone-500">October 15–19</p>
                   <p className="flex items-center gap-1.5 text-caption text-status-moss">
@@ -490,8 +496,8 @@ export function CommandShowcase() {
                 </div>
                 <div className="mt-4 grid gap-3 md:grid-cols-2">
                   <div className="rounded-[8px] bg-ink-900 p-3 shadow-[inset_0_0_0_1px_var(--line-subtle)]">
-                    <p className="text-[8px] tracking-[0.16em] text-bone-500 uppercase">
-                      Biluxr AI · awaiting review
+                    <p className="flex items-center gap-1.5 text-[8px] tracking-[0.16em] text-bone-500 uppercase">
+                      <OrbGlyph className="size-3" /> Biluxr AI · awaiting review
                     </p>
                     <p className="mt-2 text-bone-200">
                       Four passengers, Nassau, out Saturday morning, back Sunday evening.

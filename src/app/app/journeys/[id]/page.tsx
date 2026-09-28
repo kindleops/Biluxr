@@ -2,12 +2,14 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { CommandComposer } from "@/components/member/composer";
 import { MemberContainer } from "@/components/member/page-header";
+import { CinematicImage } from "@/components/motion/cinematic-image";
 import { EmptyState } from "@/components/ui/empty-state";
 import { cn } from "@/lib/cn";
 import { requireMember } from "@/lib/auth/session";
 import { memberRepository, publicRepository } from "@/lib/data";
 import { WorldMap, framePlaces, placeForMarket } from "@/components/geo/world-map";
 import { NotFoundError } from "@/lib/data/repository";
+import { destinationImage } from "@/lib/design/destinations";
 import type { JourneyItem } from "@/lib/domain/types";
 import { formatDateRange, formatTime } from "@/lib/format";
 
@@ -74,6 +76,7 @@ export default async function JourneyPage({ params }: { params: Promise<{ id: st
       ? ([origin, destination] as const)
       : null;
   const days = groupByDay(items);
+  const photo = destinationImage(slugFor(journey.primaryMarketId));
 
   return (
     <MemberContainer>
@@ -82,8 +85,19 @@ export default async function JourneyPage({ params }: { params: Promise<{ id: st
           ← Journeys
         </Link>
       </nav>
+      {photo && (
+        <CinematicImage
+          src={photo.src}
+          alt=""
+          position={photo.position}
+          sizes="(min-width: 1024px) 60rem, 100vw"
+          priority
+          className="mt-6 h-60 rounded-xl sm:h-96"
+          imageClassName="brightness-[0.7]"
+        />
+      )}
       {route && (
-        <figure className="relative mt-6 overflow-hidden rounded-xl bg-ink-900 shadow-[inset_0_0_0_1px_var(--line-subtle)]">
+        <figure className="relative mt-3 overflow-hidden rounded-xl bg-ink-900 shadow-[inset_0_0_0_1px_var(--line-subtle)]">
           <WorldMap
             label={`Route from ${route[0].name} to ${route[1].name}`}
             viewBox={framePlaces([route[0], route[1]], 3)}

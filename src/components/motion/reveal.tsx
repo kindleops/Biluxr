@@ -14,8 +14,11 @@ export function Reveal({
   delay = 0,
   distance = 28,
   style,
+  bare = false,
 }: {
   as?: ElementType;
+  /** Only mark visibility (for SplitLines / wipes); no fade of its own. */
+  bare?: boolean;
   children: ReactNode;
   className?: string;
   delay?: number;
@@ -44,7 +47,7 @@ export function Reveal({
   return (
     <Tag
       ref={ref}
-      data-reveal
+      data-reveal={bare ? "bare" : ""}
       className={className}
       style={{
         ...style,

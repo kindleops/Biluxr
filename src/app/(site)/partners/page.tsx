@@ -36,6 +36,7 @@ export default async function PartnersPage() {
   return (
     <>
       <PageIntro
+        image={{ src: "/images/paris.jpg", position: "58% 60%" }}
         eyebrow="Partners"
         title={
           <>
