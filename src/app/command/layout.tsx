@@ -26,7 +26,7 @@ export default async function CommandLayout({ children }: { children: React.Reac
   ).length;
 
   return (
-    <div data-density="compact" className="flex min-h-dvh bg-ink-950 lg:flex-row">
+    <div data-density="compact" className="flex min-h-dvh flex-col bg-ink-950 lg:flex-row">
       <CommandNav
         name={me?.name ?? "Staff"}
         initials={me?.initials ?? initials(me?.name ?? "S")}

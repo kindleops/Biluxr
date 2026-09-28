@@ -1,7 +1,9 @@
 import { existsSync } from "node:fs";
 import { defineConfig } from "@playwright/test";
 
-const chromium = process.env.CHROMIUM_PATH ?? (existsSync("/opt/pw-browsers/chromium") ? "/opt/pw-browsers/chromium" : undefined);
+const chromium =
+  process.env.CHROMIUM_PATH ??
+  (existsSync("/opt/pw-browsers/chromium") ? "/opt/pw-browsers/chromium" : undefined);
 const port = Number(process.env.E2E_PORT ?? 3100);
 
 /**

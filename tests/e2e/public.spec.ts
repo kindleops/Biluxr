@@ -1,7 +1,17 @@
 import { expect, test } from "@playwright/test";
 import { VIEWPORTS, expectAccessible, expectNoHorizontalOverflow } from "./helpers";
 
-const PAGES = ["/", "/membership", "/concierge", "/partners", "/apply", "/contact", "/login", "/legal/privacy", "/legal/security"];
+const PAGES = [
+  "/",
+  "/membership",
+  "/concierge",
+  "/partners",
+  "/apply",
+  "/contact",
+  "/login",
+  "/legal/privacy",
+  "/legal/security",
+];
 
 for (const [name, viewport] of Object.entries(VIEWPORTS)) {
   test.describe(`public site @ ${name}`, () => {
@@ -57,7 +67,9 @@ test.describe("navigation", () => {
     expect((await request.get("/sitemap.xml")).status()).toBe(200);
     const robots = await (await request.get("/robots.txt")).text();
     expect(robots).toContain("Disallow: /app");
-    expect((await request.get("/opengraph-image")).headers()["content-type"]).toContain("image/png");
+    expect((await request.get("/opengraph-image")).headers()["content-type"]).toContain(
+      "image/png",
+    );
   });
 });
 
@@ -71,8 +83,12 @@ test.describe("apply", () => {
     await page.getByLabel("Full name").fill("Imogen Test");
     await page.getByLabel("Email").fill("imogen@example.com");
     await page.getByLabel("City you live in").fill("Miami");
-    await page.getByLabel("How does your life move?").fill("Two homes, a lot of travel, two small children.");
-    await page.getByLabel("What would make it easier?").fill("One person who remembers everything for us.");
+    await page
+      .getByLabel("How does your life move?")
+      .fill("Two homes, a lot of travel, two small children.");
+    await page
+      .getByLabel("What would make it easier?")
+      .fill("One person who remembers everything for us.");
     await page.getByLabel(/I have read the privacy notice/).check();
     await page.getByRole("button", { name: "Submit application" }).click();
     await expect(page.getByText("Thank you. Your application is with us.")).toBeVisible();

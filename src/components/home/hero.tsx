@@ -7,7 +7,7 @@ import { WorldClock } from "./world-clock";
  */
 export function Hero() {
   return (
-    <section className="grain relative -mt-(--nav-height) flex min-h-[100svh] flex-col overflow-hidden bg-ink-950">
+    <section className="grain relative -mt-(--nav-height) flex min-h-[min(100svh,60rem)] flex-col overflow-hidden bg-ink-950">
       <HorizonArt />
       <div className="page-gutter content-max relative z-[2] flex w-full flex-1 flex-col justify-end pt-[calc(var(--nav-height)+4rem)] pb-10 sm:pb-14">
         <p className="reveal text-label text-bone-400" style={{ animationDelay: "150ms" }}>

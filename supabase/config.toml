@@ -1,0 +1,25 @@
+# Supabase CLI configuration for local development (`supabase start`).
+project_id = "biluxr"
+
+[api]
+port = 54321
+schemas = ["public"]
+
+[db]
+port = 54322
+major_version = 15
+
+[db.seed]
+enabled = true
+sql_paths = ["./seed.sql"]
+
+[auth]
+site_url = "http://localhost:3000"
+additional_redirect_urls = ["http://localhost:3000/auth/callback"]
+# Accounts are created only for approved applicants (enforced in the sign-in
+# action via shouldCreateUser); the platform setting must allow sign-up.
+enable_signup = true
+
+[auth.email]
+enable_signup = true
+enable_confirmations = false

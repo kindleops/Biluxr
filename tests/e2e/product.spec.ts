@@ -1,7 +1,14 @@
 import { expect, test } from "@playwright/test";
 import { VIEWPORTS, expectAccessible, expectNoHorizontalOverflow, signInAs } from "./helpers";
 
-const MEMBER_PAGES = ["/app", "/app/concierge", "/app/journeys", "/app/access", "/app/membership", "/app/profile"];
+const MEMBER_PAGES = [
+  "/app",
+  "/app/concierge",
+  "/app/journeys",
+  "/app/access",
+  "/app/membership",
+  "/app/profile",
+];
 
 test.describe("access control", () => {
   test("signed-out visitors are sent to sign in", async ({ page, context }) => {
@@ -18,7 +25,10 @@ test.describe("access control", () => {
     await expect(page).toHaveURL(/\/app$/);
   });
 
-  test("concierges cannot open the member app or admin configuration", async ({ page, context }) => {
+  test("concierges cannot open the member app or admin configuration", async ({
+    page,
+    context,
+  }) => {
     await signInAs(context, page, "concierge");
     await page.goto("/app");
     await expect(page).toHaveURL(/\/command$/);
@@ -72,7 +82,10 @@ test.describe("the request loop: member → concierge → member", () => {
 
   test("concierge reviews the AI reading and presents an option", async ({ page, context }) => {
     await signInAs(context, page, "concierge");
-    await page.getByRole("link", { name: /A quiet table for two/ }).first().click();
+    await page
+      .getByRole("link", { name: /A quiet table for two/ })
+      .first()
+      .click();
     await expect(page.getByRole("heading", { level: 1 })).toContainText("A quiet table for two");
 
     // The reading happens after the member's response is sent; reload until present.
@@ -88,22 +101,32 @@ test.describe("the request loop: member → concierge → member", () => {
     await page.getByRole("button", { name: "New option" }).click();
     const sheet = page.getByRole("dialog", { name: "New option" });
     await sheet.getByLabel("Title").fill("Counter seats, 8:30pm");
-    await sheet.getByLabel("Why this").fill("Two seats facing the pass. The chef will cook off-menu if you let us know tonight.");
+    await sheet
+      .getByLabel("Why this")
+      .fill("Two seats facing the pass. The chef will cook off-menu if you let us know tonight.");
     await sheet.getByLabel("Price").fill("640");
     await sheet.getByRole("button", { name: "Save option" }).click();
     await expect(page.getByText("Counter seats, 8:30pm").first()).toBeVisible();
     await expect(page.getByText("Options presented").first()).toBeVisible();
 
     await page.getByRole("radio", { name: "Internal note" }).click();
-    await page.getByLabel("Internal note").fill("Member prefers counter seating; confirmed with the restaurant by phone.");
+    await page
+      .getByLabel("Internal note")
+      .fill("Member prefers counter seating; confirmed with the restaurant by phone.");
     await page.getByRole("button", { name: "Add note" }).click();
     await expect(page.getByText("Member prefers counter seating")).toBeVisible();
   });
 
-  test("member chooses the option; the app says it is being secured, not confirmed", async ({ page, context }) => {
+  test("member chooses the option; the app says it is being secured, not confirmed", async ({
+    page,
+    context,
+  }) => {
     await signInAs(context, page, "member");
     await page.goto("/app/concierge");
-    await page.getByRole("link", { name: /A quiet table for two/ }).first().click();
+    await page
+      .getByRole("link", { name: /A quiet table for two/ })
+      .first()
+      .click();
     await expect(page.getByRole("heading", { name: "Counter seats, 8:30pm" })).toBeVisible();
     await expect(page.getByText("Member prefers counter seating")).toHaveCount(0);
     await page.getByRole("button", { name: "Choose this" }).click();
@@ -118,7 +141,15 @@ test.describe("Command", () => {
   test("every section renders for an administrator", async ({ page, context }) => {
     await page.setViewportSize(VIEWPORTS["desktop-1440"]);
     await signInAs(context, page, "admin");
-    for (const path of ["/command", "/command/members", "/command/applications", "/command/providers", "/command/cohort", "/command/analytics", "/command/settings"]) {
+    for (const path of [
+      "/command",
+      "/command/members",
+      "/command/applications",
+      "/command/providers",
+      "/command/cohort",
+      "/command/analytics",
+      "/command/settings",
+    ]) {
       await page.goto(path);
       await expect(page.locator("h1").first()).toBeVisible();
       await expectNoHorizontalOverflow(page);
@@ -130,8 +161,15 @@ test.describe("Command", () => {
     await page.setViewportSize(VIEWPORTS["mobile-390"]);
     await signInAs(context, page, "concierge");
     await expectNoHorizontalOverflow(page);
+    // Content must span the screen beneath the header, not sit beside it.
+    const main = await page.locator("main").boundingBox();
+    expect(main?.x).toBe(0);
+    expect(main?.width).toBeGreaterThan(VIEWPORTS["mobile-390"].width - 2);
     await page.getByRole("button", { name: "Menu" }).click();
-    await page.getByRole("navigation", { name: "Command" }).getByRole("link", { name: "Members" }).click();
+    await page
+      .getByRole("navigation", { name: "Command" })
+      .getByRole("link", { name: "Members" })
+      .click();
     await expect(page).toHaveURL(/\/command\/members$/);
   });
 });
