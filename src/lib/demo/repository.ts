@@ -491,7 +491,7 @@ export class DemoStaffRepository implements StaffRepository {
       events: this.s.events.filter((e) => e.requestId === id).sort((a, b) => a.createdAt.localeCompare(b.createdAt)),
       aiEvents: this.s.aiEvents.filter((e) => e.requestId === id).sort((a, b) => b.createdAt.localeCompare(a.createdAt)),
       staff: await this.listStaff(),
-      providers: this.s.providers.filter((p) => p.status !== "removed"),
+      providers: this.s.providers.filter((p) => p.status !== "removed" && p.status !== "paused"),
     };
   }
 

@@ -429,7 +429,7 @@ export class SupabaseStaffRepository implements StaffRepository {
       this.db.from("request_options").select("*").eq("request_id", id).order("sort_order"),
       this.db.from("request_events").select("*").eq("request_id", id).order("created_at"),
       this.db.from("ai_events").select("*").eq("request_id", id).order("created_at", { ascending: false }),
-      this.db.from("providers").select("*").neq("status", "removed").order("name"),
+      this.db.from("providers").select("*").not("status", "in", "(removed,paused)").order("name"),
       this.listStaff(),
     ]);
     return {

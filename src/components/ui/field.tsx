@@ -54,10 +54,16 @@ export function Field({
   );
 }
 
-export function Input({ tone = "dark", className, invalid, ...rest }: ComponentProps<"input"> & { tone?: Tone; invalid?: boolean }) {
+export function Input({
+  tone = "dark",
+  className,
+  invalid,
+  dense = false,
+  ...rest
+}: ComponentProps<"input"> & { tone?: Tone; invalid?: boolean; dense?: boolean }) {
   return (
     <input
-      className={cn(controlBase, "h-12", control[tone], className)}
+      className={cn(controlBase, dense ? "h-10 text-body-sm" : "h-12", control[tone], className)}
       aria-invalid={invalid || undefined}
       aria-describedby={invalid && rest.id ? `${rest.id}-error` : rest["aria-describedby"]}
       {...rest}
@@ -85,13 +91,14 @@ export function Select({
   tone = "dark",
   className,
   invalid,
+  dense = false,
   children,
   ...rest
-}: ComponentProps<"select"> & { tone?: Tone; invalid?: boolean }) {
+}: ComponentProps<"select"> & { tone?: Tone; invalid?: boolean; dense?: boolean }) {
   return (
     <div className="relative">
       <select
-        className={cn(controlBase, "h-12 appearance-none pr-10", control[tone], className)}
+        className={cn(controlBase, dense ? "h-10 text-body-sm" : "h-12", "appearance-none pr-10", control[tone], className)}
         aria-invalid={invalid || undefined}
         {...rest}
       >
