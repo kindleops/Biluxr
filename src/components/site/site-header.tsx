@@ -53,7 +53,7 @@ export function SiteHeader() {
         solid
           ? "bg-ink-950 [box-shadow:inset_0_-1px_0_0_var(--line-subtle)]"
           : scrolled && !open
-            ? "glass rounded-none [box-shadow:inset_0_-1px_0_0_var(--line-subtle)]"
+            ? "glass rounded-none bg-ink-950/90 [box-shadow:inset_0_-1px_0_0_var(--line-subtle)]"
             : "bg-transparent",
         paper ? "text-ink-900" : "text-bone-100",
       )}

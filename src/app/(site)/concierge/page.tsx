@@ -1,6 +1,10 @@
 import type { Metadata } from "next";
-import { PageIntro, Section } from "@/components/site/page-intro";
-import { Arrow, LinkButton } from "@/components/ui/button";
+import { LiquidSilk } from "@/components/motion/liquid-silk";
+import { BiluxrOrb } from "@/components/motion/orb";
+import { Reveal } from "@/components/motion/reveal";
+import { SplitLines } from "@/components/motion/split-lines";
+import { ClosingCTA, Manifesto, Marquee, ScrollTimeline } from "@/components/site/cinematic";
+import { PageIntro } from "@/components/site/page-intro";
 import { StatusPill } from "@/components/ui/status";
 import { publicRepository } from "@/lib/data";
 import { REQUEST_STATUS_PRESENTATION } from "@/lib/domain/requests";
@@ -29,6 +33,21 @@ const FLOW_COPY: Record<(typeof FLOW)[number], string> = {
   completed: "And we remember what you loved, and what you did not.",
 };
 
+const PRINCIPLES = [
+  [
+    "It reads, so people can begin with understanding.",
+    "Dates, places, the people involved and what is still unclear — gathered before your concierge opens the request.",
+  ],
+  [
+    "It suggests; it never commits.",
+    "Every question put to you and every option you receive has been reviewed by a person on our team.",
+  ],
+  [
+    "It is accountable.",
+    "What the system proposes is recorded so it can be reviewed and improved. Your requests are never used to train public models.",
+  ],
+] as const;
+
 export default async function ConciergePage() {
   const repo = await publicRepository();
   const categories = repo ? await repo.listCategories().catch(() => []) : [];
@@ -46,86 +65,107 @@ export default async function ConciergePage() {
         lede="A person who knows you, working with a system that forgets nothing. You write the way you would to a trusted friend; everything after that is ours to carry."
       />
 
-      <Section eyebrow="The relationship" title="Someone who knows you.">
-        <div className="grid gap-10 md:grid-cols-2">
-          <p className="text-lede text-bone-300">
-            Every member has a single concierge — a named person who learns your preferences, your
-            people and your rhythms. Behind them sits a small team, so the relationship never pauses
-            when someone is asleep or away.
-          </p>
-          <p className="text-body text-bone-400">
-            You will never be asked to repeat yourself. Preferences you share are kept in your
-            profile, visible to you, and editable at any time. What we learn on one request quietly
-            improves the next.
-          </p>
-        </div>
-      </Section>
+      <Manifesto
+        eyebrow="The relationship"
+        lines={["Someone who knows you.", <em key="t">And a team behind them.</em>]}
+        body="Every member has a single concierge — a named person who learns your preferences, your people and your rhythms — with a small team behind them, so the relationship never pauses when someone is asleep or away. You will never be asked to repeat yourself."
+      />
 
-      <Section tone="raised" eyebrow="How a request moves" title="Always clear where things stand.">
-        <ol className="grid gap-px overflow-hidden rounded-card bg-white/[0.06]">
-          {FLOW.map((s) => (
-            <li
-              key={s}
-              className="grid gap-2 bg-ink-900 px-6 py-6 sm:grid-cols-[14rem_1fr] sm:items-baseline sm:gap-8"
+      {/* How a request moves */}
+      <section className="bg-ink-900" aria-labelledby="flow">
+        <div className="page-gutter content-max grid gap-16 py-28 sm:py-40 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:gap-24">
+          <Reveal bare className="lg:sticky lg:top-32 lg:self-start">
+            <p className="text-label text-bone-500">How a request moves</p>
+            <h2
+              id="flow"
+              className="mt-7 font-display text-display font-light tracking-[var(--tracking-editorial)] text-bone-50"
             >
-              <StatusPill tone={REQUEST_STATUS_PRESENTATION[s].tone}>
-                {REQUEST_STATUS_PRESENTATION[s].member}
-              </StatusPill>
-              <p className="text-body-sm text-bone-400">{FLOW_COPY[s]}</p>
-            </li>
-          ))}
-        </ol>
-      </Section>
-
-      <Section
-        tone="paper"
-        eyebrow="Intelligence, in service"
-        title="The system drafts. People decide."
-      >
-        <div className="grid gap-8 md:grid-cols-2">
-          <p className="text-lede text-ink-800/85">
-            Biluxr&apos;s intelligence reads each request for what matters — dates, places, the
-            people involved, what is still unclear — so your concierge can begin with understanding
-            rather than admin.
-          </p>
-          <div className="grid gap-4 text-body text-ink-700/80">
-            <p>
-              It suggests; it never commits. Every question put to you and every option you receive
-              has been reviewed by a person on our team.
+              <SplitLines lines={["Always clear", <em key="w">where things stand.</em>]} />
+            </h2>
+            <p className="mt-8 max-w-sm text-body text-bone-400">
+              The same words you see in the app — each one true only when it is.
             </p>
-            <p>
-              Your requests are never used to train public models, and what the system proposes is
-              recorded so it can be reviewed and improved.
-            </p>
-          </div>
-        </div>
-      </Section>
-
-      {categories.length > 0 && (
-        <Section eyebrow="What members ask for" title="Anything, really.">
-          <ul className="flex flex-wrap gap-x-10 gap-y-5">
-            {categories.map((c) => (
-              <li
-                key={c.slug}
-                className="font-display text-[clamp(1.5rem,1.2rem+1vw,2.1rem)] font-light text-bone-200"
-              >
-                {c.name}
-              </li>
-            ))}
-          </ul>
-        </Section>
-      )}
-
-      <section className="bg-ink-950">
-        <div className="page-gutter content-max flex flex-col items-start gap-8 border-t border-white/[0.06] py-24 sm:flex-row sm:items-end sm:justify-between sm:py-32">
-          <p className="max-w-[20ch] font-display text-headline font-light text-bone-50">
-            Consider it handled.
-          </p>
-          <LinkButton href="/apply" size="lg" trailing={<Arrow />}>
-            Apply for membership
-          </LinkButton>
+          </Reveal>
+          <ScrollTimeline
+            items={FLOW.map((s) => ({
+              key: s,
+              marker: (
+                <StatusPill tone={REQUEST_STATUS_PRESENTATION[s].tone}>
+                  {REQUEST_STATUS_PRESENTATION[s].member}
+                </StatusPill>
+              ),
+              body: (
+                <p className="font-display text-[clamp(1.3rem,1.1rem+0.6vw,1.7rem)] leading-snug font-light text-bone-100">
+                  {FLOW_COPY[s]}
+                </p>
+              ),
+            }))}
+          />
         </div>
       </section>
+
+      {/* Intelligence, in service */}
+      <section className="relative overflow-hidden bg-ink-950" aria-labelledby="intelligence">
+        <LiquidSilk tint="tide" intensity={0.8} />
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_bottom,var(--color-ink-950),transparent_25%,transparent_75%,var(--color-ink-950))]"
+        />
+        <div className="page-gutter content-max relative grid items-center gap-12 py-28 sm:py-40 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:gap-20">
+          <div className="relative mx-auto w-[min(22rem,80vw)] lg:w-full lg:max-w-[30rem]">
+            <BiluxrOrb state="listening" className="w-full" />
+          </div>
+          <div>
+            <Reveal bare>
+              <p className="text-label text-bone-400">Intelligence, in service</p>
+              <h2
+                id="intelligence"
+                className="mt-7 font-display text-display font-light tracking-[var(--tracking-editorial)] text-bone-50"
+              >
+                <SplitLines lines={["The system drafts.", <em key="p">People decide.</em>]} />
+              </h2>
+            </Reveal>
+            <ol className="mt-12 grid gap-3">
+              {PRINCIPLES.map(([t, d], i) => (
+                <Reveal
+                  as="li"
+                  key={t}
+                  delay={i * 120}
+                  distance={20}
+                  className="liquid-glass rounded-[22px] p-6 sm:p-7"
+                >
+                  <h3 className="font-display text-title font-light text-bone-50">{t}</h3>
+                  <p className="mt-2 text-body-sm text-bone-300">{d}</p>
+                </Reveal>
+              ))}
+            </ol>
+          </div>
+        </div>
+      </section>
+
+      {categories.length > 0 && (
+        <section className="overflow-hidden bg-ink-950 py-28 sm:py-40" aria-labelledby="asks">
+          <Reveal bare className="page-gutter content-max">
+            <p className="text-label text-bone-500">What members ask for</p>
+            <h2
+              id="asks"
+              className="mt-7 font-display text-headline font-light tracking-[var(--tracking-editorial)] text-bone-50"
+            >
+              <SplitLines lines={["Anything, really."]} />
+            </h2>
+          </Reveal>
+          <div className="page-gutter mt-14 sm:mt-20">
+            <Marquee items={categories.map((c) => c.name)} label="Categories of request" />
+          </div>
+        </section>
+      )}
+
+      <ClosingCTA
+        image="/images/terrace.jpg"
+        position="70% 50%"
+        lines={["Consider it", <em key="h">handled.</em>]}
+        lede="Write once. We return with a considered choice, arrange it, and remember."
+      />
     </>
   );
 }

@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { ScrollScene } from "@/components/motion/scroll";
+import { SplitLines } from "@/components/motion/split-lines";
 import { EditorialHeading } from "@/components/ui/typography";
 import { LEGAL_DOCUMENTS, legalDocument } from "@/content/legal";
 import { cn } from "@/lib/cn";
@@ -56,9 +58,13 @@ export default async function LegalPage({ params }: { params: Promise<{ slug: st
             ))}
           </ul>
         </nav>
-        <article className="max-w-[var(--measure)]">
+        <ScrollScene as="article" mode="pin" className="max-w-[var(--measure)]">
+          <span
+            aria-hidden
+            className="reading-progress fixed inset-x-0 top-(--nav-height) z-[var(--z-sticky)] h-px origin-left bg-ink-900/60"
+          />
           <EditorialHeading as="h1" size="display">
-            {doc.title}
+            <SplitLines trigger="load" delay={100} lines={[doc.title]} />
           </EditorialHeading>
           <p className="mt-6 text-lede text-ink-700/80">{doc.summary}</p>
           <p className="mt-8 rounded-md px-4 py-3 text-caption text-ink-700/75 shadow-[inset_0_0_0_1px_var(--line-paper-strong)]">
@@ -77,7 +83,7 @@ export default async function LegalPage({ params }: { params: Promise<{ slug: st
               </section>
             ))}
           </div>
-        </article>
+        </ScrollScene>
       </div>
     </div>
   );

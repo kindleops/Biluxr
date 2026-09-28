@@ -476,7 +476,7 @@
   filter: blur(6px);
 }
 @media (prefers-reduced-motion: reduce) {
-  .js [data-reveal]:not([data-visible]) {
+  .js [data-reveal]:not([data-reveal="bare"]):not([data-visible]) {
     opacity: 1;
     transform: none;
     filter: none;
@@ -851,4 +851,89 @@ html.lenis {
   .hero .hero-copy {
     transform: none;
   }
+}
+
+/* ---------- Scroll timeline ---------- */
+.scroll-timeline .timeline-fill {
+  transform: scaleY(clamp(0, calc((var(--progress, 0) - 0.18) * 1.9), 1));
+}
+.timeline-node {
+  border-radius: 9999px;
+  background: var(--color-ink-950);
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.25);
+  transition:
+    background-color 0.8s var(--ease-settle) 0.2s,
+    box-shadow 0.8s var(--ease-settle) 0.2s;
+}
+[data-visible] > .timeline-node {
+  background: var(--color-bone-100);
+  box-shadow:
+    inset 0 0 0 1px var(--color-bone-100),
+    0 0 0 5px rgb(243 239 232 / 0.06),
+    0 0 18px 2px rgb(215 198 165 / 0.35);
+}
+html:not(.js) .timeline-node {
+  background: var(--color-bone-100);
+}
+
+/* ---------- Marquee ---------- */
+@keyframes marquee {
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+.marquee {
+  mask-image: linear-gradient(to right, transparent, #000 12%, #000 88%, transparent);
+}
+.marquee-track {
+  animation: marquee 80s linear infinite;
+}
+.marquee-reverse {
+  animation-duration: 96s;
+  animation-direction: reverse;
+}
+.marquee:hover .marquee-track {
+  animation-play-state: paused;
+}
+
+/* ---------- Disclosure (FAQ) ---------- */
+details.disclosure {
+  interpolate-size: allow-keywords;
+}
+details.disclosure::details-content {
+  block-size: 0;
+  overflow: clip;
+  opacity: 0;
+  transition:
+    block-size 0.6s var(--ease-settle),
+    opacity 0.5s var(--ease-considered),
+    content-visibility 0.6s allow-discrete;
+}
+details.disclosure[open]::details-content {
+  block-size: auto;
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track {
+    animation: none !important;
+  }
+  .scroll-timeline .timeline-fill {
+    transform: none;
+  }
+}
+
+/* ---------- Joining line ---------- */
+.joining .joining-fill {
+  transform: scaleX(clamp(0, calc((var(--progress, 0) - 0.3) * 2.6), 1));
+}
+@media (prefers-reduced-motion: reduce) {
+  .joining .joining-fill {
+    transform: none;
+  }
+}
+
+/* ---------- Reading progress ---------- */
+.reading-progress {
+  transform: scaleX(var(--progress, 0));
 }

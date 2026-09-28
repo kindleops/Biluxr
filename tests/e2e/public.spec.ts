@@ -74,6 +74,46 @@ test.describe("navigation", () => {
     await context.close();
   });
 
+  test("sub pages show all content under reduced motion, without scrolling", async ({
+    browser,
+  }) => {
+    const context = await browser.newContext({ reducedMotion: "reduce" });
+    const page = await context.newPage();
+    for (const path of ["/membership", "/concierge", "/partners"]) {
+      await page.goto(path);
+      const hidden = await page.evaluate(
+        () =>
+          [...document.querySelectorAll<HTMLElement>("[data-reveal]")].filter(
+            (el) => getComputedStyle(el).opacity !== "1",
+          ).length,
+      );
+      expect(hidden, `${path}: revealed content is visible`).toBe(0);
+    }
+    await context.close();
+  });
+
+  test("membership questions open and close", async ({ page }) => {
+    await page.goto("/membership");
+    const summary = page.getByText("Where does Biluxr operate?");
+    await summary.scrollIntoViewIfNeeded();
+    await summary.click();
+    await expect(page.getByText(/opening first in Miami and South Florida/)).toBeVisible();
+  });
+
+  test("concierge explains every member-facing status in order", async ({ page }) => {
+    await page.goto("/concierge");
+    const flow = page.locator(".scroll-timeline li");
+    await expect(flow).toHaveCount(6);
+    await expect(flow.first()).toContainText("Received");
+    await expect(page.getByRole("list", { name: "Categories of request" })).toBeAttached();
+  });
+
+  test("partners marks its example brief as illustrative", async ({ page }) => {
+    await page.goto("/partners");
+    await expect(page.getByText("Illustrative. Fictional member.")).toBeAttached();
+    await expect(page.getByRole("button", { name: /Introduce your business/ })).toBeAttached();
+  });
+
   test("SEO endpoints respond", async ({ request }) => {
     expect((await request.get("/sitemap.xml")).status()).toBe(200);
     const robots = await (await request.get("/robots.txt")).text();

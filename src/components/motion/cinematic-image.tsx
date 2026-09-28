@@ -20,6 +20,7 @@ export function CinematicImage({
   wipe = true,
   position,
   style,
+  fill = false,
 }: {
   src: string;
   alt: string;
@@ -33,10 +34,16 @@ export function CinematicImage({
   /** CSS object-position, e.g. "70% 50%". */
   position?: string;
   style?: CSSProperties;
+  /** Fill the nearest positioned ancestor instead of sizing itself. */
+  fill?: boolean;
 }) {
   return (
     <ScrollScene
-      className={cn("cinematic-frame relative overflow-hidden bg-ink-900", className)}
+      className={cn(
+        "cinematic-frame overflow-hidden bg-ink-900",
+        fill ? "absolute inset-0" : "relative",
+        className,
+      )}
       data-wipe={wipe || undefined}
       style={{ ...style, ["--parallax" as string]: `${parallax}%` }}
     >

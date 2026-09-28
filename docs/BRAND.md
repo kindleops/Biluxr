@@ -155,6 +155,16 @@ and settling as you scroll). `SplitLines` reveals headlines line by line out
 of masks. Public-site navigations crossfade with React `<ViewTransition>`
 (`page-swap`).
 
+**Sub-page kit** (`components/site/cinematic.tsx`): `Manifesto` (a centred
+statement revealed line by line), `ScrollTimeline` (a rail that fills as you
+scroll; each node lights when reached — used for the request lifecycle),
+`Marquee` (two slow rows of words drifting in opposite directions; read once
+by assistive tech), and `ClosingCTA` (one photograph, one line, one action).
+Membership, Concierge and Partners are composed from these plus sticky photo
+columns and liquid-glass panels; FAQ answers open with `details.disclosure`
+(animated where `::details-content` is supported). Legal pages carry a
+hairline reading-progress line and stay deliberately plain.
+
 - **Reveal** (`components/motion/reveal.tsx`): sections rise 28px out of a soft
   blur as they enter the viewport. Content is visible without JavaScript (the
   hidden state is gated on an `html.js` class set before paint) and under
