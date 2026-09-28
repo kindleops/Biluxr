@@ -22,6 +22,9 @@ cp .env.example .env.local        # then set BILUXR_DEMO_MODE=true
 npm run dev                       # http://localhost:3000
 ```
 
+Press **⌘K** (Ctrl+K) anywhere once signed in. In Command, `g` then a letter
+jumps between sections and `j`/`k` move through the queue.
+
 Open `/login` and choose a fictional persona: **Elena Voss** (member),
 **Isabel Moreau** (concierge) or **Rhea Linden** (administrator). Demo data is
 fictional, lives in memory and resets on restart; a banner marks every page.

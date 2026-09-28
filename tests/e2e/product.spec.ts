@@ -137,6 +137,51 @@ test.describe("the request loop: member → concierge → member", () => {
   });
 });
 
+test.describe("keyboard", () => {
+  test("⌘K palette finds a member and opens their 360", async ({ page, context }) => {
+    await signInAs(context, page, "concierge");
+    await page.waitForLoadState("networkidle");
+    await page.keyboard.press("Control+k");
+    const palette = page.getByRole("dialog", { name: "Command palette" });
+    await expect(palette).toBeVisible();
+    await palette.getByRole("combobox").fill("Priya");
+    await expect(palette.getByRole("option").first()).toHaveAttribute("aria-selected", "true");
+    await page.keyboard.press("Enter");
+    await expect(page).toHaveURL(/\/command\/members\/.+/);
+    await expect(page.getByRole("heading", { level: 1 })).toContainText("Priya Anand");
+  });
+
+  test("g-then-key jumps and j/k move through the queue", async ({ page, context }) => {
+    await signInAs(context, page, "concierge");
+    await page.waitForLoadState("networkidle");
+    await page.keyboard.press("g");
+    await page.keyboard.press("m");
+    await expect(page).toHaveURL(/\/command\/members$/);
+    await page.waitForLoadState("networkidle");
+    await page.keyboard.press("g");
+    await page.keyboard.press("q");
+    await expect(page).toHaveURL(/\/command$/);
+    await page.waitForLoadState("networkidle");
+    await page.keyboard.press("j");
+    const first = page.locator("[data-nav-row]").first();
+    await expect(first).toBeFocused();
+    await page.keyboard.press("j");
+    await expect(page.locator("[data-nav-row]").nth(1)).toBeFocused();
+    await page.keyboard.press("Enter");
+    await expect(page).toHaveURL(/\/command\/requests\/.+/);
+  });
+
+  test("members can jump anywhere with the palette", async ({ page, context }) => {
+    await signInAs(context, page, "member");
+    await page.getByRole("button", { name: "Search" }).first().click();
+    const palette = page.getByRole("dialog", { name: "Command palette" });
+    await palette.getByRole("combobox").fill("Paris");
+    await page.keyboard.press("Enter");
+    await expect(page).toHaveURL(/\/app\/journeys\/.+/);
+    await expect(page.getByRole("img", { name: /Route from Miami to Paris/ })).toBeVisible();
+  });
+});
+
 test.describe("Command", () => {
   test("every section renders for an administrator", async ({ page, context }) => {
     await page.setViewportSize(VIEWPORTS["desktop-1440"]);

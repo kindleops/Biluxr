@@ -254,7 +254,7 @@ export function JourneysShowcase() {
                   { ...PLACES.miami, emphasis: false },
                   { ...PLACES.paris, emphasis: true },
                 ]}
-                dotClassName="stroke-bone-100/[0.12]"
+                dotOpacity={0.12}
               />
             </div>
             <div className="absolute inset-0 bg-[linear-gradient(to_right,transparent_40%,var(--color-ink-950)_85%)] max-md:bg-[linear-gradient(to_top,var(--color-ink-950)_40%,transparent_70%)]" />

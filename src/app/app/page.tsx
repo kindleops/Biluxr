@@ -6,7 +6,7 @@ import { ConciergeAvatar } from "@/components/ui/avatar";
 import { EmptyState } from "@/components/ui/empty-state";
 import { requireMember } from "@/lib/auth/session";
 import { memberRepository, publicRepository } from "@/lib/data";
-import { formatDateLong, greeting } from "@/lib/format";
+import { formatDateLong, formatTime, greeting } from "@/lib/format";
 
 export const metadata = { title: "Home" };
 
@@ -22,6 +22,7 @@ export default async function MemberHome() {
   const { profile, membership } = home.viewer;
   const name = profile.preferredName ?? profile.fullName.split(" ")[0];
   const now = new Date();
+  const homeMarket = markets.find((m) => m.id === profile.homeMarketId) ?? null;
 
   const needsYou = home.activeRequests.filter(
     (r) =>
@@ -33,17 +34,30 @@ export default async function MemberHome() {
 
   return (
     <MemberContainer>
-      <section className="pt-10 pb-8 lg:pt-16">
-        <p className="text-label text-bone-500">
-          {new Intl.DateTimeFormat("en-US", {
-            weekday: "long",
-            month: "long",
-            day: "numeric",
-            timeZone: profile.timezone,
-          }).format(now)}
+      <section className="relative pt-10 pb-8 lg:pt-16">
+        <AmbientLight hour={localHour(now, profile.timezone)} />
+        <p className="text-label relative flex flex-wrap items-center gap-x-3 text-bone-500">
+          <span>
+            {new Intl.DateTimeFormat("en-US", {
+              weekday: "long",
+              month: "long",
+              day: "numeric",
+              timeZone: profile.timezone,
+            }).format(now)}
+          </span>
+          {homeMarket && (
+            <>
+              <span aria-hidden className="text-bone-600">
+                ·
+              </span>
+              <span>
+                {homeMarket.name.split(" & ")[0]} {formatTime(now.toISOString(), profile.timezone)}
+              </span>
+            </>
+          )}
         </p>
-        <h1 className="mt-4 font-display text-display font-light text-bone-50">
-          {greeting(now, profile.timezone)}, <em className="text-bone-300">{name}.</em>
+        <h1 className="relative mt-4 font-display text-display font-light text-bone-50">
+          {greeting(now, profile.timezone)}, <em className="text-shine">{name}.</em>
         </h1>
       </section>
 
@@ -166,5 +180,35 @@ export default async function MemberHome() {
         </section>
       )}
     </MemberContainer>
+  );
+}
+
+function localHour(date: Date, timeZone: string): number {
+  return Number(
+    new Intl.DateTimeFormat("en-US", { hour: "numeric", hourCycle: "h23", timeZone }).format(date),
+  );
+}
+
+/**
+ * A faint wash of light keyed to the member's local hour: warm at dawn and
+ * dusk, cool at midday, nearly absent at night. Decorative only.
+ */
+function AmbientLight({ hour }: { hour: number }) {
+  const tint =
+    hour >= 5 && hour < 9
+      ? "rgb(215 170 120 / 0.10)"
+      : hour >= 9 && hour < 16
+        ? "rgb(160 180 205 / 0.08)"
+        : hour >= 16 && hour < 20
+          ? "rgb(210 150 110 / 0.10)"
+          : "rgb(120 130 170 / 0.06)";
+  return (
+    <div
+      aria-hidden
+      className="pointer-events-none absolute -top-24 -right-40 -left-40 h-[26rem]"
+      style={{
+        background: `radial-gradient(ellipse 55% 60% at 70% 20%, ${tint}, transparent 70%)`,
+      }}
+    />
   );
 }

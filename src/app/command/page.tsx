@@ -106,7 +106,8 @@ export default async function QueuePage({
                     <td className="min-w-0 md:px-4 md:py-3">
                       <Link
                         href={`/command/requests/${r.id}`}
-                        className="block after:absolute after:inset-0"
+                        data-nav-row
+                        className="block outline-none after:absolute after:inset-0 focus-visible:after:bg-white/[0.03] focus-visible:after:shadow-[inset_2px_0_0_0_var(--color-bone-100)]"
                       >
                         <span className="block truncate text-bone-50">{r.title}</span>
                         <span className="mt-0.5 block font-mono text-caption text-bone-600">

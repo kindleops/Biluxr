@@ -17,7 +17,8 @@ const sizes: Record<Size, string> = {
 
 const variants: Record<Tone, Record<Variant, string>> = {
   dark: {
-    primary: "bg-bone-100 text-ink-950 hover:bg-bone-50 shadow-[0_0_0_1px_rgb(255_255_255/0.2)]",
+    primary:
+      "bg-bone-100 text-ink-950 shadow-[0_0_0_1px_rgb(255_255_255/0.2),0_1px_0_0_rgb(255_255_255/0.6)_inset,0_8px_24px_-12px_rgb(243_239_232/0.35)] hover:bg-bone-50 hover:shadow-[0_0_0_1px_rgb(255_255_255/0.3),0_1px_0_0_rgb(255_255_255/0.6)_inset,0_10px_30px_-10px_rgb(243_239_232/0.45)] disabled:bg-white/[0.07] disabled:text-bone-500 disabled:opacity-100 disabled:shadow-[inset_0_0_0_1px_var(--line)]",
     secondary:
       "bg-transparent text-bone-100 shadow-[inset_0_0_0_1px_var(--line-strong)] hover:bg-white/[0.04] hover:shadow-[inset_0_0_0_1px_rgb(255_255_255/0.3)]",
     ghost: "bg-transparent text-bone-200 hover:bg-white/[0.05] hover:text-bone-50",

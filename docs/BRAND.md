@@ -28,6 +28,13 @@
   hero, page intros, membership credential, OG image). It is the mark's
   enclosure, enlarged — never a globe, never 3D.
 
+- **The world, as points of light**: a dotted map generated from Natural Earth
+  land polygons (`scripts/gen-world-dots.mjs` → `public/geo/world-dots.svg`, one
+  cacheable asset). Routes are drawn as lifted arcs that write themselves in;
+  the member's home glows. Used for the hero horizon band, the journeys
+  showcase and every journey's route header. It describes the member's world,
+  never a claim about where Biluxr operates.
+
 ## Tokens (`src/app/globals.css`)
 
 | Group        | Tokens                                                                                                                                                                                                        |
@@ -100,11 +107,30 @@ texture, quiet human moments. Never: champagne, supercars, jet-stair poses,
 watches on steering wheels, staged penthouses, stock "success". The current
 build uses no photography by choice — type, line and space carry it.
 
-## Motion
+## Motion & material
 
-Entrances rise 14px and settle (`--ease-settle`, 520ms); the horizon circle
-draws once over 2.6s; hover states nudge, never bounce. Nothing loops except a
-slow 9s light "breath" behind the hero. Reduced motion collapses all of it.
+- **Reveal** (`components/motion/reveal.tsx`): sections rise 28px out of a soft
+  blur as they enter the viewport. Content is visible without JavaScript (the
+  hidden state is gated on an `html.js` class set before paint) and under
+  reduced motion.
+- **Light**: a slow specular shine crosses the hero's italic line once; the
+  member greeting carries the same treatment. Member home has an ambient wash
+  keyed to the member's local hour.
+- **Tilt** (`components/motion/tilt.tsx`): the membership credential tilts under
+  the pointer with a moving highlight — GPU transforms only, inert for touch and
+  reduced motion.
+- **Routes** draw in over 2.4s; the home marker pulses slowly. Floating product
+  details drift on 9–12s cycles.
+- Hover states nudge, never bounce. Reduced motion collapses all of it.
+
+## Interaction
+
+- **⌘K / Ctrl+K palette** everywhere signed in (`components/ui/command-palette.tsx`):
+  Command searches open requests, members, applications and providers and
+  lists actions; members jump to requests, journeys and sections. Combobox +
+  active-descendant listbox; fully keyboard- and screen-reader-operable.
+- **Command shortcuts**: `g` then `q m a p c n s` to jump between sections;
+  `j`/`k` to move through queue rows, `Enter` to open.
 
 ## Sound
 

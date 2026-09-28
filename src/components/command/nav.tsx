@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { BiluxrMark, BiluxrWordmark } from "@/components/brand/logo";
 import { ConciergeAvatar } from "@/components/ui/avatar";
+import { PaletteTrigger } from "@/components/ui/command-palette";
 import { cn } from "@/lib/cn";
 
 interface Item {
@@ -86,7 +87,8 @@ export function CommandNav({
               </span>
             </span>
           </Link>
-          <nav aria-label="Command" className="mt-8">
+          <PaletteTrigger className="mt-6 w-full" label="Search" />
+          <nav aria-label="Command" className="mt-5">
             {list}
           </nav>
         </div>

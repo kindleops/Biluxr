@@ -5,7 +5,8 @@ import { MemberContainer } from "@/components/member/page-header";
 import { EmptyState } from "@/components/ui/empty-state";
 import { cn } from "@/lib/cn";
 import { requireMember } from "@/lib/auth/session";
-import { memberRepository } from "@/lib/data";
+import { memberRepository, publicRepository } from "@/lib/data";
+import { WorldMap, framePlaces, placeForMarket } from "@/components/geo/world-map";
 import { NotFoundError } from "@/lib/data/repository";
 import type { JourneyItem } from "@/lib/domain/types";
 import { formatDateRange, formatTime } from "@/lib/format";
@@ -62,8 +63,16 @@ export default async function JourneyPage({ params }: { params: Promise<{ id: st
     if (e instanceof NotFoundError) notFound();
     throw e;
   });
-  const home = await repo.home();
+  const [home, pub] = await Promise.all([repo.home(), publicRepository()]);
   const active = home.viewer.membership?.status === "active";
+  const markets = pub ? await pub.listMarkets() : [];
+  const slugFor = (marketId: string | null) => markets.find((m) => m.id === marketId)?.slug;
+  const origin = placeForMarket(slugFor(home.viewer.profile.homeMarketId));
+  const destination = placeForMarket(slugFor(journey.primaryMarketId));
+  const route =
+    origin && destination && origin.name !== destination.name
+      ? ([origin, destination] as const)
+      : null;
   const days = groupByDay(items);
 
   return (
@@ -73,6 +82,23 @@ export default async function JourneyPage({ params }: { params: Promise<{ id: st
           ← Journeys
         </Link>
       </nav>
+      {route && (
+        <figure className="relative mt-6 overflow-hidden rounded-xl bg-ink-900 shadow-[inset_0_0_0_1px_var(--line-subtle)]">
+          <WorldMap
+            label={`Route from ${route[0].name} to ${route[1].name}`}
+            viewBox={framePlaces([route[0], route[1]], 3)}
+            routes={[[route[0], route[1]]]}
+            markers={[route[0], { ...route[1], emphasis: true }]}
+            dotOpacity={0.1}
+            className="h-40 sm:h-56"
+            preserveAspectRatio="xMidYMid slice"
+          />
+          <figcaption className="absolute top-3 left-4 flex items-center gap-2 text-caption text-bone-400">
+            {route[0].name} <span aria-hidden>→</span>{" "}
+            <span className="text-bone-100">{route[1].name}</span>
+          </figcaption>
+        </figure>
+      )}
       <header className="mt-6 border-b border-white/[0.06] pb-10">
         <p className="text-label text-bone-500">
           {formatDateRange(journey.startsOn, journey.endsOn)}

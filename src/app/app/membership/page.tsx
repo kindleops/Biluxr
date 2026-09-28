@@ -1,4 +1,5 @@
 import { MembershipCard, membershipStatusLine } from "@/components/member/membership-card";
+import { TiltSurface } from "@/components/motion/tilt";
 import { MemberContainer, MemberPageHeader, SectionHeading } from "@/components/member/page-header";
 import { EmptyState } from "@/components/ui/empty-state";
 import { requireMember } from "@/lib/auth/session";
@@ -36,11 +37,13 @@ export default async function MembershipPage() {
       ) : (
         <>
           <div className="grid gap-10 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] md:items-center">
-            <MembershipCard
-              name={bundle.profile.fullName}
-              membership={membership}
-              tierName={tier?.name ?? null}
-            />
+            <TiltSurface className="w-full max-w-md">
+              <MembershipCard
+                name={bundle.profile.fullName}
+                membership={membership}
+                tierName={tier?.name ?? null}
+              />
+            </TiltSurface>
             <dl className="grid gap-5">
               <div>
                 <dt className="text-label text-bone-500">Status</dt>

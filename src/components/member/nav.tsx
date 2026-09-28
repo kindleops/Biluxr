@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { BiluxrLogo, BiluxrMark } from "@/components/brand/logo";
 import { ConciergeAvatar } from "@/components/ui/avatar";
+import { PaletteTrigger } from "@/components/ui/command-palette";
 import { cn } from "@/lib/cn";
 
 type IconName = "home" | "concierge" | "journeys" | "access" | "membership" | "profile";
@@ -77,7 +78,8 @@ export function MemberRail({ name, initials }: { name: string; initials: string 
         <Link href="/app" aria-label="Biluxr home" className="block px-3 py-2 text-bone-100">
           <BiluxrLogo />
         </Link>
-        <nav aria-label="Member" className="mt-10">
+        <PaletteTrigger className="mt-8 w-full" label="Search" />
+        <nav aria-label="Member" className="mt-6">
           <ul className="grid gap-0.5">
             {ITEMS.map((item) => {
               const active = isActive(pathname, item.href);
@@ -126,9 +128,29 @@ export function MemberTopBar() {
       <Link href="/app" aria-label="Biluxr home" className="-m-2 p-2 text-bone-100">
         <BiluxrMark decorative className="size-7" />
       </Link>
-      <Link href="/app/membership" className="text-caption text-bone-400 hover:text-bone-100">
-        Membership
-      </Link>
+      <div className="flex items-center gap-3">
+        <Link href="/app/membership" className="text-caption text-bone-400 hover:text-bone-100">
+          Membership
+        </Link>
+        <button
+          type="button"
+          onClick={() => window.dispatchEvent(new Event("biluxr:palette"))}
+          className="-mr-2 inline-flex size-10 items-center justify-center rounded-full text-bone-300 hover:text-bone-50"
+          aria-label="Search"
+        >
+          <svg
+            aria-hidden
+            viewBox="0 0 20 20"
+            className="size-[1.1rem]"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.4"
+          >
+            <circle cx="9" cy="9" r="5.5" />
+            <path d="m13.2 13.2 3.3 3.3" />
+          </svg>
+        </button>
+      </div>
     </header>
   );
 }

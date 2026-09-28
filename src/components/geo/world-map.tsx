@@ -1,5 +1,5 @@
 import { cn } from "@/lib/cn";
-import { WORLD_BOUNDS, WORLD_DOTS, WORLD_HEIGHT, WORLD_WIDTH } from "./world-dots";
+import { WORLD_BOUNDS, WORLD_DOTS_URL, WORLD_HEIGHT, WORLD_WIDTH } from "./world-dots";
 
 export interface Place {
   name: string;
@@ -25,6 +25,50 @@ export const PLACES = {
   singapore: { name: "Singapore", lon: 103.82, lat: 1.35 },
 } satisfies Record<string, Place>;
 
+const MARKET_PLACES: Record<string, Place> = {
+  miami: PLACES.miami,
+  "new-york": PLACES.newYork,
+  "los-angeles": PLACES.losAngeles,
+  aspen: PLACES.aspen,
+  "st-barts": PLACES.stBarts,
+  london: PLACES.london,
+  paris: PLACES.paris,
+  milan: PLACES.milan,
+  monaco: PLACES.monaco,
+  ibiza: PLACES.ibiza,
+  mykonos: PLACES.mykonos,
+  dubai: PLACES.dubai,
+  tokyo: PLACES.tokyo,
+  singapore: PLACES.singapore,
+};
+
+export function placeForMarket(slug: string | null | undefined): Place | null {
+  return slug ? (MARKET_PLACES[slug] ?? null) : null;
+}
+
+/** A viewBox framing the given places at a target aspect ratio, with padding. */
+export function framePlaces(places: Place[], aspect = 2.6, padding = 70): string {
+  const pts = places.map(project);
+  const xs = pts.map((p) => p[0]);
+  const ys = pts.map((p) => p[1]);
+  let x0 = Math.min(...xs) - padding;
+  const x1 = Math.max(...xs) + padding;
+  let y0 = Math.min(...ys) - padding * 1.3;
+  const y1 = Math.max(...ys) + padding * 0.7;
+  let w = x1 - x0;
+  let h = y1 - y0;
+  if (w / h < aspect) {
+    const nw = h * aspect;
+    x0 -= (nw - w) / 2;
+    w = nw;
+  } else {
+    const nh = w / aspect;
+    y0 -= (nh - h) / 2;
+    h = nh;
+  }
+  return `${x0.toFixed(1)} ${y0.toFixed(1)} ${w.toFixed(1)} ${h.toFixed(1)}`;
+}
+
 export function project(p: Pick<Place, "lon" | "lat">): [number, number] {
   const lon = p.lon < WORLD_BOUNDS.west ? p.lon + 360 : p.lon;
   const x = ((lon - WORLD_BOUNDS.west) / (WORLD_BOUNDS.east - WORLD_BOUNDS.west)) * WORLD_WIDTH;
@@ -46,14 +90,6 @@ export function arcPath(a: Place, b: Place, liftScale = 1): string {
   return `M${x1.toFixed(1)} ${y1.toFixed(1)} Q${mx.toFixed(1)} ${my.toFixed(1)} ${x2.toFixed(1)} ${y2.toFixed(1)}`;
 }
 
-// All dots as one path of zero-length round-capped segments: one DOM node.
-const DOT_PATH = WORLD_DOTS.split(" ")
-  .map((p) => {
-    const [x, y] = p.split(",");
-    return `M${x} ${y}h0`;
-  })
-  .join("");
-
 /**
  * Dotted world map with optional routes. Pure SVG, server-rendered; route
  * drawing is CSS (stroke-dash), disabled under reduced motion.
@@ -62,40 +98,46 @@ export function WorldMap({
   routes = [],
   markers = [],
   className,
-  dotClassName = "stroke-bone-100/[0.16]",
+  dotOpacity = 0.16,
   label = "Map",
   animate = true,
   latitudes,
   arcLift = 1,
   preserveAspectRatio,
+  viewBox,
 }: {
   routes?: [Place, Place][];
   markers?: (Place & { emphasis?: boolean })[];
   className?: string;
-  dotClassName?: string;
+  /** Opacity of the land dots (they are bone-coloured). */
+  dotOpacity?: number;
   label?: string;
   animate?: boolean;
   /** Crop to a latitude band, e.g. [70, 12]. */
   latitudes?: [number, number];
   arcLift?: number;
   preserveAspectRatio?: string;
+  /** Explicit viewBox (e.g. from framePlaces); overrides latitudes. */
+  viewBox?: string;
 }) {
   const top = latitudes ? project({ lon: 0, lat: latitudes[0] })[1] : 0;
   const bottom = latitudes ? project({ lon: 0, lat: latitudes[1] })[1] : WORLD_HEIGHT;
   return (
     <svg
-      viewBox={`0 ${top.toFixed(1)} ${WORLD_WIDTH} ${(bottom - top).toFixed(1)}`}
+      viewBox={viewBox ?? `0 ${top.toFixed(1)} ${WORLD_WIDTH} ${(bottom - top).toFixed(1)}`}
       preserveAspectRatio={preserveAspectRatio}
       className={cn("block h-auto w-full", className)}
       role="img"
       aria-label={label}
     >
-      <path
-        d={DOT_PATH}
-        className={dotClassName}
-        strokeWidth={2.1}
-        strokeLinecap="round"
-        fill="none"
+      <image
+        href={WORLD_DOTS_URL}
+        x={0}
+        y={0}
+        width={WORLD_WIDTH}
+        height={WORLD_HEIGHT}
+        opacity={dotOpacity}
+        preserveAspectRatio="none"
       />
       <g fill="none" strokeLinecap="round">
         {routes.map(([a, b], i) => {

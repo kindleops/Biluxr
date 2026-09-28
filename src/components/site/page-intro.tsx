@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { Reveal } from "@/components/motion/reveal";
 import { EditorialHeading } from "@/components/ui/typography";
 
 export function PageIntro({
@@ -59,7 +60,7 @@ export function Section({
     <section id={id} data-surface={tone === "paper" ? "paper" : undefined} className={bg}>
       <div className="page-gutter content-max grid gap-12 py-24 sm:py-32 lg:grid-cols-[minmax(0,1fr)_minmax(0,2fr)] lg:gap-20">
         {(eyebrow || title) && (
-          <div>
+          <Reveal>
             {eyebrow && (
               <p className={`text-label ${tone === "paper" ? "text-ink-700/75" : "text-bone-500"}`}>
                 {eyebrow}
@@ -74,9 +75,11 @@ export function Section({
                 {title}
               </EditorialHeading>
             )}
-          </div>
+          </Reveal>
         )}
-        <div className={eyebrow || title ? "" : "lg:col-span-2"}>{children}</div>
+        <Reveal delay={120} className={eyebrow || title ? "" : "lg:col-span-2"}>
+          {children}
+        </Reveal>
       </div>
     </section>
   );
