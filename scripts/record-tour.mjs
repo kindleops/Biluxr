@@ -3,7 +3,7 @@
  * Records a product walkthrough of a running Biluxr (demo mode) as MP4.
  *
  *   BILUXR_DEMO_MODE=true npm run build && BILUXR_DEMO_MODE=true npx next start -p 3000
- *   FFMPEG=/path/to/ffmpeg node scripts/record-tour.mjs <outDir> [desktop|mobile|all]
+ *   FFMPEG=/path/to/ffmpeg node scripts/record-tour.mjs <outDir> [desktop|mobile|all|pages]
  *
  * Frames come from Chrome's screencast (JPEG, timestamped) and are encoded
  * with H.264 at constant 30fps. A caption strip and a visible cursor are
@@ -418,6 +418,140 @@ async function mobileTour(page) {
   await page.waitForTimeout(3000);
   await caption(page, "Biluxr. Consider it handled.");
   await page.waitForTimeout(2400);
+}
+
+/* ------------------------------- Sub pages -------------------------------- */
+
+/** Scroll from where we are to the end of the page's main content. */
+async function scrollThrough(page, duration) {
+  const end = await page.evaluate(() => {
+    const main = document.querySelector("main");
+    return Math.max(0, main.getBoundingClientRect().bottom + scrollY - innerHeight);
+  });
+  await smoothScrollTo(page, end, duration);
+}
+
+async function navTo(page, name, url, mobile = false) {
+  if (mobile) {
+    await page.getByRole("button", { name: "Open menu" }).tap();
+    await page.waitForTimeout(700);
+    await page.getByRole("navigation", { name: "Mobile" }).getByRole("link", { name }).tap();
+  } else {
+    await clickLike(
+      page,
+      page.getByRole("banner").getByRole("link", { name, exact: true }).first(),
+    );
+  }
+  await page.waitForURL(url);
+  await page.waitForLoadState("networkidle");
+}
+
+async function pagesTour(page) {
+  await page.goto(`${BASE}/membership`, { waitUntil: "networkidle" });
+  await page.mouse.move(900, 500);
+  await caption(page, "Membership");
+  await page.waitForTimeout(4200);
+  await caption(page, "");
+  await smoothScrollTo(page, "details.disclosure", 16000);
+  await smoothScrollTo(
+    page,
+    await page.evaluate(
+      () =>
+        document.querySelector("details.disclosure").getBoundingClientRect().top + scrollY - 260,
+    ),
+    900,
+  );
+  const faq = page.locator("details.disclosure summary").nth(3);
+  await clickLike(page, faq);
+  await page.waitForTimeout(2000);
+  await scrollThrough(page, 4200);
+  await page.waitForTimeout(1200);
+
+  await smoothScrollTo(page, 0, 1600);
+  await navTo(page, "Concierge", /\/concierge$/);
+  await caption(page, "Concierge");
+  await page.waitForTimeout(3600);
+  await caption(page, "");
+  await smoothScrollTo(page, "#flow", 4200);
+  await page.waitForTimeout(400);
+  await smoothScrollTo(
+    page,
+    await page.evaluate(() => {
+      const el = document.querySelector(".scroll-timeline");
+      return el.getBoundingClientRect().bottom + scrollY - innerHeight * 0.55;
+    }),
+    6500,
+  );
+  await smoothScrollTo(page, "#intelligence", 2600);
+  await circleOver(page, page.locator("section[aria-labelledby=intelligence] ol li").first(), 2.4);
+  await scrollThrough(page, 9000);
+  await page.waitForTimeout(1000);
+
+  await smoothScrollTo(page, 0, 1600);
+  await navTo(page, "Partners", /\/partners$/);
+  await caption(page, "Partners");
+  await page.waitForTimeout(3600);
+  await caption(page, "");
+  await smoothScrollTo(page, "#principles", 4200);
+  await circleOver(page, page.locator("figure.liquid-glass").first(), 2.6);
+  await scrollThrough(page, 8000);
+  await page.waitForTimeout(800);
+
+  await navTo(page, "Apply", /\/apply$/);
+  await caption(page, "Apply");
+  await page.waitForTimeout(3200);
+  await caption(page, "");
+  await scrollThrough(page, 5200);
+  await page.waitForTimeout(600);
+
+  await smoothScrollTo(page, 0, 1200);
+  await navTo(page, "Contact", /\/contact$/);
+  await caption(page, "Contact");
+  await page.waitForTimeout(3600);
+  await caption(page, "");
+
+  await page.goto(`${BASE}/legal/privacy`, { waitUntil: "networkidle" });
+  await caption(page, "Legal — plain on purpose");
+  await page.waitForTimeout(2400);
+  await caption(page, "");
+  await scrollThrough(page, 6000);
+  await page.waitForTimeout(1000);
+}
+
+async function pagesTourMobile(page) {
+  await page.goto(`${BASE}/membership`, { waitUntil: "networkidle" });
+  await caption(page, "Membership");
+  await page.waitForTimeout(3600);
+  await caption(page, "");
+  await scrollThrough(page, 20000);
+  await page.waitForTimeout(800);
+  await smoothScrollTo(page, 0, 1200);
+  await navTo(page, "Concierge", /\/concierge$/, true);
+  await caption(page, "Concierge");
+  await page.waitForTimeout(3200);
+  await caption(page, "");
+  await scrollThrough(page, 18000);
+  await page.waitForTimeout(800);
+  await smoothScrollTo(page, 0, 1200);
+  await navTo(page, "Partners", /\/partners$/, true);
+  await caption(page, "Partners");
+  await page.waitForTimeout(3200);
+  await caption(page, "");
+  await scrollThrough(page, 14000);
+  await page.waitForTimeout(1200);
+}
+
+if (which === "pages") {
+  await record(
+    "pages-desktop",
+    { viewport: { width: 1440, height: 900 }, deviceScaleFactor: 1 },
+    pagesTour,
+  );
+  await record(
+    "pages-mobile",
+    { viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true },
+    pagesTourMobile,
+  );
 }
 
 if (which === "desktop" || which === "all") {
